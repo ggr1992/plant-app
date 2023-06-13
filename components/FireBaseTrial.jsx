@@ -44,20 +44,21 @@ const plant = doc(db, "Plants List", "1");
       .then((result) => {
 
         let Plant = { common_name: result.data().obj.common_name}
-        let userInfo = { nickname:""}
         let dynamicName = Plant.common_name
+        let dynamicName2 = "Plant.common_name"
+
         let dynamicObject = {}
-        dynamicObject[dynamicName]= {Plantinfo : Plant, userInfo:userInfo}
+        dynamicObject[dynamicName]= Plant
+        let dynamicObject2 = {}
+        dynamicObject2[dynamicName2]= Plant
 
         // console.log(result.data().obj)
         setDoc(doc(db, "Users", "Bill"),
 
-       Plant
+        dynamicObject
   )
-  setDoc(doc(db, "Users", "Bill"),
 
-  userInfo
-)
+
 })
       .catch((err) => {
         console.log(err);
