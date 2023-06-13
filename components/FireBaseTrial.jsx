@@ -8,12 +8,13 @@ function FireBaseTrial() {
   const [watering, setwatering] = useState(0);
   const [sun, setsun] = useState(0);
   const [plantName, setplantName] = useState(0);
+  const [nickname, setNickname] = useState('BillyThePlant')
 
   const list = doc(db, "Users", "Bill");
   useEffect(() => {
     getDoc(list)
       .then((result) => {
-        console.log(result.data())
+       // console.log(result.data())
        
       })
       .catch((err) => {
@@ -27,7 +28,7 @@ const plant = doc(db, "Plants List", "1");
   useEffect(() => {
     getDoc(plant)
       .then((result) => {
-        console.log(result.data())
+        //console.log(result.data())
        
       })
       .catch((err) => {
@@ -39,24 +40,41 @@ const plant = doc(db, "Plants List", "1");
 
   /// Add plant to user
   const plantToAdd = doc(db, "Plants List", "1");
+  const usersData = doc(db, "Users", "Jill");
+
   useEffect(() => {
-    getDoc(plantToAdd)
-      .then((result) => {
+    getDoc(usersData)
+    .then((result) => {
+      let billsData = result.data()
 
-        let Plant = { common_name: result.data().obj.common_name}
-        let dynamicName = Plant.common_name
-        let dynamicName2 = "Plant.common_name"
+        getDoc(plantToAdd).then((result) => {
 
-        let dynamicObject = {}
-        dynamicObject[dynamicName]= Plant
-        let dynamicObject2 = {}
-        dynamicObject2[dynamicName2]= Plant
+    let newPlant = {} 
+    newPlant['nickname']=nickname
+    newPlant['common_name']=result.data().obj.common_name
+    newPlant['id']=result.data().obj.id
+    newPlant['scientific_name']=result.data().obj.scientific_name[0]
+    newPlant['Image']=result.data().obj.image_url
+    let dynamicName = newPlant.nickname || newPlant.common_name
+    let dynamicObject = {...billsData}
+    dynamicObject[dynamicName]= newPlant
 
-        // console.log(result.data().obj)
-        setDoc(doc(db, "Users", "Bill"),
+    
+     return dynamicObject
+    }).then((result) => {
+    
+    setDoc(doc(db, "Users", "Jill"),
+    result
+     )
+  })
+  //       let Plant = { common_name: result.data().obj.common_name}
+  //       let dynamicName = Plant.common_name
+  //       let dynamicObject = {}
+  //       dynamicObject[dynamicName]= Plant
+  //       setDoc(doc(db, "Users", "Bill"),
 
-        dynamicObject
-  )
+  //       dynamicObject
+  // )
 
 
 })
