@@ -1,3 +1,17 @@
+
+
+
+
+
+
+
+// Legacy Page too be deleted after confirmation this isn't needed
+
+
+
+
+
+
 import { useEffect, useState } from "react";
 import { db } from "../Firebase_Config/firebaseConfig";
 import {
@@ -21,13 +35,6 @@ function FireBaseTrial() {
   const [plantName, setplantName] = useState(0);
   //From Spiking
 
-
-
-  // Get list of plant IDs limited
-
-
-
-  useEffect(() => {}, []);
 
   // UserName needs to be set for this
   function OnSubmit() {

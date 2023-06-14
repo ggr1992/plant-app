@@ -1,6 +1,17 @@
 const getUserDoc = require("../components/utils/getUserDoc");
 const getPlantInfo = require("../components/utils/getPlantsInfo");
-const addPlantToUser = require('../components/utils/addPlantToUser')
+const addPlantToUser = require("../components/utils/addPlantToUser");
+const getAllPlantNames = require("../components/utils/getAllPlantNames");
+import { db } from "../Firebase_Config/firebaseConfig";
+import { setDoc, doc } from "firebase/firestore";
+
+afterEach(() => {
+  const currentTestName = expect.getState().currentTestName.trim();
+
+  if (currentTestName === "Adds plant to user") {
+    setDoc(doc(db, "Users", "Ajai"), {});
+  }
+});
 
 describe("getUserDoc", () => {
   test("Returns User information when passed their ID name", async () => {
@@ -58,7 +69,7 @@ describe("getPlantInfo", () => {
         watering_description: expect.any(String),
         image_url: expect.any(String),
       })
-    )
+    );
   });
   test("", async () => {
     const result = await getPlantInfo("2");
@@ -85,27 +96,38 @@ describe("getPlantInfo", () => {
         watering_description: expect.any(String),
         image_url: expect.any(String),
       })
-    )
+    );
   });
 });
-describe('',  () => {
-  test.only('',async () => {
-   const test = await addPlantToUser("Charlie","13");
-    console.log(test.msg , "Here")
-    expect(test.msg).toBe('User does not exist')
-  })
-  test('',async () => {
-     await addPlantToUser("Ajai","13");
-     const result = await getUserDoc("Ajai");
-     let obj = Object.keys(result);
-     expect(result[obj[0]]).toEqual(
-       expect.objectContaining({
-         common_name: expect.any(String),
-         id:13,
-         Image: expect.any(String),
-         scientific_name: expect.any(String),
-         nickname: expect.any(String),
-       })
-     )
-   })
-})
+describe("", () => {
+  test("Fails if User does not exist", async () => {
+    const test = await addPlantToUser("Charlie", "13");
+    expect(test.msg).toBe("User does not exist");
+  });
+  test("Adds plant to user", async () => {
+    await addPlantToUser("Ajai", "13");
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    const result = await getUserDoc("Ajai");
+    let obj = Object.keys(result);
+
+    
+    
+    expect(result[obj[0]]).toEqual(
+      expect.objectContaining({
+        common_name: expect.any(String),
+        id: 13,
+        Image: expect.any(String),
+        scientific_name: expect.any(String),
+        nickname: expect.any(String),
+      })
+      );
+    });
+  });
+  
+  // const ans = await getAllPlantNames()
+
+
+  // console.log(ans)
+  
+  
+  

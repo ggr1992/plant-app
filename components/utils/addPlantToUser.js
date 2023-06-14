@@ -1,35 +1,28 @@
 import { db } from "../../Firebase_Config/firebaseConfig";
-import { doc, getDoc,setDoc,collection } from "firebase/firestore";
+import { doc, getDoc,setDoc} from "firebase/firestore";
 
-//const [nickname, setNickname] = useState();
+async function addPlantToUser(user,plantID) {
 
-function addPlantToUser(user,plantID) {
-    const docRef = db.collection("User").doc(user);
-    docRef.get().then((doc) => {
-        if (doc.exists) {
-          // Document exists, check if it has any fields
-          if (doc.data()) {
-            // Document has fields
-            console.log("Document exists and has fields.");
-          } else {
-            // Document exists but has no fields
-            console.log("Document exists but has no fields.");
-          }
-        } else {
-          // Document does not exist
-          console.log("Document does not exist.");
-        }
-      })
+  async function userExists(user) {
     const usersData = doc(db, "Users", user);
+    const docSnapshot = await getDoc(usersData);
+    return docSnapshot.exists();
+  }
 
-    if(!usersData.data) {
-        
-        return Promise.reject({
-            msg: "User does not exist",
-          }).catch((err) => {
-            return err
-          });
-    }
+
+  const userExists2 = await userExists(user);
+
+  if (!userExists2) {
+    return Promise.reject({
+      
+      msg:  'User does not exist',
+    }) .catch((err) => {
+      return err;
+    });
+  }
+
+
+  const usersData = doc(db, "Users", user)
     const plantToAdd = doc(db, "Plants List", plantID);
     getDoc(usersData)
       .then((result) => {
