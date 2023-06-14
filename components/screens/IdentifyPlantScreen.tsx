@@ -1,11 +1,17 @@
-import React, { useState, useEffect, useRef, Fragment } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  Fragment,
+  useLayoutEffect,
+} from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
 import { Camera, CameraType } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import { Entypo } from "@expo/vector-icons";
 import { identifyPlant } from "../utils/utils";
 
-export function IdentifyPlantScreen() {
+export function IdentifyPlantScreen({ navigation }) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [image, setImage] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
@@ -37,6 +43,15 @@ export function IdentifyPlantScreen() {
         });
     }
   });
+
+  useLayoutEffect(() => {
+    navigation.addListener("focus", () => {
+      let parentNav = navigation.getParent();
+      parentNav.setOptions({
+        tabBarStyle: { display: "none" },
+      });
+    });
+  }, []);
 
   const takePicture = async () => {
     if (cameraRef) {
@@ -76,7 +91,7 @@ export function IdentifyPlantScreen() {
               flexDirection: "row",
               justifyContent: "center",
               alignItems: "center",
-              marginTop: 700,
+              marginTop: 600,
             }}
           >
             <Entypo name="camera" size={80} color={"#fff"} />
