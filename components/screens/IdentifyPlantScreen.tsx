@@ -72,6 +72,10 @@ export function IdentifyPlantScreen({ navigation }) {
     setIsLoading(false);
   };
 
+  const addPlantManually = () => {
+    navigation.navigate("Add Plant Manually");
+  };
+
   if (hasCameraPermission === false) {
     return <Text>No access to camera!</Text>;
   }
@@ -181,6 +185,28 @@ export function IdentifyPlantScreen({ navigation }) {
                   }}
                 >
                   Try Again
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={addPlantManually}
+                style={{
+                  height: 40,
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginTop: 40,
+                }}
+              >
+                <Entypo name="edit" size={28} color={"#333"} />
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: 16,
+                    color: "#333",
+                    marginLeft: 10,
+                  }}
+                >
+                  Add Plant Manually
                 </Text>
               </TouchableOpacity>
             </>
