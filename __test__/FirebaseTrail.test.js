@@ -1,5 +1,6 @@
 const getUserDoc = require("../components/utils/getUserDoc");
 const getPlantInfo = require("../components/utils/getPlantsInfo");
+const addPlantToUser = require('../components/utils/addPlantToUser')
 
 describe("getUserDoc", () => {
   test("Returns User information when passed their ID name", async () => {
@@ -87,3 +88,24 @@ describe("getPlantInfo", () => {
     )
   });
 });
+describe('',  () => {
+  test.only('',async () => {
+   const test = await addPlantToUser("Charlie","13");
+    console.log(test.msg , "Here")
+    expect(test.msg).toBe('User does not exist')
+  })
+  test('',async () => {
+     await addPlantToUser("Ajai","13");
+     const result = await getUserDoc("Ajai");
+     let obj = Object.keys(result);
+     expect(result[obj[0]]).toEqual(
+       expect.objectContaining({
+         common_name: expect.any(String),
+         id:13,
+         Image: expect.any(String),
+         scientific_name: expect.any(String),
+         nickname: expect.any(String),
+       })
+     )
+   })
+})

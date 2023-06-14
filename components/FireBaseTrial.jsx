@@ -26,35 +26,6 @@ function FireBaseTrial() {
   // Get list of plant IDs limited
 
 
-  function addPlantToUser() {
-    const usersData = doc(db, "Users", user);
-    const plantToAdd = doc(db, "Plants List", plantID);
-    getDoc(usersData)
-      .then((result) => {
-        let billsData = result.data();
-
-        getDoc(plantToAdd)
-          .then((result) => {
-            let newPlant = {};
-            newPlant["nickname"] = nickname;
-            newPlant["common_name"] = result.data().obj.common_name;
-            newPlant["id"] = result.data().obj.id;
-            newPlant["scientific_name"] = result.data().obj.scientific_name[0];
-            newPlant["Image"] = result.data().obj.image_url;
-            let dynamicName = newPlant.nickname || newPlant.common_name;
-            let dynamicObject = { ...billsData };
-            dynamicObject[dynamicName] = newPlant;
-
-            return dynamicObject;
-          })
-          .then((result) => {
-            setDoc(doc(db, "Users", user), result);
-          });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
 
   useEffect(() => {}, []);
 
