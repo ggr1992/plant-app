@@ -73,7 +73,7 @@ export function IdentifyPlantScreen({ navigation }) {
   };
 
   const addPlantManually = () => {
-    navigation.navigate("Add Plant Manually");
+    navigation.navigate("Add Plant");
   };
 
   if (hasCameraPermission === false) {
