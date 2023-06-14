@@ -6,7 +6,7 @@ import { TabNavigator } from './components/navigation/TabNavigator'
 export default function App() {
 	return (
 		<NavigationContainer>
-      <TabNavigator />
+			<TabNavigator />
 		</NavigationContainer>
 	)
 }
