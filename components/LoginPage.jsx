@@ -7,6 +7,7 @@ export const Auth = () => {
   const [password, setpassword] = useState();
   const [loggedUser, setloggedUser] = useState();
 
+
   const signUp = () => {
     createUserWithEmailAndPassword(auth, email, password)
       .then(() => {})
