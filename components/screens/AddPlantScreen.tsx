@@ -14,7 +14,7 @@ import { Camera } from "expo-camera";
 
 const data = require("../../data/development-data/data");
 
-export function AddPlantScreen({navigation}) {
+export function AddPlantScreen({ navigation, route }) {
   const plantData = data.map((plant) => {
     return {
       common_name: plant.common_name,
@@ -31,6 +31,12 @@ export function AddPlantScreen({navigation}) {
   const [cameraRef, setCameraRef] = useState(null);
   const [cameraVisible, setCameraVisible] = useState(false);
   const [capturedPhoto, setCapturedPhoto] = useState(null);
+
+  useEffect(() => {
+    if (searchTerm !== route.params.query) {
+      setSearchTerm(route.params.query);
+    }
+  }, [route.params.query]);
 
   useEffect(() => {
     (async () => {
@@ -113,6 +119,11 @@ export function AddPlantScreen({navigation}) {
     setTempNickName("");
   };
 
+  const identifyPlant = () => {
+    setSearchTerm("");
+    navigation.navigate("Identify Plant");
+  };
+
   return (
     <SafeAreaView style={styles.formStyle}>
       <Text style={styles.Title}>Add A Plant</Text>
@@ -180,7 +191,7 @@ export function AddPlantScreen({navigation}) {
               <Button title="Take Picture" onPress={takePicture} color="blue" />
             </View>
           ) : (
-            <Button title="Open Camera" onPress={() => navigation.navigate('Identify Plant')} color="blue" /> // Keep this button
+            <Button title="Open Camera" onPress={identifyPlant} color="blue" /> // Keep this button
           )}
         </View>
       </View>

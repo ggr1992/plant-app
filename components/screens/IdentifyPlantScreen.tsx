@@ -76,6 +76,10 @@ export function IdentifyPlantScreen({ navigation }) {
     navigation.navigate("Add Plant");
   };
 
+  const pickThisPlant = (scientificName) => {
+    navigation.navigate("Add Plant", { query: scientificName });
+  };
+
   if (hasCameraPermission === false) {
     return <Text>No access to camera!</Text>;
   }
@@ -95,7 +99,7 @@ export function IdentifyPlantScreen({ navigation }) {
               flexDirection: "row",
               justifyContent: "center",
               alignItems: "center",
-              marginTop: 700,
+              marginTop: 600,
             }}
           >
             <Entypo name="camera" size={120} color={"#fff"} />
@@ -159,6 +163,11 @@ export function IdentifyPlantScreen({ navigation }) {
                         marginBottom: 10,
                         fontSize: 14,
                       }}
+                      onPress={() =>
+                        pickThisPlant(
+                          result.species.scientificNameWithoutAuthor
+                        )
+                      }
                     >
                       Pick This
                     </Text>
