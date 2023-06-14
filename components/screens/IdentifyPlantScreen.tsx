@@ -32,9 +32,9 @@ export function IdentifyPlantScreen({ navigation }) {
 
   useEffect(() => {
     if (isLoading && image) {
-      identifyPlant(image)
-        .then((data) => {
-          setResults(data.results.slice(0, 5));
+      identifyPlant(image, "plantnet")
+        .then((results) => {
+          setResults(results.slice(0, 5));
           setIsLoading(false);
         })
         .catch((err) => {
@@ -56,8 +56,13 @@ export function IdentifyPlantScreen({ navigation }) {
   const takePicture = async () => {
     if (cameraRef) {
       try {
-        const data = await cameraRef.current.takePictureAsync();
-        setImage(data.uri);
+        const options = {
+          quality: 0.5,
+          base64: true,
+          skipProcessing: true,
+        };
+        const data = await cameraRef.current.takePictureAsync(options);
+        setImage(data);
         setIsLoading(true);
         setErrorMsg("");
       } catch (err) {
@@ -76,8 +81,8 @@ export function IdentifyPlantScreen({ navigation }) {
     navigation.navigate("Add Plant");
   };
 
-  const pickThisPlant = (scientificName) => {
-    navigation.navigate("Add Plant", { query: scientificName });
+  const pickThisPlant = (name) => {
+    navigation.navigate("Add Plant", { query: name });
   };
 
   if (hasCameraPermission === false) {
@@ -120,7 +125,7 @@ export function IdentifyPlantScreen({ navigation }) {
           )}
           {isLoading === false && results.length === 0 && (
             <>
-              <Image source={{ uri: image }} style={styles.camera} />
+              <Image source={{ uri: image.uri }} style={styles.camera} />
               <TouchableOpacity
                 onPress={resetPicture}
                 style={{
@@ -151,8 +156,7 @@ export function IdentifyPlantScreen({ navigation }) {
                 return (
                   <Fragment key={index}>
                     <Text style={{ fontSize: 16, padding: 20 }}>
-                      {result.species.scientificNameWithoutAuthor} (
-                      {(result.score * 100).toFixed(2)}%)
+                      {result.name} ({(result.probability * 100).toFixed(2)}%)
                     </Text>
                     <Text
                       style={{
@@ -163,11 +167,7 @@ export function IdentifyPlantScreen({ navigation }) {
                         marginBottom: 10,
                         fontSize: 14,
                       }}
-                      onPress={() =>
-                        pickThisPlant(
-                          result.species.scientificNameWithoutAuthor
-                        )
-                      }
+                      onPress={() => pickThisPlant(result.name)}
                     >
                       Pick This
                     </Text>

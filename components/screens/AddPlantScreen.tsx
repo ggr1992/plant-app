@@ -33,10 +33,10 @@ export function AddPlantScreen({ navigation, route }) {
   const [capturedPhoto, setCapturedPhoto] = useState(null);
 
   useEffect(() => {
-    if (searchTerm !== route.params.query) {
+    if (route?.params?.query && searchTerm !== route.params.query) {
       setSearchTerm(route.params.query);
     }
-  }, [route.params.query]);
+  }, [route]);
 
   useEffect(() => {
     (async () => {
