@@ -95,10 +95,10 @@ export function IdentifyPlantScreen({ navigation }) {
               flexDirection: "row",
               justifyContent: "center",
               alignItems: "center",
-              marginTop: 600,
+              marginTop: 700,
             }}
           >
-            <Entypo name="camera" size={80} color={"#fff"} />
+            <Entypo name="camera" size={120} color={"#fff"} />
           </TouchableOpacity>
         </Camera>
       ) : (
