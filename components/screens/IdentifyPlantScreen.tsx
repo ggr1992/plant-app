@@ -13,23 +13,28 @@ export function IdentifyPlantScreen() {
   const cameraRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState([]);
-  const [bestMatch, setBestMatch] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
     async () => {
       MediaLibrary.requestPermissionsAsync();
       const cameraStatus = await Camera.requestCameraPermissionsAsync();
+      console.log(cameraStatus);
       setHasCameraPermission(cameraStatus.status === "granted");
     };
   }, []);
 
   useEffect(() => {
     if (isLoading && image) {
-      identifyPlant(image).then((data) => {
-        setBestMatch(data.bestMatch);
-        setResults(data.results.slice(0, 5));
-        setIsLoading(false);
-      });
+      identifyPlant(image)
+        .then((data) => {
+          setResults(data.results.slice(0, 5));
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          setImage(null);
+        });
     }
   });
 
@@ -39,7 +44,9 @@ export function IdentifyPlantScreen() {
         const data = await cameraRef.current.takePictureAsync();
         setImage(data.uri);
         setIsLoading(true);
+        setErrorMsg("");
       } catch (err) {
+        setErrorMsg("Could not identify plant! Please try again...");
         console.log(err);
       }
     }
@@ -66,33 +73,29 @@ export function IdentifyPlantScreen() {
           <TouchableOpacity
             onPress={takePicture}
             style={{
-              height: 40,
               flexDirection: "row",
               justifyContent: "center",
               alignItems: "center",
+              marginTop: 700,
             }}
           >
-            <Entypo name="camera" size={28} color={"#fff"} />
-            <Text
-              style={{
-                fontWeight: "bold",
-                fontSize: 16,
-                color: "#f1f1f1",
-                marginLeft: 10,
-              }}
-            >
-              Take Pic
-            </Text>
+            <Entypo name="camera" size={80} color={"#fff"} />
           </TouchableOpacity>
         </Camera>
       ) : (
         <>
-          {isLoading && (
-            <Text style={{ color: "#333", marginBottom: 40 }}>
-              Trying to identify plant... Please wait...
-            </Text>
+          {errorMsg.length > 0 && (
+            <Text style={{ color: "red", fontWeight: "bold" }}>{errorMsg}</Text>
           )}
-          {!isLoading && results.length === 0 && (
+          {isLoading === true && (
+            <>
+              <Image source={require("../../assets/loading.gif")} />
+              <Text style={{ color: "#333", marginBottom: 40 }}>
+                Trying to identify plant... Please wait...
+              </Text>
+            </>
+          )}
+          {isLoading === false && results.length === 0 && (
             <>
               <Image source={{ uri: image }} style={styles.camera} />
               <TouchableOpacity
@@ -118,17 +121,55 @@ export function IdentifyPlantScreen() {
               </TouchableOpacity>
             </>
           )}
-          <Text>Best match: {bestMatch}</Text>
-          {results.map((result, index) => {
-            return (
-              <Fragment key={index}>
-                <Text style={{ marginTop: 20 }}>
-                  {(result.score * 100).toFixed(2)}%
+          {isLoading === false && results.length > 0 && (
+            <>
+              <Text style={{ fontSize: 20, marginBottom: 10 }}>Matches:</Text>
+              {results.map((result, index) => {
+                return (
+                  <Fragment key={index}>
+                    <Text style={{ fontSize: 16, padding: 20 }}>
+                      {result.species.scientificNameWithoutAuthor} (
+                      {(result.score * 100).toFixed(2)}%)
+                    </Text>
+                    <Text
+                      style={{
+                        backgroundColor: "#225b4c",
+                        color: "#00ff7f",
+                        padding: 10,
+                        borderRadius: 20,
+                        marginBottom: 10,
+                        fontSize: 14,
+                      }}
+                    >
+                      Pick This
+                    </Text>
+                  </Fragment>
+                );
+              })}
+              <TouchableOpacity
+                onPress={resetPicture}
+                style={{
+                  height: 40,
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginTop: 40,
+                }}
+              >
+                <Entypo name="camera" size={28} color={"#333"} />
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: 16,
+                    color: "#333",
+                    marginLeft: 10,
+                  }}
+                >
+                  Try Again
                 </Text>
-                <Text>{result.species.scientificNameWithoutAuthor}</Text>
-              </Fragment>
-            );
-          })}
+              </TouchableOpacity>
+            </>
+          )}
         </>
       )}
     </View>
@@ -143,9 +184,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   camera: {
-    // flex: 1,
-    borderRadius: 20,
-    width: "50%",
-    height: "50%",
+    flex: 1,
+    width: "150%",
+    height: undefined,
   },
 });
