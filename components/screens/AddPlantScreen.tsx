@@ -1,35 +1,35 @@
-import { View, Text, Button, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, Pressable, TouchableOpacity, StyleSheet } from 'react-native'
+import { TabNavigator } from '../navigation/TabNavigator'
 
 export function AddPlantScreen({ navigation }) {
-  return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <TouchableOpacity>
-        <Text
-          onPress={() => navigation.navigate("add-plant-manual")}
-          style={styles.button}
-        >
-          Add Plant Manually
-        </Text>
-        <Text
-          onPress={() => navigation.navigate("identify-plant")}
-          style={styles.button}
-        >
-          Identify Your Plant
-        </Text>
-      </TouchableOpacity>
-    </View>
-  );
+	return (
+		<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+			<TouchableOpacity>
+				<Pressable style={styles.button}>
+					<Text style={styles.buttonText}>Add Plant Manually</Text>
+				</Pressable>
+				<Pressable
+					style={styles.button}
+					onPress={() => {
+						navigation.navigate('Identify Plant')
+					}}>
+					<Text style={styles.buttonText}>Identify Your Plant</Text>
+				</Pressable>
+			</TouchableOpacity>
+		</View>
+	)
 }
 
 const styles = StyleSheet.create({
-  button: {
-    borderRadius: 20,
-    backgroundColor: "#225b4c",
-    color: "#00ff7f",
-    padding: 40,
-    marginVertical: 20,
-    fontFamily: "sans-serif",
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-});
+	button: {
+		borderRadius: 20,
+		backgroundColor: '#225b4c',
+		padding: 40,
+		marginVertical: 20
+	},
+	buttonText: {
+		textAlign: 'center',
+		fontWeight: 'bold',
+		color: '#00ff7f'
+	}
+})
