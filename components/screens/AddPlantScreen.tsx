@@ -1,63 +1,120 @@
-import { useState } from "react";
-import { View, Text, TextInput, SafeAreaView, StyleSheet } from "react-native";
-import Autocomplete from "react-native-autocomplete-input";
-import data from "../../data/test-data/data";
+import { useState, useEffect } from 'react'
+import { View, Text, TextInput, FlatList, Pressable, SafeAreaView, StyleSheet } from 'react-native'
+// import data, { filter } from '../../data/test-data/data'
+const data = require('../../data/development-data/data')
 
 export function AddPlantScreen() {
-  const [plantList, setPlantList] = useState(data);
-  const [userInput, setUserInput] = useState("");
-  let plantNames = {};
+	const plantData = data.map((plant) => {
+		return {
+			common_name: plant.common_name,
+			scientific_name: plant.scientific_name,
+			other_name: plant.other_name
+		}
+	})
+	const [plantList, setPlantList] = useState(plantData)
+	const [searchTerm, setSearchTerm] = useState('')
+	const [displaySuggestions, setDisplaySuggestions] = useState(false)
 
-  plantList.forEach((plant, index) => {
-    plantNames[plant.common_name] = index;
-    plant.other_name.forEach((name) => {
-      plantNames[name] = index;
-    });
-  });
+	const plantNamesRef = {}
+	plantList.forEach((plant, index) => {
+		plantNamesRef[plant.common_name] = index
+	})
 
-  let namesArray = Object.keys(plantNames);
+	const namesArray = Object.keys(plantNamesRef)
 
-  const filteredNames = namesArray.filter((name) => {
-    name.toLowerCase().includes(userInput.toLowerCase());
-  });
+	const filteredNames = []
 
-  return (
-    <SafeAreaView
-      style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-    >
-      <View style={styles.SearchBar}>
-        <Autocomplete
-          data={filteredNames}
-          onChangeText={setUserInput}
-          value={userInput}
-          renderItem={({ item }) => (
-            <View style={styles.SuggestionContainer}>
-              <Text style={styles.suggestionText}>{item}</Text>
-            </View>
-          )}
-        />
-      </View>
-    </SafeAreaView>
-  );
+	namesArray.forEach((name) => {
+		if (filteredNames.length === 0) {
+			filteredNames.push(name)
+		} else {
+			if (plantNamesRef[filteredNames.at(-1)] !== plantNamesRef[name]) {
+				filteredNames.push(name)
+			}
+		}
+	})
+
+	let autocompleteList = filteredNames.filter((name) => {
+		return name.toLowerCase().includes(searchTerm.toLowerCase())
+	})
+
+	if (autocompleteList.length !== 0) {
+		autocompleteList = autocompleteList.map((name: string) => {
+			const index = plantNamesRef[name]
+			let nameArr: string[] = name.split(' ')
+			nameArr = nameArr.map((word) => {
+				return word.charAt(0).toUpperCase() + word.slice(1)
+			})
+			name = nameArr.join(' ')
+			return { name: name, scientific_name: plantList[index]['scientific_name'], id: plantNamesRef[name] }
+		})
+	}
+
+	useEffect(() => {
+		if (searchTerm.length > 2) {
+			setDisplaySuggestions(true)
+		} else {
+			setDisplaySuggestions(false)
+		}
+	}, [searchTerm])
+
+	return (
+		<SafeAreaView
+			style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', borderColor: 'red', borderWidth: 10 }}>
+			<View style={styles.container}>
+				<TextInput
+					placeholder='Search for a plant...'
+					value={searchTerm}
+					onChangeText={setSearchTerm}
+					style={styles.searchBox}
+				/>
+				{displaySuggestions && (
+					<FlatList
+						style={styles.suggestionBox}
+						data={autocompleteList}
+						renderItem={({ item }) => {
+							return (
+								<Pressable
+									onPress={() => {
+										setSearchTerm(item)
+									}}>
+									<Text style={styles.suggestionText}>
+										{item.name} <Text style={{ fontWeight: 'bold' }}>{item.scientific_name}</Text>
+									</Text>
+								</Pressable>
+							)
+						}}
+					/>
+				)}
+			</View>
+		</SafeAreaView>
+	)
 }
 
 const styles = StyleSheet.create({
-  SearchBar: {
-    flex: 1,
-    left: 0,
-    position: "absolute",
-    right: 0,
-    top: 0,
-  },
-  SuggestionContainer: {
-    padding: 10,
-    borderBottomColor: "black",
-    borderBottomWidth: 1,
-  },
-  suggestionText: {
-    fontSize: 16,
-  },
-  suggestionList: {
-    maxHeight: 200,
-  },
-});
+	container: {
+		marginLeft: 20,
+		marginRight: 20,
+		marginTop: 10,
+		borderColor: 'red',
+		borderWidth: 5,
+		width: '90%',
+		justifySelf: 'flex-start'
+	},
+	searchBox: {
+		padding: 10,
+		borderColor: 'black',
+		borderRadius: 15,
+		borderWidth: 2,
+		fontSize: 18
+	},
+	suggestionBox: {
+		marginTop: 5,
+		borderColor: 'blue',
+		borderRadius: 15,
+		borderWidth: 2
+	},
+	suggestionText: {
+		fontSize: 18
+	}
+})
