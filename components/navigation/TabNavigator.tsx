@@ -3,6 +3,7 @@ import { CalendarScreen } from '../screens/CalendarScreen'
 import { AddPlantScreen } from '../screens/AddPlantScreen'
 import { MyPlantsScreen } from '../screens/MyPlantsScreen'
 import { ProfileScreen } from '../screens/ProfileScreen'
+import { IdentifyPlantScreen } from '../screens/IdentifyPlantScreen'
 
 import { View } from 'react-native'
 
@@ -10,13 +11,15 @@ import { StyleSheet } from 'react-native'
 import { AntDesign } from '@expo/vector-icons'
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
 const Tab = createBottomTabNavigator()
+const AddPlantStack = createNativeStackNavigator()
 
 export function TabNavigator() {
 	return (
 		<Tab.Navigator
-			screenOptions={({ route }) => ({
+			screenOptions={() => ({
 				headerShown: false,
 				tabBarShowLabel: false,
 				tabBarStyle: styles.navigationBar
@@ -27,7 +30,7 @@ export function TabNavigator() {
 				options={{
 					tabBarIcon: ({ focused }) => {
 						return (
-							<View >
+							<View>
 								<AntDesign name='home' size={30} color={focused ? '#00ff7f' : 'white'}></AntDesign>
 							</View>
 						)
@@ -50,12 +53,12 @@ export function TabNavigator() {
 				}}
 			/>
 			<Tab.Screen
-				name='Add plant'
-				component={AddPlantScreen}
+				name='Add Plant Stack'
+				component={AddPlantStackNavigator}
 				options={{
 					tabBarIcon: ({ focused }) => {
 						return (
-							<View >
+							<View>
 								<AntDesign name='pluscircle' size={50} color={focused ? '#00ff7f' : 'white'} />
 							</View>
 						)
@@ -69,7 +72,7 @@ export function TabNavigator() {
 				options={{
 					tabBarIcon: ({ focused }) => {
 						return (
-							<View >
+							<View>
 								<AntDesign name='staro' size={30} color={focused ? '#00ff7f' : 'white'}></AntDesign>
 							</View>
 						)
@@ -83,7 +86,7 @@ export function TabNavigator() {
 				options={{
 					tabBarIcon: ({ focused }) => {
 						return (
-							<View >
+							<View>
 								<AntDesign name='profile' size={30} color={focused ? '#00ff7f' : 'white'}></AntDesign>
 							</View>
 						)
@@ -92,6 +95,21 @@ export function TabNavigator() {
 				}}
 			/>
 		</Tab.Navigator>
+	)
+}
+
+export function AddPlantStackNavigator() {
+	return (
+		<AddPlantStack.Navigator initialRouteName='Add Plant'>
+			<AddPlantStack.Screen
+				name='Add Plant'
+				component={AddPlantScreen}
+				options={{ headerShown: false }}></AddPlantStack.Screen>
+			<AddPlantStack.Screen
+				name='Identify Plant'
+				component={IdentifyPlantScreen}
+				options={{ headerShown: false }}></AddPlantStack.Screen>
+		</AddPlantStack.Navigator>
 	)
 }
 
@@ -104,10 +122,10 @@ const styles = StyleSheet.create({
 		backgroundColor: '#293f44',
 		borderRadius: 15,
 		height: 60,
-		paddingBottom: 0,
+		paddingBottom: 0
 	},
 	navigationIcon: {
 		height: 50,
-		width: 50,
+		width: 50
 	}
 })
