@@ -14,7 +14,7 @@ import { Camera } from "expo-camera";
 
 const data = require("../../data/development-data/data");
 
-export function AddPlantScreen() {
+export function AddPlantScreen({navigation}) {
   const plantData = data.map((plant) => {
     return {
       common_name: plant.common_name,
@@ -180,7 +180,7 @@ export function AddPlantScreen() {
               <Button title="Take Picture" onPress={takePicture} color="blue" />
             </View>
           ) : (
-            <Button title="Open Camera" onPress={showCamera} color="blue" />
+            <Button title="Open Camera" onPress={() => navigation.navigate('Identify Plant')} color="blue" /> // Keep this button
           )}
         </View>
       </View>
