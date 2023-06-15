@@ -10,6 +10,7 @@ import { StyleSheet } from 'react-native'
 import { AntDesign } from '@expo/vector-icons'
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { PlantDetailsScreen } from '../screens/PlantDetailsScreen'
 
 const Tab = createBottomTabNavigator()
 
@@ -56,7 +57,7 @@ export function TabNavigator() {
 					tabBarIcon: ({ focused }) => {
 						return (
 							<View >
-								<AntDesign name='pluscircle' size={50} color={focused ? '#00ff7f' : 'white'} />
+								<AntDesign name='pluscircle' size={45} color={focused ? '#00ff7f' : 'white'} />
 							</View>
 						)
 					},
@@ -65,7 +66,7 @@ export function TabNavigator() {
 			/>
 			<Tab.Screen
 				name='My plants'
-				component={MyPlantsScreen}
+				component={PlantDetailsScreen}
 				options={{
 					tabBarIcon: ({ focused }) => {
 						return (
@@ -98,12 +99,13 @@ export function TabNavigator() {
 const styles = StyleSheet.create({
 	navigationBar: {
 		position: 'absolute',
-		bottom: 25,
+		bottom: '3%',
 		left: 10,
 		right: 10,
 		backgroundColor: '#293f44',
+		borderColor: 'black',
 		borderRadius: 15,
-		height: 60,
+		height: '7%',
 		paddingBottom: 0,
 	},
 	navigationIcon: {
