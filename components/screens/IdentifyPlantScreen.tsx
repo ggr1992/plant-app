@@ -12,7 +12,7 @@ import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import { Entypo } from "@expo/vector-icons";
 import { identifyPlant } from "../utils/utils";
-import data from "../../data/development-data/data";
+import queryByScientificName from "../utils/queryByScientificName";
 
 export function IdentifyPlantScreen({ navigation }) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
@@ -26,23 +26,45 @@ export function IdentifyPlantScreen({ navigation }) {
   const [resultsWithMatchedData, setResultsWithMatchedData] = useState([]);
 
   useEffect(() => {
+    if (
+      results.length > 0 &&
+      results.length !== resultsWithMatchedData.length
+    ) {
+      const allNames = results.map((result) => result.name);
+      const foundNames = resultsWithMatchedData.map((result) => result.name);
+      const missingNames = allNames.filter(
+        (name) => !foundNames.includes(name)
+      );
+      console.log(
+        "Some identified plants do not exist in the database: " +
+          missingNames.join(", ")
+      );
+    }
+  }, [results]);
+
+  useEffect(() => {
     if (results.length) {
-      setResultsWithMatchedData(() => {
-        return results.map((result) => {
-          const scientificName = result.name;
-          let imageUrl, commonName;
-          const matchingPlantFromDb = data.find((plant) => {
-            return plant.scientific_name[0].includes(scientificName);
+      const scientificNames = results.map((res) => res.name);
+      queryByScientificName(scientificNames)
+        .then((dbMatches) => {
+          const actualMatches = [];
+          dbMatches.forEach((match) => {
+            const currScientificName = match.scientific_name;
+            const matchedResult = results.find(
+              (result) => result.name === currScientificName
+            );
+            if (matchedResult) {
+              actualMatches.push({
+                ...match,
+                probability: matchedResult.probability,
+              });
+            }
           });
-          if (matchingPlantFromDb?.image_url) {
-            imageUrl = matchingPlantFromDb.image_url;
-          }
-          if (matchingPlantFromDb?.common_name) {
-            commonName = matchingPlantFromDb.common_name;
-          }
-          return { ...result, imageUrl, commonName };
+          setResultsWithMatchedData(actualMatches);
+        })
+        .catch((err) => {
+          console.log(err);
         });
-      });
     }
   }, [results]);
 
@@ -50,7 +72,6 @@ export function IdentifyPlantScreen({ navigation }) {
     async () => {
       MediaLibrary.requestPermissionsAsync();
       const cameraStatus = await Camera.requestCameraPermissionsAsync();
-      console.log(cameraStatus);
       setHasCameraPermission(cameraStatus.status === "granted");
     };
   }, []);
@@ -67,7 +88,7 @@ export function IdentifyPlantScreen({ navigation }) {
           setImage(null);
         });
     }
-  });
+  }, [image, isLoading]);
 
   useLayoutEffect(() => {
     navigation.addListener("focus", () => {
@@ -83,6 +104,8 @@ export function IdentifyPlantScreen({ navigation }) {
       try {
         const options = {
           quality: 0.5,
+          maxWidth: 1000,
+          maxHeight: 1000,
           base64: true,
           skipProcessing: true,
         };
@@ -99,7 +122,7 @@ export function IdentifyPlantScreen({ navigation }) {
 
   const resetPicture = () => {
     setImage(null);
-    setIsLoading(false);
+    setIsLoading(true);
   };
 
   const addPlantManually = () => {
@@ -144,9 +167,25 @@ export function IdentifyPlantScreen({ navigation }) {
             <View>
               <Image source={require("../../assets/loading.gif")} />
               <Text
-                style={{ color: "#333", marginBottom: 40, textAlign: "center" }}
+                style={{
+                  color: "#333",
+                  marginBottom: 40,
+                  textAlign: "center",
+                  fontSize: 24,
+                }}
               >
                 Identifying...
+              </Text>
+            </View>
+          )}
+
+          {isLoading === false && resultsWithMatchedData.length === 0 && (
+            <View style={{}}>
+              <Text style={{ fontSize: 36, textAlign: "center" }}>
+                Oh no...
+              </Text>
+              <Text style={{ fontSize: 24, textAlign: "center" }}>
+                Sorry, no matches found!
               </Text>
             </View>
           )}
@@ -168,7 +207,7 @@ export function IdentifyPlantScreen({ navigation }) {
                 return (
                   <TouchableOpacity
                     key={index}
-                    onPress={() => pickThisPlant(result.name)}
+                    onPress={() => pickThisPlant(result.scientific_name)}
                     style={{
                       width: 250,
                       height: 250,
@@ -181,8 +220,8 @@ export function IdentifyPlantScreen({ navigation }) {
                   >
                     <ImageBackground
                       source={
-                        result.imageUrl
-                          ? { uri: result.imageUrl }
+                        result.image
+                          ? { uri: result.image }
                           : require("../../assets/image-not-found.jpg")
                       }
                       style={{
@@ -200,10 +239,11 @@ export function IdentifyPlantScreen({ navigation }) {
                             paddingBottom: 10,
                             position: "absolute",
                             top: 200,
+                            paddingHorizontal: 10,
                           }}
                           numberOfLines={1}
                         >
-                          {result.common_name ?? result.name}
+                          {result.common_name ?? result.scientific_name}
                         </Text>
                         <Text
                           style={{
@@ -226,6 +266,10 @@ export function IdentifyPlantScreen({ navigation }) {
                   </TouchableOpacity>
                 );
               })}
+            </ScrollView>
+          )}
+          {isLoading === false && (
+            <>
               <TouchableOpacity
                 onPress={resetPicture}
                 style={{
@@ -271,7 +315,7 @@ export function IdentifyPlantScreen({ navigation }) {
                   Add Plant Manually
                 </Text>
               </TouchableOpacity>
-            </ScrollView>
+            </>
           )}
         </View>
       )}
