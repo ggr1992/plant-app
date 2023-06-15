@@ -7,8 +7,6 @@ import FireBaseTrial from './components/FireBaseTrial'
 export default function App() {
 	return (
 		<NavigationContainer>
-
-		<FireBaseTrial/>
       <TabNavigator />
 		</NavigationContainer>
 	)
