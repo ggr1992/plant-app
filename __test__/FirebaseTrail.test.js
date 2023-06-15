@@ -2,6 +2,8 @@ const getUserDoc = require("../components/utils/getUserDoc");
 const getPlantInfo = require("../components/utils/getPlantsInfo");
 const addPlantToUser = require("../components/utils/addPlantToUser");
 const getAllPlantNames = require("../components/utils/getAllPlantNames");
+const queryByScientificName = require("../components/utils/queryByScientificName");
+
 import { db } from "../Firebase_Config/firebaseConfig";
 import { setDoc, doc } from "firebase/firestore";
 
@@ -110,8 +112,6 @@ describe("", () => {
     const result = await getUserDoc("Ajai");
     let obj = Object.keys(result);
 
-    
-    
     expect(result[obj[0]]).toEqual(
       expect.objectContaining({
         common_name: expect.any(String),
@@ -120,14 +120,49 @@ describe("", () => {
         scientific_name: expect.any(String),
         nickname: expect.any(String),
       })
-      );
-    });
+    );
   });
-  
-  // const ans = await getAllPlantNames()
+});
+describe("getAllPlantNames", () => {
+  test("", async () => {
+    const result = await getAllPlantNames();
+    for (let i = 0; i < result.length; i++) {
+      expect(result[i]).toEqual(
+        expect.objectContaining({
+          common_name: expect.any(String),
+          id: expect.any(Number),
+          scientific_name: expect.any(String),
+        })
+      );
+    }
+  });
+});
 
+describe("queryByScientificName", () => {
+  test("", async () => {
+    const result = await queryByScientificName([
+      "Malus 'Ambrosia'",
+      "Alocasia amazonica 'Polly'",
+    ]);
 
-  // console.log(ans)
-  
-  
-  
+    for (let i = 0; i < result.length; i++) {
+      expect(result[i]).toEqual(
+        expect.objectContaining({
+          common_name: expect.any(String),
+          id: expect.any(Number),
+          scientific_name: expect.any(String),
+          image: expect.any(String),
+        })
+      );
+    }
+  });
+
+  test("When there are no matches, the functions notifies the user", async () => {
+    const result = await queryByScientificName(["Silly"]);
+    console.log(result);
+
+    expect(result[0]).toBe("No Plants Found");
+  });
+});
+
+// console.log(ans)
