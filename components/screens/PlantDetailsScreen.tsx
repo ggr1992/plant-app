@@ -1,13 +1,12 @@
-import { Text, View, SafeAreaView, StyleSheet, Image, ImageSourcePropType } from 'react-native'
+import { Text, ScrollView, View, SafeAreaView, StyleSheet, Image, ImageSourcePropType, Pressable } from 'react-native'
 import { useState, useEffect } from 'react'
 import { capitalise } from '../../utils/capitalise'
 const plantData = require('../../data/development-data/data')
 
 export function PlantDetailsScreen() {
 	const [plantDetails, setPlantDetails] = useState({})
-	const [isLoading, setIsLoading] = useState(false)
+	const [isLoading, setIsLoading] = useState(true)
 	useEffect(() => {
-		setIsLoading(true)
 		setPlantDetails(() => {
 			const plant = plantData[5]
 			plant['common_name'] = capitalise(plant['common_name'])
@@ -23,51 +22,100 @@ export function PlantDetailsScreen() {
 	}, [])
 
 	if (isLoading) {
-		return <View style={styles.container}>Loading...</View>
+		return (
+			<View style={styles.container}>
+				<Text>Loading</Text>
+			</View>
+		)
 	}
 
+	let keys = Object.keys(plantDetails)
+	for (let i = 0; i < 10; i++) {
+		keys.shift()
+	}
+	let strKeys = keys.join(' \n')
+
 	return (
-		<SafeAreaView>
-			<View style={styles.container}>
-				<Text style={styles.headerText}>{plantDetails['common_name']}</Text>
-				<Text style={{ ...styles.headerText, fontWeight: 'bold' }}>{plantDetails['scientific_name']}</Text>
-				{plantDetails['other_name'] && (
-					<Text style={styles.text}>Also known as {plantDetails['other_name'].join(', ')}</Text>
-				)}
-				<Image
-					style={styles.image}
-					source={{uri: plantDetails['image_url']} as ImageSourcePropType}
-				/>
-			</View>
-			{/* <Text>Watering Frequency: {myPlant.watering}</Text>
-			<Text>Sunlight: {myPlant.sunlight}</Text>
-			<Text>Maintenance: {myPlant.maintenance}</Text>
-      */}
-		</SafeAreaView>
+		<View style={styles.page}>
+			<SafeAreaView style={styles.containerWrapper}>
+				<ScrollView contentContainerStyle={styles.container}>
+					<Text style={styles.headerText}>{plantDetails['common_name']}</Text>
+					<Text style={{ ...styles.headerText, fontWeight: 'bold' }}>{plantDetails['scientific_name']}</Text>
+					{plantDetails['other_name'] && (
+						<Text style={styles.subHeaderText}>Also known as {plantDetails['other_name'].join(', ')}</Text>
+					)}
+					<Pressable><Text>Skip to care guide</Text></Pressable>
+					<View style={styles.imageContainer}>
+						<Image style={styles.image} source={{ uri: plantDetails['image_url'] } as ImageSourcePropType} />
+					</View>
+					<Text style={styles.bodyText}>
+						<Text style={{ fontWeight: 'bold' }}>Family: </Text>
+						{plantDetails['family']}
+					</Text>
+					<Text style={styles.bodyText}>
+						<Text style={{ fontWeight: 'bold' }}>Origin: </Text>
+						{plantDetails['origin'].join(', ')}
+					</Text>
+					<Text style={styles.bodyText}>
+						<Text style={{ fontWeight: 'bold' }}>Type: </Text>
+						{plantDetails['type']}
+					</Text>
+					<Text style={styles.bodyText}>
+						<Text style={{ fontWeight: 'bold' }}>Dimension: </Text>
+						{plantDetails['dimension']}
+					</Text>
+					<Text style={styles.bodyText}>
+						<Text style={{ fontWeight: 'bold' }}>Indoor plant? </Text>
+						{plantDetails['indoor'] ? 'Yes' : 'No'}
+					</Text>
+					<Text style={styles.descriptionText}>{plantDetails['plant_description']}</Text>
+					<Text>{strKeys}</Text>
+
+				</ScrollView>
+				
+			</SafeAreaView>
+		</View>
 	)
 }
 
 const styles = StyleSheet.create({
+	page: {
+		backgroundColor: 'white',
+		height: '100%'
+	},
+	containerWrapper: {
+		height: '89.5%'
+	},
 	container: {
-		marginHorizontal: 'auto',
-		padding: '5%',
-		height: '100%',
+		paddingTop: 5,
+		marginHorizontal: 10,
 		backgroundColor: '#ffffcd',
-		rowGap: 10
+		rowGap: 8
+	},
+	imageContainer: {
+		width: '100%',
+		alignSelf: 'center'
 	},
 	image: {
-    width: '99%',
-    height: undefined,
+		width: '100%',
 		aspectRatio: 1,
-		resizeMode: 'contain',
-    alignSelf: 'center',
+		alignSelf: 'center',
+		borderRadius: 15
 	},
 	headerText: {
 		fontSize: 24,
 		textAlign: 'center'
 	},
-	text: {
+	subHeaderText: {
 		fontSize: 18,
+		textAlign: 'center'
+	},
+	bodyText: {
+		fontSize: 18,
+		textAlign: 'left'
+	},
+	descriptionText: {
+		fontSize: 16,
 		textAlign: 'center'
 	}
 })
