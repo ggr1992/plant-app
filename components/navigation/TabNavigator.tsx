@@ -7,7 +7,7 @@ import { ProfileScreen } from '../screens/ProfileScreen'
 import { View } from 'react-native'
 
 import { StyleSheet } from 'react-native'
-import { AntDesign } from '@expo/vector-icons'
+import Icon from 'react-native-vector-icons/AntDesign'
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { PlantDetailsScreen } from '../screens/PlantDetailsScreen'
@@ -28,8 +28,8 @@ export function TabNavigator() {
 				options={{
 					tabBarIcon: ({ focused }) => {
 						return (
-							<View >
-								<AntDesign name='home' size={30} color={focused ? '#00ff7f' : 'white'}></AntDesign>
+							<View>
+								<Icon name='home' size={30} color={focused ? '#00ff7f' : 'white'}></Icon>
 							</View>
 						)
 					},
@@ -43,7 +43,7 @@ export function TabNavigator() {
 					tabBarIcon: ({ focused }) => {
 						return (
 							<View>
-								<AntDesign name='calendar' size={30} color={focused ? '#00ff7f' : 'white'}></AntDesign>
+								<Icon name='calendar' size={30} color={focused ? '#00ff7f' : 'white'}></Icon>
 							</View>
 						)
 					},
@@ -56,8 +56,8 @@ export function TabNavigator() {
 				options={{
 					tabBarIcon: ({ focused }) => {
 						return (
-							<View >
-								<AntDesign name='pluscircle' size={45} color={focused ? '#00ff7f' : 'white'} />
+							<View>
+								<Icon name='pluscircle' size={45} color={focused ? '#00ff7f' : 'white'} />
 							</View>
 						)
 					},
@@ -70,8 +70,8 @@ export function TabNavigator() {
 				options={{
 					tabBarIcon: ({ focused }) => {
 						return (
-							<View >
-								<AntDesign name='staro' size={30} color={focused ? '#00ff7f' : 'white'}></AntDesign>
+							<View>
+								<Icon name='staro' size={30} color={focused ? '#00ff7f' : 'white'}></Icon>
 							</View>
 						)
 					},
@@ -84,8 +84,8 @@ export function TabNavigator() {
 				options={{
 					tabBarIcon: ({ focused }) => {
 						return (
-							<View >
-								<AntDesign name='profile' size={30} color={focused ? '#00ff7f' : 'white'}></AntDesign>
+							<View>
+								<Icon name='profile' size={30} color={focused ? '#00ff7f' : 'white'}></Icon>
 							</View>
 						)
 					},
@@ -106,10 +106,10 @@ const styles = StyleSheet.create({
 		borderColor: 'black',
 		borderRadius: 15,
 		height: '7%',
-		paddingBottom: 0,
+		paddingBottom: 0
 	},
 	navigationIcon: {
 		height: 50,
-		width: 50,
+		width: 50
 	}
 })

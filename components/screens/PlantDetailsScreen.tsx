@@ -1,14 +1,26 @@
-import { Text, ScrollView, View, SafeAreaView, StyleSheet, Image, ImageSourcePropType, Pressable } from 'react-native'
+import {
+	Text,
+	ScrollView,
+	Button,
+	View,
+	SafeAreaView,
+	StyleSheet,
+	Image,
+	ImageSourcePropType,
+	Pressable
+} from 'react-native'
 import { useState, useEffect } from 'react'
 import { capitalise } from '../utils/capitalise'
+import Icon from 'react-native-vector-icons/AntDesign'
 const plantData = require('../../data/development-data/data')
 
 export function PlantDetailsScreen() {
 	const [plantDetails, setPlantDetails] = useState({})
 	const [isLoading, setIsLoading] = useState(true)
+	const [displayCareGuide, setDisplayCareGuide] = useState(false)
 	useEffect(() => {
 		setPlantDetails(() => {
-			const plant = plantData[5]
+			const plant: object = plantData[5]
 			plant['common_name'] = capitalise(plant['common_name'])
 			plant['scientific_name'] = plant['scientific_name'].map((name) => capitalise(name))
 			if (plant['other_name'].length === 0) {
@@ -16,6 +28,17 @@ export function PlantDetailsScreen() {
 			} else {
 				plant['other_name'] = plant['other_name'].map((name) => capitalise(name))
 			}
+			plant['watering'] = plant['watering'].toLowerCase()
+			plant['sunlight'] = plant['sunlight'].map((string) => {
+				return string.trim().toLowerCase()
+			})
+			plant['maintenance'] = plant['maintenance'].toLowerCase()
+			plant['propagation'] = plant['propagation'].map((string) => {
+				return string.trim().toLowerCase()
+			})
+			plant['soil'] = plant['soil'].map((string) => {
+				return string.trim().toLowerCase()
+			})
 			return plant
 		})
 		setIsLoading(false)
@@ -44,7 +67,9 @@ export function PlantDetailsScreen() {
 					{plantDetails['other_name'] && (
 						<Text style={styles.subHeaderText}>Also known as {plantDetails['other_name'].join(', ')}</Text>
 					)}
-					<Pressable><Text>Skip to care guide</Text></Pressable>
+					<Pressable>
+						<Text>Skip to care guide</Text>
+					</Pressable>
 					<View style={styles.imageContainer}>
 						<Image style={styles.image} source={{ uri: plantDetails['image_url'] } as ImageSourcePropType} />
 					</View>
@@ -69,10 +94,50 @@ export function PlantDetailsScreen() {
 						{plantDetails['indoor'] ? 'Yes' : 'No'}
 					</Text>
 					<Text style={styles.descriptionText}>{plantDetails['plant_description']}</Text>
-					<Text>{strKeys}</Text>
-
+					<Pressable onPress={() => setDisplayCareGuide(!displayCareGuide)}>
+						<View style={{ paddingLeft: 10, flexDirection: 'row', columnGap: 15, alignItems: 'center' }}>
+							<View style={{ width: 30, height: 30 }}>
+								<Icon style={displayCareGuide && styles.iconActive} name='down' size={30} color='black'></Icon>
+							</View>
+							<Text style={{ ...styles.subHeaderText, fontWeight: 'bold' }}>
+								{displayCareGuide ? 'Hide care guide' : 'View care guide'}
+							</Text>
+						</View>
+					</Pressable>
+					{displayCareGuide && (
+						<View style={{flexDirection: 'column', rowGap: 10}}>
+							<View style={{ flexDirection: 'row', columnGap: 10, justifyContent: 'center', alignItems: 'center' }}>
+								<Image style={styles.icon} source={require('../../assets/watering.png')} />
+								<Text style={{ ...styles.bodyText, fontWeight: 'bold' }}>{plantDetails['watering']}</Text>
+							</View>
+							<Text style={styles.descriptionText}>{plantDetails['watering_description']}</Text>
+							<View style={{ flexDirection: 'row', columnGap: 10, justifyContent: 'center', alignItems: 'center' }}>
+								<Image style={styles.icon} source={require('../../assets/sunlight.png')} />
+								<Text style={{ ...styles.bodyText, fontWeight: 'bold' }}>{plantDetails['sunlight'].join(', ')}</Text>
+							</View>
+							<Text style={styles.descriptionText}>{plantDetails['sunlight_description']}</Text>
+							{plantDetails['pruning_description'] && (
+								<>
+									<View style={{ flexDirection: 'row', columnGap: 10, justifyContent: 'center', alignItems: 'center' }}>
+										<Image style={styles.icon} source={require('../../assets/pruning.png')} />
+										<Text style={{ ...styles.bodyText, fontWeight: 'bold' }}>
+											{plantDetails['maintenance']} maintenance
+										</Text>
+									</View>
+									<Text style={styles.descriptionText}>{plantDetails['pruning_description']}</Text>
+								</>
+							)}
+							<View style={{ flexDirection: 'row', columnGap: 10, justifyContent: 'center', alignItems: 'center' }}>
+								<Image style={styles.icon} source={require('../../assets/soil.png')} />
+								<Text style={{ ...styles.bodyText, fontWeight: 'bold' }}>{plantDetails['soil'].join(', ')}</Text>
+							</View>
+							<View style={{ flexDirection: 'row', columnGap: 10, justifyContent: 'center', alignItems: 'center' }}>
+								<Image style={styles.icon} source={require('../../assets/planting.png')} />
+								<Text style={{ ...styles.bodyText, fontWeight: 'bold' }}>{plantDetails['propagation'].join(', ')}</Text>
+							</View>
+						</View>
+					)}
 				</ScrollView>
-				
 			</SafeAreaView>
 		</View>
 	)
@@ -80,7 +145,7 @@ export function PlantDetailsScreen() {
 
 const styles = StyleSheet.create({
 	page: {
-		backgroundColor: 'white',
+		backgroundColor: '#728c69',
 		height: '100%'
 	},
 	containerWrapper: {
@@ -88,6 +153,7 @@ const styles = StyleSheet.create({
 	},
 	container: {
 		paddingTop: 5,
+		paddingBottom: 10,
 		marginHorizontal: 10,
 		backgroundColor: '#ffffcd',
 		rowGap: 8
@@ -117,5 +183,12 @@ const styles = StyleSheet.create({
 	descriptionText: {
 		fontSize: 16,
 		textAlign: 'center'
+	},
+	iconActive: {
+		transform: [{ rotate: '180deg' }]
+	},
+	icon: {
+		width: 32,
+		height: 32
 	}
 })
