@@ -1,7 +1,7 @@
 import { db } from "../../Firebase_Config/firebaseConfig";
 import { collection, query, getDocs, where } from "firebase/firestore";
 
-async function queryByScientificName(arr) {
+export default async function queryByScientificName(arr) {
   const plants = query(
     collection(db, "Plants List"),
     where("obj.scientific_name", "array-contains-any", arr)
@@ -17,11 +17,9 @@ async function queryByScientificName(arr) {
     });
   });
 
-if(storage.length === 0){
-    return ["No Plants Found"]
-}
+  if (storage.length === 0) {
+    return ["No Plants Found"];
+  }
 
   return storage;
 }
-
-module.exports = queryByScientificName;
