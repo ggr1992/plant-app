@@ -1,6 +1,6 @@
 import { Text, ScrollView, View, SafeAreaView, StyleSheet, Image, ImageSourcePropType, Pressable } from 'react-native'
 import { useState, useEffect } from 'react'
-import { capitalise } from '../../utils/capitalise'
+import { capitalise } from '../utils/capitalise'
 const plantData = require('../../data/development-data/data')
 
 export function PlantDetailsScreen() {
