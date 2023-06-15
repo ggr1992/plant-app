@@ -2,8 +2,7 @@ import { StatusBar } from 'expo-status-bar'
 import { StyleSheet, View } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { TabNavigator } from './components/navigation/TabNavigator'
-import FireBaseTrial from './components/FireBaseTrial'
-import { SignUpFuntion } from './components/utils/signUpData'
+
 
 export default function App() {
 	return (
