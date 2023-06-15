@@ -1,15 +1,18 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  Fragment,
-  useLayoutEffect,
-} from "react";
-import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
-import { Camera, CameraType } from "expo-camera";
+import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Image,
+  ImageBackground,
+  ScrollView,
+} from "react-native";
+import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import { Entypo } from "@expo/vector-icons";
 import { identifyPlant } from "../utils/utils";
+import data from "../../data/development-data/data";
 
 export function IdentifyPlantScreen({ navigation }) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
@@ -20,6 +23,28 @@ export function IdentifyPlantScreen({ navigation }) {
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState([]);
   const [errorMsg, setErrorMsg] = useState("");
+  const [resultsWithMatchedData, setResultsWithMatchedData] = useState([]);
+
+  useEffect(() => {
+    if (results.length) {
+      setResultsWithMatchedData(() => {
+        return results.map((result) => {
+          const scientificName = result.name;
+          let imageUrl, commonName;
+          const matchingPlantFromDb = data.find((plant) => {
+            return plant.scientific_name[0].includes(scientificName);
+          });
+          if (matchingPlantFromDb?.image_url) {
+            imageUrl = matchingPlantFromDb.image_url;
+          }
+          if (matchingPlantFromDb?.common_name) {
+            commonName = matchingPlantFromDb.common_name;
+          }
+          return { ...result, imageUrl, commonName };
+        });
+      });
+    }
+  }, [results]);
 
   useEffect(() => {
     async () => {
@@ -32,7 +57,7 @@ export function IdentifyPlantScreen({ navigation }) {
 
   useEffect(() => {
     if (isLoading && image) {
-      identifyPlant(image, "plantnet")
+      identifyPlant(image, "plantid")
         .then((results) => {
           setResults(results.slice(0, 5));
           setIsLoading(false);
@@ -111,67 +136,94 @@ export function IdentifyPlantScreen({ navigation }) {
           </TouchableOpacity>
         </Camera>
       ) : (
-        <>
+        <View style={{}}>
           {errorMsg.length > 0 && (
             <Text style={{ color: "red", fontWeight: "bold" }}>{errorMsg}</Text>
           )}
           {isLoading === true && (
-            <>
+            <View>
               <Image source={require("../../assets/loading.gif")} />
-              <Text style={{ color: "#333", marginBottom: 40 }}>
-                Trying to identify plant... Please wait...
-              </Text>
-            </>
-          )}
-          {isLoading === false && results.length === 0 && (
-            <>
-              <Image source={{ uri: image.uri }} style={styles.camera} />
-              <TouchableOpacity
-                onPress={resetPicture}
-                style={{
-                  height: 40,
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
+              <Text
+                style={{ color: "#333", marginBottom: 40, textAlign: "center" }}
               >
-                <Entypo name="circle-with-cross" size={28} color={"#333"} />
-                <Text
-                  style={{
-                    fontWeight: "bold",
-                    fontSize: 16,
-                    color: "#333",
-                    marginLeft: 10,
-                  }}
-                >
-                  Cancel
-                </Text>
-              </TouchableOpacity>
-            </>
+                Identifying...
+              </Text>
+            </View>
           )}
-          {isLoading === false && results.length > 0 && (
-            <>
-              <Text style={{ fontSize: 20, marginBottom: 10 }}>Matches:</Text>
-              {results.map((result, index) => {
+
+          {isLoading === false && resultsWithMatchedData.length > 0 && (
+            <ScrollView
+              style={{
+                width: "100%",
+                marginTop: 40,
+                paddingBottom: 40,
+              }}
+            >
+              <Text
+                style={{ fontSize: 30, marginBottom: 10, textAlign: "center" }}
+              >
+                Matches
+              </Text>
+              {resultsWithMatchedData.map((result, index) => {
                 return (
-                  <Fragment key={index}>
-                    <Text style={{ fontSize: 16, padding: 20 }}>
-                      {result.name} ({(result.probability * 100).toFixed(2)}%)
-                    </Text>
-                    <Text
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => pickThisPlant(result.name)}
+                    style={{
+                      width: 250,
+                      height: 250,
+                      marginBottom: 20,
+                      shadowColor: "#52006A",
+                      shadowOffset: { width: 10, height: 3 },
+                      shadowOpacity: 50,
+                      elevation: 10,
+                    }}
+                  >
+                    <ImageBackground
+                      source={
+                        result.imageUrl
+                          ? { uri: result.imageUrl }
+                          : require("../../assets/image-not-found.jpg")
+                      }
                       style={{
-                        backgroundColor: "#225b4c",
-                        color: "#00ff7f",
-                        padding: 10,
-                        borderRadius: 20,
-                        marginBottom: 10,
-                        fontSize: 14,
+                        width: "100%",
+                        height: "100%",
                       }}
-                      onPress={() => pickThisPlant(result.name)}
                     >
-                      Pick This
-                    </Text>
-                  </Fragment>
+                      <View>
+                        <Text
+                          style={{
+                            backgroundColor: "rgba(0,0,0,.4)",
+                            color: "#fff",
+                            width: "100%",
+                            fontSize: 20,
+                            paddingBottom: 10,
+                            position: "absolute",
+                            top: 200,
+                          }}
+                          numberOfLines={1}
+                        >
+                          {result.common_name ?? result.name}
+                        </Text>
+                        <Text
+                          style={{
+                            position: "absolute",
+                            backgroundColor: "rgba(0,0,0,.4)",
+                            color: "#fff",
+                            padding: 10,
+                            fontSize: 20,
+                            top: 20,
+                            right: 0,
+                            borderTopLeftRadius: 20,
+                            borderBottomLeftRadius: 20,
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {parseInt(result.probability * 100)}%
+                        </Text>
+                      </View>
+                    </ImageBackground>
+                  </TouchableOpacity>
                 );
               })}
               <TouchableOpacity
@@ -204,6 +256,7 @@ export function IdentifyPlantScreen({ navigation }) {
                   justifyContent: "center",
                   alignItems: "center",
                   marginTop: 40,
+                  marginBottom: 100,
                 }}
               >
                 <Entypo name="edit" size={28} color={"#333"} />
@@ -218,9 +271,9 @@ export function IdentifyPlantScreen({ navigation }) {
                   Add Plant Manually
                 </Text>
               </TouchableOpacity>
-            </>
+            </ScrollView>
           )}
-        </>
+        </View>
       )}
     </View>
   );
