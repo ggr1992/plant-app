@@ -207,7 +207,7 @@ export function IdentifyPlantScreen({ navigation }) {
                 return (
                   <TouchableOpacity
                     key={index}
-                    onPress={() => pickThisPlant(result.scientific_name)}
+                    onPress={() => pickThisPlant(result.common_name)}
                     style={{
                       width: 250,
                       height: 250,
