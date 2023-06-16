@@ -10,27 +10,22 @@ import {
   Button,
   Image,
 } from "react-native";
-import { Camera } from "expo-camera";
-
-const data = require("../../data/development-data/data");
+import addPlantToUser from "../utils/addPlantToUser";
+import getAllPlantNames from "../utils/getAllPlantNames";
 
 export function AddPlantScreen({ navigation, route }) {
-  const plantData = data.map((plant) => {
-    return {
-      common_name: plant.common_name,
-      scientific_name: plant.scientific_name,
-      other_name: plant.other_name,
-    };
-  });
-  const [plantList, setPlantList] = useState(plantData);
+  const [plantList, setPlantList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [displaySuggestions, setDisplaySuggestions] = useState(false);
   const [nickName, setNickName] = useState("");
   const [tempNickName, setTempNickName] = useState("");
-  const [hasPermission, setHasPermission] = useState(null);
-  const [cameraRef, setCameraRef] = useState(null);
-  const [cameraVisible, setCameraVisible] = useState(false);
-  const [capturedPhoto, setCapturedPhoto] = useState(null);
+  const [selectedPlant, setSelectedPlant] = useState({});
+
+  useEffect(() => {
+    getAllPlantNames().then((plants) => {
+      setPlantList(plants);
+    });
+  }, []);
 
   useEffect(() => {
     if (route?.params?.query && searchTerm !== route.params.query) {
@@ -40,8 +35,6 @@ export function AddPlantScreen({ navigation, route }) {
 
   useEffect(() => {
     (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === "granted");
       if (searchTerm.length > 2) {
         setDisplaySuggestions(true);
       } else {
@@ -49,31 +42,6 @@ export function AddPlantScreen({ navigation, route }) {
       }
     })();
   }, [searchTerm]);
-
-  const takePicture = async () => {
-    if (cameraRef) {
-      const photo = await cameraRef.takePictureAsync();
-      setCapturedPhoto(photo);
-    }
-  };
-
-  if (hasPermission === null) {
-    return <View />;
-  }
-  if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
-  }
-
-  const showCamera = () => {
-    setCameraVisible(true);
-  };
-  const closeCamera = () => {
-    setCameraVisible(false);
-  };
-
-  const deleteStoredImage = () => {
-    setCapturedPhoto(null);
-  };
 
   const plantNamesRef = {};
   plantList.forEach((plant, index) => {
@@ -114,9 +82,23 @@ export function AddPlantScreen({ navigation, route }) {
     });
   }
 
-  const handleNickName = () => {
+  const addPlant = () => {
+    setSelectedPlant({});
     setNickName(tempNickName);
-    setTempNickName("");
+    const user = "test_user";
+    const plantId = selectedPlant.id;
+    addPlantToUser(user, plantId, nickName)
+      .then(() => {
+        setNickName("");
+        setTempNickName("");
+        setSelectedPlant({});
+        setDisplaySuggestions(false);
+        setSearchTerm("");
+        navigation.navigate("My plants");
+      })
+      .catch(() => {
+        console.log("Could not add plant...");
+      });
   };
 
   const identifyPlant = () => {
@@ -128,21 +110,6 @@ export function AddPlantScreen({ navigation, route }) {
     <SafeAreaView style={styles.formStyle}>
       <Text style={styles.Title}>Add A Plant</Text>
       <View style={styles.Information}>
-        <View>
-          {capturedPhoto && (
-            <Image
-              style={styles.capturedImage}
-              source={{ uri: capturedPhoto.uri }}
-            />
-          )}
-          {capturedPhoto && (
-            <Button
-              title="Delete Image"
-              onPress={deleteStoredImage}
-              color="red"
-            />
-          )}
-        </View>
         <View>
           <Text style={styles.nickNameDisplay}>{nickName}</Text>
         </View>
@@ -170,6 +137,7 @@ export function AddPlantScreen({ navigation, route }) {
                 <Pressable
                   onPress={() => {
                     setSearchTerm(item.name);
+                    setSelectedPlant(item);
                   }}
                 >
                   <Text style={styles.suggestionText}>
@@ -183,19 +151,13 @@ export function AddPlantScreen({ navigation, route }) {
             }}
           />
         )}
-        <View>
-          {cameraVisible ? (
-            <View>
-              <Camera style={styles.camera} ref={(ref) => setCameraRef(ref)} />
-              <Button title="Close Camera" onPress={closeCamera} color="red" />
-              <Button title="Take Picture" onPress={takePicture} color="blue" />
-            </View>
-          ) : (
-            <Button title="Open Camera" onPress={identifyPlant} color="blue" /> // Keep this button
-          )}
-        </View>
+        <Button title="Add Plant" onPress={addPlant} color="green" />
+        <Button
+          title="Identify with camera"
+          onPress={identifyPlant}
+          color="blue"
+        />
       </View>
-      <Button title="Add" onPress={handleNickName} color="green" />
     </SafeAreaView>
   );
 }
