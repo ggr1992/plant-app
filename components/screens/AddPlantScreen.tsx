@@ -65,7 +65,7 @@ export function AddPlantScreen({ navigation, route }) {
         setTempNickName("");
         setSelectedPlant(null);
         setSearchTerm("");
-        navigation.navigate("My plants");
+        navigation.navigate("My Plants Stack");
       })
       .catch(() => {
         console.log("Could not add plant...");
