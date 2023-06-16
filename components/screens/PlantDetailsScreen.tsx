@@ -1,20 +1,13 @@
-import {
-	Text,
-	ScrollView,
-	Button,
-	View,
-	SafeAreaView,
-	StyleSheet,
-	Image,
-	ImageSourcePropType,
-	Pressable
-} from 'react-native'
-import { useState, useEffect } from 'react'
+import { Text, ScrollView, View, SafeAreaView, StyleSheet, Image, ImageSourcePropType, Pressable } from 'react-native'
+import { useState, useEffect, useRef } from 'react'
 import { capitalise } from '../utils/capitalise'
 import Icon from 'react-native-vector-icons/AntDesign'
 const plantData = require('../../data/development-data/data')
 
 export function PlantDetailsScreen() {
+	const scrollRef = useRef<ScrollView>()
+	const [coordinate, setCoordinate] = useState(0)
+
 	const [plantDetails, setPlantDetails] = useState({})
 	const [isLoading, setIsLoading] = useState(true)
 	const [displayCareGuide, setDisplayCareGuide] = useState(false)
@@ -52,10 +45,17 @@ export function PlantDetailsScreen() {
 		)
 	}
 
+	function toggleDetails() {
+		setDisplayCareGuide(!displayCareGuide)
+		if (displayCareGuide) {
+			scrollRef.current.scrollTo({ y: 0, animated: true })
+		}
+	}
+
 	return (
 		<View style={styles.page}>
 			<SafeAreaView style={styles.containerWrapper}>
-				<ScrollView contentContainerStyle={styles.container}>
+				<ScrollView contentContainerStyle={styles.container} ref={scrollRef}>
 					<Text style={styles.headerText}>{plantDetails['common_name']}</Text>
 					<Text style={{ ...styles.headerText, fontWeight: 'bold' }}>{plantDetails['scientific_name']}</Text>
 					{plantDetails['other_name'] && (
@@ -85,7 +85,7 @@ export function PlantDetailsScreen() {
 						{plantDetails['indoor'] ? 'Yes' : 'No'}
 					</Text>
 					<Text style={styles.descriptionText}>{plantDetails['plant_description']}</Text>
-					<Pressable onPress={() => setDisplayCareGuide(!displayCareGuide)}>
+					<Pressable onPress={toggleDetails}>
 						<View style={{ paddingLeft: 10, flexDirection: 'row', columnGap: 15, alignItems: 'center' }}>
 							<View style={{ width: 30, height: 30 }}>
 								<Icon style={displayCareGuide && styles.iconActive} name='down' size={30} color='black'></Icon>
@@ -96,7 +96,13 @@ export function PlantDetailsScreen() {
 						</View>
 					</Pressable>
 					{displayCareGuide && (
-						<View style={{flexDirection: 'column', rowGap: 10}}>
+						<View
+							style={{ flexDirection: 'column', rowGap: 10 }}
+							onLayout={(event) => {
+								const layout = event.nativeEvent.layout
+								setCoordinate(layout.y)
+								scrollRef.current.scrollTo({ y: coordinate, animated: true })
+							}}>
 							<View style={{ flexDirection: 'row', columnGap: 10, justifyContent: 'center', alignItems: 'center' }}>
 								<Image style={styles.icon} source={require('../../assets/watering.png')} />
 								<Text style={{ ...styles.bodyText, fontWeight: 'bold' }}>{plantDetails['watering']}</Text>
