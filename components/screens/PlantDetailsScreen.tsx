@@ -52,12 +52,6 @@ export function PlantDetailsScreen() {
 		)
 	}
 
-	let keys = Object.keys(plantDetails)
-	for (let i = 0; i < 10; i++) {
-		keys.shift()
-	}
-	let strKeys = keys.join(' \n')
-
 	return (
 		<View style={styles.page}>
 			<SafeAreaView style={styles.containerWrapper}>
@@ -67,9 +61,6 @@ export function PlantDetailsScreen() {
 					{plantDetails['other_name'] && (
 						<Text style={styles.subHeaderText}>Also known as {plantDetails['other_name'].join(', ')}</Text>
 					)}
-					<Pressable>
-						<Text>Skip to care guide</Text>
-					</Pressable>
 					<View style={styles.imageContainer}>
 						<Image style={styles.image} source={{ uri: plantDetails['image_url'] } as ImageSourcePropType} />
 					</View>
