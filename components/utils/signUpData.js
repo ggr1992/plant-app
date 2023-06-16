@@ -3,19 +3,17 @@ import { createUserWithEmailAndPassword, signInWithPopup,signOut, signInWithEmai
 import { setDoc ,doc} from "firebase/firestore";
 import { db } from "../../Firebase_Config/firebaseConfig";
     
-    const signUp = (email,password,location,username,avatar) => {
+    export function signUp (email,password,location,username,avatar) {
        return createUserWithEmailAndPassword(auth, email, password)
           .then(() => {
+            console.log('hello')
             return setDoc(doc(db, "Users", email, "Profile","userData"), {
-            "Username":username,
-            "Location":location,
-            "Avatar":avatar} )})
-          .catch((error) => {
-        return "Email already in use"
-          });
-        }
+              "Username":username,
+              "Location":location,
+              "Avatar":avatar} )})
+            }
 
-module.exports = signUp
+export default signUp
 
 
 
