@@ -9,7 +9,6 @@
     "noEmit": true,
     "resolveJsonModule": true,
 		"target": "ESNext",
-    "skipLibCheck": true,
-		"watch": true
+    "skipLibCheck": true
   }
 }
