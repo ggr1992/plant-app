@@ -145,14 +145,12 @@ describe("getAllPlantNames", () => {
   });
 });
 
-describe.only("queryByScientificName", () => {
+describe("queryByScientificName", () => {
   test("", async () => {
     const result = await queryByScientificName([
       "Malus 'Ambrosia'",
-      "Alocasia amazonica 'Polly'",
+      "Alocasia amazonica",
     ]);
-
-console.log(result)
 
     for (let i = 0; i < result.length; i++) {
       expect(result[i]).toEqual(
@@ -187,7 +185,7 @@ describe('signUp' ,() => {
    
   })
 })
-describe.only('login' , () => {
+describe('login' , () => {
   test('test for incorrect email', async () => {
     const result = await signIn("test1234@gmail.com","password");
     expect(result).toBe('auth/user-not-found') 
@@ -204,4 +202,4 @@ describe.only('login' , () => {
     await new Promise((resolve) => setTimeout(resolve, 10));
   })
 })
-// console.log(ans)
+
