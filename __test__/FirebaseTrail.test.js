@@ -101,7 +101,7 @@ describe("getPlantInfo", () => {
     );
   });
 });
-describe("", () => {
+describe("addPlantToUser", () => {
   test("Fails if User does not exist", async () => {
     const test = await addPlantToUser("Charlie", "13");
     expect(test.msg).toBe("User does not exist");
@@ -138,12 +138,14 @@ describe("getAllPlantNames", () => {
   });
 });
 
-describe("queryByScientificName", () => {
+describe.only("queryByScientificName", () => {
   test("", async () => {
     const result = await queryByScientificName([
       "Malus 'Ambrosia'",
       "Alocasia amazonica 'Polly'",
     ]);
+
+console.log(result)
 
     for (let i = 0; i < result.length; i++) {
       expect(result[i]).toEqual(
