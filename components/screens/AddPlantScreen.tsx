@@ -130,7 +130,10 @@ export function AddPlantScreen({ navigation, route }) {
             style={{ width: 200, height: 200 }}
           />
         )}
-        <Button title="Add Plant" onPress={addPlant} color="green" />
+        {selectedPlant === null && <Text>Select a plant to continue...</Text>}
+        {selectedPlant !== null && (
+          <Button title="Add Plant" onPress={addPlant} color="green" />
+        )}
         <Button
           title="Reset"
           onPress={() => {
