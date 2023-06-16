@@ -3,8 +3,8 @@ import { CalendarScreen } from '../screens/CalendarScreen'
 import { AddPlantScreen } from '../screens/AddPlantScreen'
 import { MyPlantsScreen } from '../screens/MyPlantsScreen'
 import { ProfileScreen } from '../screens/ProfileScreen'
+import { IdentifyPlantScreen } from '../screens/IdentifyPlantScreen'
 import { PlantDetailsScreen } from '../screens/PlantDetailsScreen'
-
 import { View } from 'react-native'
 
 import { StyleSheet } from 'react-native'
@@ -14,12 +14,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
 const Tab = createBottomTabNavigator()
+const AddPlantStack = createNativeStackNavigator()
 const MyPlantsStack = createNativeStackNavigator()
 
 export function TabNavigator() {
 	return (
 		<Tab.Navigator
-			screenOptions={({ route }) => ({
+			screenOptions={() => ({
 				headerShown: false,
 				tabBarShowLabel: false,
 				tabBarStyle: styles.navigationBar
@@ -53,8 +54,8 @@ export function TabNavigator() {
 				}}
 			/>
 			<Tab.Screen
-				name='Add plant'
-				component={AddPlantScreen}
+				name='Add Plant Stack'
+				component={AddPlantStackNavigator}
 				options={{
 					tabBarIcon: ({ focused }) => {
 						return (
@@ -95,6 +96,22 @@ export function TabNavigator() {
 				}}
 			/>
 		</Tab.Navigator>
+	)
+}
+
+
+export function AddPlantStackNavigator() {
+	return (
+		<AddPlantStack.Navigator initialRouteName='Add Plant'>
+			<AddPlantStack.Screen
+				name='Add Plant'
+				component={AddPlantScreen}
+				options={{ headerShown: false }}></AddPlantStack.Screen>
+			<AddPlantStack.Screen
+				name='Identify Plant'
+				component={IdentifyPlantScreen}
+				options={{ headerShown: false }}></AddPlantStack.Screen>
+		</AddPlantStack.Navigator>
 	)
 }
 

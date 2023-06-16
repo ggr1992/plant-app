@@ -1,10 +1,11 @@
 import { collection, query, getDocs } from 'firebase/firestore';
 import { db } from '../../Firebase_Config/firebaseConfig';
 
-async function queryByScientificName(arr) {
-  const plantsCollection = collection(db, 'Plants List');
+export default async function queryByScientificName(arr) {
+  
+  const plantsCollection = collection(db, 'Plants List');  
   const querySnapshot = await getDocs(plantsCollection);
-
+  
   const storage = [];
   querySnapshot.forEach((doc) => {
     const scientificName = doc.data().obj.scientific_name[0];
@@ -24,5 +25,3 @@ async function queryByScientificName(arr) {
 
   return storage;
 }
-
-module.exports = queryByScientificName;
