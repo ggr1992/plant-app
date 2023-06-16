@@ -1,7 +1,7 @@
 import { db } from "../../Firebase_Config/firebaseConfig";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
-async function addPlantToUser(user, plantID) {
+async function addPlantToUser(user, plantID, nickname) {
   async function userExists(user) {
     const usersData = doc(db, "Users", user);
     const docSnapshot = await getDoc(usersData);
@@ -27,7 +27,7 @@ async function addPlantToUser(user, plantID) {
       getDoc(plantToAdd)
         .then((result) => {
           let newPlant = {};
-          newPlant["nickname"] = "scumples";
+          newPlant["nickname"] = nickname;
           newPlant["common_name"] = result.data().obj.common_name;
           newPlant["id"] = result.data().obj.id;
           newPlant["scientific_name"] = result.data().obj.scientific_name[0];
