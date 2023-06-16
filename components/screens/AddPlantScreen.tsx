@@ -16,10 +16,10 @@ import getAllPlantNames from "../utils/getAllPlantNames";
 export function AddPlantScreen({ navigation, route }) {
   const [plantList, setPlantList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [displaySuggestions, setDisplaySuggestions] = useState(false);
   const [nickName, setNickName] = useState("");
   const [tempNickName, setTempNickName] = useState("");
-  const [selectedPlant, setSelectedPlant] = useState({});
+  const [selectedPlant, setSelectedPlant] = useState(null);
+  const [filteredPlants, setFilteredPlants] = useState([]);
 
   useEffect(() => {
     getAllPlantNames().then((plants) => {
@@ -28,62 +28,34 @@ export function AddPlantScreen({ navigation, route }) {
   }, []);
 
   useEffect(() => {
+    if (searchTerm.length >= 3) {
+      if (
+        selectedPlant !== null &&
+        searchTerm !== selectedPlant.scientific_name
+      ) {
+        setSelectedPlant(null);
+      }
+      setFilteredPlants(() => {
+        return plantList.filter((plant) => {
+          const searchTermLowerCase = searchTerm.toLowerCase();
+          const scientificNameLowerCase = plant.scientific_name.toLowerCase();
+          const commonNameLowerCase = plant.common_name.toLowerCase();
+          return (
+            scientificNameLowerCase.includes(searchTermLowerCase) ||
+            commonNameLowerCase.includes(searchTermLowerCase)
+          );
+        });
+      });
+    }
+  }, [searchTerm]);
+
+  useEffect(() => {
     if (route?.params?.query && searchTerm !== route.params.query) {
       setSearchTerm(route.params.query);
     }
   }, [route]);
 
-  useEffect(() => {
-    (async () => {
-      if (searchTerm.length > 2) {
-        setDisplaySuggestions(true);
-      } else {
-        setDisplaySuggestions(false);
-      }
-    })();
-  }, [searchTerm]);
-
-  const plantNamesRef = {};
-  plantList.forEach((plant, index) => {
-    plantNamesRef[plant.common_name] = index;
-  });
-
-  const namesArray = Object.keys(plantNamesRef);
-
-  const filteredNames = [];
-
-  namesArray.forEach((name) => {
-    if (filteredNames.length === 0) {
-      filteredNames.push(name);
-    } else {
-      if (plantNamesRef[filteredNames.at(-1)] !== plantNamesRef[name]) {
-        filteredNames.push(name);
-      }
-    }
-  });
-
-  let autocompleteList = filteredNames.filter((name) => {
-    return name.toLowerCase().includes(searchTerm.toLowerCase());
-  });
-
-  if (autocompleteList.length !== 0) {
-    autocompleteList = autocompleteList.map((name: string) => {
-      const index = plantNamesRef[name];
-      let nameArr: string[] = name.split(" ");
-      nameArr = nameArr.map((word) => {
-        return word.charAt(0).toUpperCase() + word.slice(1);
-      });
-      name = nameArr.join(" ");
-      return {
-        name: name,
-        scientific_name: plantList[index]["scientific_name"],
-        id: plantNamesRef[name],
-      };
-    });
-  }
-
   const addPlant = () => {
-    setSelectedPlant({});
     setNickName(tempNickName);
     const user = "test_user";
     const plantId = selectedPlant.id;
@@ -91,8 +63,7 @@ export function AddPlantScreen({ navigation, route }) {
       .then(() => {
         setNickName("");
         setTempNickName("");
-        setSelectedPlant({});
-        setDisplaySuggestions(false);
+        setSelectedPlant(null);
         setSearchTerm("");
         navigation.navigate("My plants");
       })
@@ -128,30 +99,46 @@ export function AddPlantScreen({ navigation, route }) {
           />
         </View>
 
-        {displaySuggestions && (
-          <FlatList
-            style={styles.suggestionBox}
-            data={autocompleteList}
-            renderItem={({ item }) => {
-              return (
-                <Pressable
-                  onPress={() => {
-                    setSearchTerm(item.name);
-                    setSelectedPlant(item);
-                  }}
-                >
-                  <Text style={styles.suggestionText}>
-                    {item.name}{" "}
-                    <Text style={{ fontWeight: "bold" }}>
-                      {item.scientific_name}
+        {searchTerm.length > 2 &&
+          filteredPlants.length > 0 &&
+          selectedPlant === null && (
+            <FlatList
+              style={styles.suggestionBox}
+              data={filteredPlants}
+              renderItem={({ item }) => {
+                return (
+                  <Pressable
+                    onPress={() => {
+                      setSelectedPlant(item);
+                      setSearchTerm(item.scientific_name);
+                    }}
+                  >
+                    <Text style={styles.suggestionText}>
+                      {item.common_name}{" "}
+                      <Text style={{ fontWeight: "bold" }}>
+                        {item.scientific_name}
+                      </Text>
                     </Text>
-                  </Text>
-                </Pressable>
-              );
-            }}
+                  </Pressable>
+                );
+              }}
+            />
+          )}
+        {selectedPlant !== null && (
+          <Image
+            source={{ uri: selectedPlant.image }}
+            style={{ width: 200, height: 200 }}
           />
         )}
         <Button title="Add Plant" onPress={addPlant} color="green" />
+        <Button
+          title="Reset"
+          onPress={() => {
+            setSearchTerm("");
+            setSelectedPlant(null);
+          }}
+          color="#da5da5"
+        />
         <Button
           title="Identify with camera"
           onPress={identifyPlant}
