@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useEffect, useState, useRef } from "react";
 import {
   View,
@@ -10,6 +10,7 @@ import {
   Pressable,
 } from "react-native";
 import getUserDoc from "../utils/getUserDoc";
+import { UserContext } from "../context/User";
 
 export function MyPlantsScreen({ navigation }) {
   const [loading, setLoading] = useState(true);

@@ -1,10 +1,11 @@
-import { db } from "../../Firebase_Config/firebaseConfig"
-import { doc, getDoc } from "firebase/firestore"
+import { db } from "../../Firebase_Config/firebaseConfig";
+import { doc, getDoc } from "firebase/firestore";
 
 function getUserProfile(name) {
-  const user = doc(db, "Users", name, 'Profile', 'userData');
+  const user = doc(db, "Users", name, "Profile", "userData");
   return getDoc(user)
     .then((result) => {
+      console.log(result);
       return result.data();
     })
     .catch((err) => {
@@ -12,4 +13,4 @@ function getUserProfile(name) {
     });
 }
 
-export default getUserProfile
+export default getUserProfile;
