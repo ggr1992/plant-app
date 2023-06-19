@@ -6,7 +6,7 @@ import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 
 
 export const CalendarScreen: React.FC = () => {
-    const [markedDates, setMarkedDates] = useState<{ [date: string]: any }>({});
+  const [markedDates, setMarkedDates] = useState<{ [date: string]: any }>({});
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
 
@@ -104,10 +104,3 @@ const styles = StyleSheet.create({
 	  marginBottom: 5,
 	},
   });
-// export function CalendarScreen() {
-// 	return (
-// 		<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-// 			<Text>Calendar screen</Text>
-// 		</View>
-// 	)
-// }
