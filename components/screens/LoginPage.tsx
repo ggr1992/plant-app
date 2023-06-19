@@ -1,26 +1,28 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Pressable, Button } from 'react-native'
 import signUp from '../utils/signUpData'
 import signIn from '../utils/signInUser'
+import { UserContext } from '../context/User'
 
 export function LoginScreen({ navigation }) {
-	const [username, setUsername] = useState<string>('')
 	const [emailSignUp, setEmailSignup] = useState<string>('')
 	const [email, setEmailLogin] = useState<string>('')
 	const [passwordSignUp, setPasswordSignUp] = useState<string>('')
 	const [password, setPassword] = useState<string>('')
-	const [location, setLocation] = useState<string>('')
 	const [error, setError] = useState<string>('')
 	const [errorLogin, setErrorLogin] = useState<string>('')
 	const [successfullSignUp, setSuccessfullSignUp] = useState<Boolean>(false)
 	const [successfullSignIn, setSuccessfulSignIn] = useState<Boolean>(false)
 	const [showSignUp, setShowSignup] = useState<Boolean>(false)
 
+  const {setUserEmail} = useContext(UserContext)
+
 	const handleSignup = () => {
 		setError('')
-		signUp(emailSignUp, passwordSignUp, location, username, 'AvatarHere')
+		signUp(emailSignUp, passwordSignUp, null)
 			.then(() => {
 				setSuccessfullSignUp(true)
+        setUserEmail(emailSignUp)
         navigation.navigate('App')
 			})
 			.catch((error) => {
@@ -36,6 +38,7 @@ export function LoginScreen({ navigation }) {
 		signIn(email, password)
 			.then(() => {
 				setSuccessfulSignIn(true)
+        setUserEmail(email)
         navigation.navigate('App')
 			})
 			.catch((error) => {
@@ -87,12 +90,6 @@ export function LoginScreen({ navigation }) {
 					<View>
 						<TextInput
 							style={styles.input}
-							placeholder='Username...'
-							onChangeText={(text) => setUsername(text)}
-							value={username}
-						/>
-						<TextInput
-							style={styles.input}
 							placeholder='Email....'
 							onChangeText={(text) => setEmailSignup(text)}
 							value={emailSignUp}
@@ -103,12 +100,6 @@ export function LoginScreen({ navigation }) {
 							onChangeText={(text) => setPasswordSignUp(text)}
 							value={passwordSignUp}
 							secureTextEntry
-						/>
-						<TextInput
-							style={styles.input}
-							placeholder='Location'
-							onChangeText={(event) => setLocation(event)}
-							value={location}
 						/>
 						<TouchableOpacity style={styles.button} onPress={handleSignup}>
 							<Text style={styles.buttonText}>Sign-up</Text>
