@@ -113,8 +113,8 @@ export function IdentifyPlantScreen({ navigation }) {
     navigation.navigate("Add Plant");
   };
 
-  const pickThisPlant = (name) => {
-    navigation.navigate("Add Plant", { query: name });
+  const pickThisPlant = (plant) => {
+    navigation.navigate("Add Plant", { plant });
   };
 
   if (hasCameraPermission === false) {
@@ -191,7 +191,7 @@ export function IdentifyPlantScreen({ navigation }) {
                 return (
                   <TouchableOpacity
                     key={index}
-                    onPress={() => pickThisPlant(result.common_name)}
+                    onPress={() => pickThisPlant(result)}
                     style={{
                       width: 250,
                       height: 250,

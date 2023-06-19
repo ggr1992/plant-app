@@ -49,8 +49,9 @@ export function AddPlantScreen({ navigation, route }) {
   }, [selectedPlant]);
 
   useEffect(() => {
-    if (route?.params?.query && searchTerm !== route.params.query) {
-      setSearchTerm(route.params.query);
+    if (route?.params?.plant) {
+      setSearchTerm(route.params.plant.scientific_name[0]);
+      setSelectedPlant(route.params.plant);
     }
   }, [route]);
 
