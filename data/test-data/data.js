@@ -2,6 +2,7 @@ module.exports = [
   {
     common_name: "golden pothos",
     scientific_name: ["Epipremnum aureum"],
+    nickname: ["Hello"],
     other_name: ["golden pothos"],
     image_url:
       "https://perenual.com/storage/species_image/2773_epipremnum_aureum/og/2560px-Epipremnum_aureum_31082012.jpg",
@@ -233,8 +234,9 @@ module.exports = [
   },
   {
     common_name: "river birch",
-    scientific_name: ["Betula nigra 'Dickinson' NORTHERN TRIBUTE"],
+    scientific_name:[],
     other_name: ["Hello"],
+
     image_url:
       "https://perenual.com/storage/species_image/2_abies_alba_pyramidalis/og/49255769768_df55596553_b.jpg",
     family: "Betulaceae",
