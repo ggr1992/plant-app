@@ -1,9 +1,4 @@
 
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { TabNavigator } from "./components/navigation/TabNavigator";
-import axios from "axios";
 import FireBaseTrial from "./components/FireBaseTrial";
 import React from "react";
 import { StatusBar } from 'expo-status-bar'
