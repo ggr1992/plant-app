@@ -4,7 +4,7 @@ export async function queryByScientificName(arr) {
   return axios
     .post(
       "https://plant-app-backend.onrender.com/plants/search-by-scientific-names",
-      arr
+      { names: arr }
     )
     .then(({ data: { plants } }) => {
       return plants;

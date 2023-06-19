@@ -12,7 +12,8 @@ import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import { Entypo } from "@expo/vector-icons";
 import { identifyPlant } from "../utils/utils";
-import queryByScientificName from "../utils/queryByScientificName";
+import { queryByScientificName } from "../utils/api";
+import { capitalise } from "../utils/capitalise";
 
 export function IdentifyPlantScreen({ navigation }) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
@@ -26,32 +27,15 @@ export function IdentifyPlantScreen({ navigation }) {
   const [resultsWithMatchedData, setResultsWithMatchedData] = useState([]);
 
   useEffect(() => {
-    if (
-      results.length > 0 &&
-      results.length !== resultsWithMatchedData.length
-    ) {
-      const allNames = results.map((result) => result.name);
-      const foundNames = resultsWithMatchedData.map((result) => result.name);
-      const missingNames = allNames.filter(
-        (name) => !foundNames.includes(name)
-      );
-      console.log(
-        "Some identified plants do not exist in the database: " +
-          missingNames.join(", ")
-      );
-    }
-  }, [results]);
-
-  useEffect(() => {
     if (results.length) {
       const scientificNames = results.map((res) => res.name);
       queryByScientificName(scientificNames)
         .then((dbMatches) => {
           const actualMatches = [];
           dbMatches.forEach((match) => {
-            const currScientificName = match.scientific_name;
-            const matchedResult = results.find(
-              (result) => result.name === currScientificName
+            const currScientificName = match.scientific_name[0];
+            const matchedResult = results.find((result) =>
+              currScientificName.includes(result.name)
             );
             if (matchedResult) {
               actualMatches.push({
@@ -220,8 +204,8 @@ export function IdentifyPlantScreen({ navigation }) {
                   >
                     <ImageBackground
                       source={
-                        result.image
-                          ? { uri: result.image }
+                        result.image_url
+                          ? { uri: result.image_url }
                           : require("../../assets/image-not-found.jpg")
                       }
                       style={{
@@ -243,7 +227,8 @@ export function IdentifyPlantScreen({ navigation }) {
                           }}
                           numberOfLines={1}
                         >
-                          {result.common_name ?? result.scientific_name}
+                          {capitalise(result.common_name) ??
+                            capitalise(result.scientific_name)}
                         </Text>
                         <Text
                           style={{
