@@ -8,7 +8,7 @@ import {
   ImageBackground,
   ScrollView,
 } from "react-native";
-import { Camera } from "expo-camera";
+import { Camera, CameraType, FlashMode } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import { Entypo } from "@expo/vector-icons";
 import { identifyPlant } from "../utils/utils";
@@ -18,8 +18,8 @@ import { capitalise } from "../utils/capitalise";
 export function IdentifyPlantScreen({ navigation }) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [image, setImage] = useState(null);
-  const [type, setType] = useState(Camera.Constants.Type.back);
-  const [flash, setFlash] = useState(Camera.Constants.FlashMode.off);
+  const [type, setType] = useState(CameraType.back);
+  const [flash, setFlash] = useState(FlashMode.off);
   const cameraRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState([]);
@@ -244,7 +244,7 @@ export function IdentifyPlantScreen({ navigation }) {
                             fontWeight: "bold",
                           }}
                         >
-                          {parseInt(result.probability * 100)}%
+                          {parseInt(result.probability) * 100}%
                         </Text>
                       </View>
                     </ImageBackground>
