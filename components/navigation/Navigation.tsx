@@ -5,6 +5,7 @@ import { MyPlantsScreen } from '../screens/MyPlantsScreen'
 import { ProfileScreen } from '../screens/ProfileScreen'
 import { IdentifyPlantScreen } from '../screens/IdentifyPlantScreen'
 import { PlantDetailsScreen } from '../screens/PlantDetailsScreen'
+import { LoginScreen } from '../screens/LoginPage'
 import { View } from 'react-native'
 
 import { StyleSheet } from 'react-native'
@@ -16,10 +17,21 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 const Tab = createBottomTabNavigator()
 const AddPlantStack = createNativeStackNavigator()
 const MyPlantsStack = createNativeStackNavigator()
+const LoginPageStack = createNativeStackNavigator()
+
+export function LoginPageStackNavigator() {
+	return (
+		<LoginPageStack.Navigator initialRouteName='Login Page'>
+			<LoginPageStack.Screen name='Login Page' component={LoginScreen} options={{headerShown: false}}/>
+			<LoginPageStack.Screen name='App' component={TabNavigator} options={{headerShown: false}}/>
+		</LoginPageStack.Navigator>
+	)
+}
 
 export function TabNavigator() {
 	return (
 		<Tab.Navigator
+			initialRouteName='Home'
 			screenOptions={() => ({
 				headerShown: false,
 				tabBarShowLabel: false,
