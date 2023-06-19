@@ -43,19 +43,21 @@ export function MyPlantsScreen({ navigation }) {
       ) : (
         <>
           <ScrollView
-            contentContainerStyle={styles.container}
+            contentContainerStyle={styles.contentContainer}
             showsVerticalScrollIndicator={false}
             ref={scrollViewRef}
           >
             {savedPlants.map((plant) => (
               <Pressable
+                key={plant.id}
+                style={styles.tile}
                 onPress={() =>
                   navigation.navigate("Plant Details", {
                     plantId: plant.id,
                   })
                 }
               >
-                <View key={plant.id} style={styles.tile}>
+                <View key={plant.id}>
                   <View key={plant.common_name} style={styles.card}>
                     <Text key={plant.nickname} style={styles.nickname}>
                       {plant.nickname}
@@ -75,30 +77,29 @@ export function MyPlantsScreen({ navigation }) {
                 </View>
               </Pressable>
             ))}
-            <TouchableOpacity style={styles.button} onPress={handleScrollToTop}>
-              <Text>Back to top</Text>
-            </TouchableOpacity>
           </ScrollView>
         </>
       )}
+      <TouchableOpacity style={styles.button} onPress={handleScrollToTop}>
+        <Text>Back to top</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
+  contentContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-evenly",
-    paddingVertical: 20,
     overflow: "visible",
-    backgroundColor: "#AAFFAA",
+    backgroundColor: "lightgreen",
+    height: "100%",
+    rowGap: 20,
   },
   tile: {
-    width: "40%",
-    aspectRatio: 1,
-    margin: 10,
+    width: "45%",
+    aspectRatio: 0.75,
   },
   card: {
     backgroundColor: "#fff",
@@ -106,48 +107,51 @@ const styles = StyleSheet.create({
     padding: 10,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "black",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 5,
+      height: 2,
     },
-    shadowOpacity: 0.5,
+    shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 10,
-    borderWidth: 1,
-    borderColor: "black",
+    elevation: 5,
   },
   name: {
-    fontSize: 12,
+    fontSize: 16,
     fontWeight: "bold",
+    marginBottom: 5,
   },
   image: {
-    width: 120,
-    height: 120,
+    width: "100%",
+    height: "70%",
     borderRadius: 10,
-    borderWidth: 1,
+    marginBottom: 10,
   },
   type: {
-    fontSize: 10,
+    fontSize: 14,
+    fontWeight: "bold",
   },
   nickname: {
-    fontSize: 15,
+    textAlign: "center",
+    fontSize: 16,
     fontWeight: "bold",
+    marginTop: 10,
   },
   button: {
     position: "absolute",
-    bottom: 75,
+    bottom: 100,
     left: 10,
-    width: 100,
+    width: 120,
     height: 50,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "white",
+    backgroundColor: "#fff",
+    borderRadius: 10,
     borderWidth: 1,
     borderColor: "black",
   },
   loading: {
-    fontSize: 30,
+    fontSize: 20,
     fontWeight: "bold",
     textAlign: "center",
   },
