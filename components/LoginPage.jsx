@@ -43,29 +43,29 @@ export const Auth = () => {
 
 
   }
-
-  return (
-    <div>
-      <input
-        placeholder="Email...."
-        onChange={(event) => setEmail(event.target.value)}
-      />
-      <input
-        placeholder="Password .."
-        onChange={(event) => setpassword(event.target.value)}
-      />
-      <button onClick={signUp}>Sign Up</button>
-      <button onClick={signIn}>Sign In</button>
-<br></br>
-<br></br>
-<br></br>
-<button onClick={(signInWithGoogle)}>Sign in with Google</button>
-<br></br>
-<br></br>
-{loggedUser}
-<br></br>
-<button onClick={logOut
-}>Log Out</button>
-    </div>
-  );
-};
+}
+ // return (
+      //   <View>
+      //     <TextInput
+      //     placeholder="UserName"
+      //     onChangeText={event => setUsername(event)}
+      //     defaultValue={username}
+      //   />
+      //     <TextInput
+      //       placeholder="Email...."
+      //       onChangeText={event => setEmail(event)}
+      //       defaultValue={email}
+      //     />
+      //     <TextInput
+      //       placeholder="Password .."
+      //       onChangeText={event => setpassword(event)}
+      //       defaultValue={password}
+      //     />
+      //     <TextInput
+      //       placeholder="Location"
+      //       onChangeText={event => setpassword(event)}
+      //       defaultValue={password}
+      //     />
+      //     <Button onClick={signUp}>Sign Up</Button>
+      //     </View>
+      // )

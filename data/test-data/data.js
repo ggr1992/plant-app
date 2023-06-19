@@ -234,8 +234,9 @@ module.exports = [
   },
   {
     common_name: "river birch",
-    scientific_name: ["Betula nigra 'Dickinson' NORTHERN TRIBUTE"],
-    other_name: [],
+    scientific_name:[],
+    other_name: ["Hello"],
+
     image_url:
       "https://perenual.com/storage/species_image/2_abies_alba_pyramidalis/og/49255769768_df55596553_b.jpg",
     family: "Betulaceae",
