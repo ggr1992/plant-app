@@ -1,9 +1,21 @@
 import { useState, useEffect } from 'react'
-import { View, Text, TextInput, FlatList, Pressable, SafeAreaView, StyleSheet, Button, Image, ImageSourcePropType } from 'react-native'
+import {
+	View,
+	Text,
+	TextInput,
+	FlatList,
+	Pressable,
+	SafeAreaView,
+	StyleSheet,
+	Button,
+	Image,
+	ImageSourcePropType
+} from 'react-native'
 import { useFonts } from 'expo-font'
 import addPlantToUser from '../utils/addPlantToUser'
 import { capitalise } from '../utils/capitalise'
 import { queryBySearchTerm, querySinglePlantByScientificName } from '../utils/api'
+import Icon from 'react-native-vector-icons/AntDesign'
 
 export function AddPlantScreen({ navigation, route }) {
 	const [searchTerm, setSearchTerm] = useState('')
@@ -12,7 +24,6 @@ export function AddPlantScreen({ navigation, route }) {
 	const [filteredPlants, setFilteredPlants] = useState([])
 	const [selectedPlantWithId, setSelectedPlantWithId] = useState(null)
 	const [displayAutocomplete, setDisplayAutocomplete] = useState(false)
-	const [autocompleteHeight, setAutocompleteHeight] = useState(0)
 
 	const [fontsLoaded] = useFonts({
 		'BDO-Grotesk-Med': require('../../assets/BDOGrotesk-Medium.ttf'),
@@ -37,7 +48,6 @@ export function AddPlantScreen({ navigation, route }) {
 	useEffect(() => {
 		if (filteredPlants.length > 0) {
 			setDisplayAutocomplete(true)
-			setAutocompleteHeight(170 * filteredPlants.length)
 		}
 	}, [filteredPlants])
 
@@ -46,6 +56,7 @@ export function AddPlantScreen({ navigation, route }) {
 			querySinglePlantByScientificName(selectedPlant.scientific_name[0]).then((plant) => {
 				setSelectedPlantWithId({ ...selectedPlant, id: plant.id })
 			})
+			setDisplayAutocomplete(false)
 		}
 	}, [selectedPlant])
 
@@ -101,7 +112,7 @@ export function AddPlantScreen({ navigation, route }) {
 
 					{displayAutocomplete && (
 						<FlatList
-							style={{ ...styles.suggestionBox, height: autocompleteHeight, flexGrow: 0 }}
+							style={{ ...styles.suggestionBox, height: 340, flexGrow: 0 }}
 							data={filteredPlants}
 							renderItem={({ item }) => {
 								return (
@@ -111,9 +122,13 @@ export function AddPlantScreen({ navigation, route }) {
 											setSelectedPlant(item)
 											setSearchTerm(item.scientific_name[0])
 											setFilteredPlants([])
+											addPlant()
 										}}>
 										<View style={styles.listItem}>
-											<Image style={styles.listImage} source={{ uri: item.image_url } as ImageSourcePropType} />
+											<View style={styles.listImageWrapper}>
+												<Icon style={styles.plusIcon} name='pluscircleo' size={35} color='white'/>
+												<Image style={styles.listImage} source={{ uri: item.image_url } as ImageSourcePropType} />
+											</View>
 											<View style={{ flex: 1 }}>
 												<Text style={styles.suggestionText}>{capitalise(item.common_name)} </Text>
 												<Text style={styles.suggestionTextBold}>{item.scientific_name}</Text>
@@ -125,21 +140,16 @@ export function AddPlantScreen({ navigation, route }) {
 						/>
 					)}
 
-					{selectedPlant && (
-						<Image source={{ uri: selectedPlant.image_url }} style={{ marginTop: 20, width: '80%', aspectRatio: 1 }} />
-					)}
 					{!selectedPlant && (
-						<Text style={{ fontFamily: 'BDO-Grotesk-Med', fontSize: 16 }}>
-							Select a plant to continue...
-						</Text>
+						<Text style={{ fontFamily: 'BDO-Grotesk-Med', fontSize: 16 }}>Select a plant to continue...</Text>
 					)}
-					{selectedPlant && (
+					{/* {selectedPlant && (
 						<Pressable onPress={addPlant}>
 							<View style={styles.button}>
 								<Text style={{...styles.buttonText, color: 'green'}}>Add plant</Text>
 							</View>
 						</Pressable>
-					)}
+					)} */}
 					<Pressable
 						onPress={() => {
 							setSearchTerm('')
@@ -147,12 +157,12 @@ export function AddPlantScreen({ navigation, route }) {
 							setDisplayAutocomplete(false)
 						}}>
 						<View style={styles.button}>
-							<Text style={{...styles.buttonText, color: 'red'}}>Reset</Text>
+							<Text style={{ ...styles.buttonText, color: 'red' }}>Reset</Text>
 						</View>
 					</Pressable>
 					<Pressable onPress={identifyPlant}>
 						<View style={styles.button}>
-							<Text style={{...styles.buttonText, color: 'blue'}}>Identify with camera</Text>
+							<Text style={{ ...styles.buttonText, color: 'blue' }}>Identify with camera</Text>
 						</View>
 					</Pressable>
 				</View>
@@ -167,7 +177,7 @@ const styles = StyleSheet.create({
 		height: '100%'
 	},
 	contentWrapper: {
-		height: '89.5%',
+		height: '89.5%'
 	},
 	content: {
 		rowGap: 10,
@@ -232,7 +242,7 @@ const styles = StyleSheet.create({
 		padding: 10,
 		borderWidth: 3,
 		borderRadius: 10,
-		justifyContent: 'center',
+		justifyContent: 'center'
 	},
 	buttonText: {
 		fontFamily: 'BDO-Grotesk-Med',
@@ -242,12 +252,20 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center'
 	},
-	listImage: {
+	listImageWrapper: {
 		flex: 1,
-		height: 150,
-		aspectRatio: 'auto',
 		borderWidth: 2,
 		borderColor: '#d35647',
 		margin: 8
+	},
+	plusIcon: {
+		position: 'absolute',
+		bottom: 5,
+		left: 5,
+		zIndex: 10
+	},
+	listImage: {
+		height: 150,
+		aspectRatio: 'auto',
 	}
 })
