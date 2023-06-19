@@ -31,12 +31,15 @@ export function AddPlantScreen({ navigation, route }) {
 			if (searchTerm !== selectedPlant?.scientific_name[0]) {
 				setSelectedPlant(null)
 			}
-			if (filteredPlants.length > 0) {
-				setDisplayAutocomplete(true)
-				setAutocompleteHeight(170 * filteredPlants.length)
-			}
 		}
 	}, [searchTerm])
+
+	useEffect(() => {
+		if (filteredPlants.length > 0) {
+			setDisplayAutocomplete(true)
+			setAutocompleteHeight(170 * filteredPlants.length)
+		}
+	}, [filteredPlants])
 
 	useEffect(() => {
 		if (selectedPlant !== null) {
