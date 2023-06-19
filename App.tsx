@@ -1,14 +1,14 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { TabNavigator } from "./components/navigation/TabNavigator";
-
-import FireBaseTrial from "./components/FireBaseTrial";
+import { StatusBar } from 'expo-status-bar'
+import { StyleSheet, View } from 'react-native'
+import { NavigationContainer } from '@react-navigation/native'
+import { TabNavigator } from './components/navigation/TabNavigator'
+import LoginScreen from './components/screens/LoginPage'
 
 
 export default function App() {
-  return (
-    <NavigationContainer>
+	return (
+		<NavigationContainer>
+			<LoginScreen/>
       <TabNavigator />
     </NavigationContainer>
   );

@@ -1,14 +1,15 @@
 import {auth} from "../../Firebase_Config/firebaseConfig";
 import { signInWithEmailAndPassword} from "firebase/auth";
 
-const signIn = (email,password) => {
+export function signIn  (email,password)  {
    return signInWithEmailAndPassword(auth, email, password)
       .then((result) => {
-      return "login successful"
+         return {success: true, message: 'Login successful' }
       })
-      .catch((error) => {
-       return error.code
-      });
+      // .catch((error) => {
+      //  //  console.log(error.code)
+      //  return error.code
+      // });
   };
 
-module.exports = signIn
+export default signIn
