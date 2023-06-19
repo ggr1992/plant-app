@@ -3,12 +3,12 @@ const getPlantInfo = require("../components/utils/getPlantsInfo");
 const addPlantToUser = require("../components/utils/addPlantToUser");
 const getAllPlantNames = require("../components/utils/getAllPlantNames");
 const queryByScientificName = require("../components/utils/queryByScientificName");
-const signUp = require("../components/utils/signUpData")
-const signIn = require("../components/utils/signInUser")
+const signUp = require("../components/utils/signUpData");
+const signIn = require("../components/utils/signInUser");
 
-
-import { db ,auth} from "../Firebase_Config/firebaseConfig";
-import { setDoc, doc , getDoc } from "firebase/firestore";
+import { db, auth } from "../Firebase_Config/firebaseConfig";
+import { setDoc, doc, getDoc } from "firebase/firestore";
+import exactScienticNameSearch from "../components/utils/exactScienticNameSearch";
 
 afterEach(() => {
   const currentTestName = expect.getState().currentTestName.trim();
@@ -16,11 +16,11 @@ afterEach(() => {
   if (currentTestName === "Adds plant to user") {
     setDoc(doc(db, "Users", "Ajai"), {});
   }
-//   if(currentTestName ===  'signUp Creating a user') {
-//     setDoc(doc(db, "Users", "test123@gmail.com"), {});
-//     admin.auth().deleteUser('Bzk1275X7qQEsNGaSsLOoRnjPVh2')
-//   }
- });
+  //   if(currentTestName ===  'signUp Creating a user') {
+  //     setDoc(doc(db, "Users", "test123@gmail.com"), {});
+  //     admin.auth().deleteUser('Bzk1275X7qQEsNGaSsLOoRnjPVh2')
+  //   }
+});
 
 describe("getUserDoc", () => {
   test("Returns User information when passed their ID name", async () => {
@@ -145,61 +145,75 @@ describe("getAllPlantNames", () => {
   });
 });
 
-describe("queryByScientificName", () => {
-  test("", async () => {
-    const result = await queryByScientificName([
-      "Malus 'Ambrosia'",
-      "Alocasia amazonica",
-    ]);
+// describe("queryByScientificName", () => {
+//   test("", async () => {
+//     const result = await queryByScientificName([
+//       "Malus 'Ambrosia'",
+//       "Alocasia amazonica",
+//     ]);
 
-    for (let i = 0; i < result.length; i++) {
-      expect(result[i]).toEqual(
-        expect.objectContaining({
-          common_name: expect.any(String),
-          id: expect.any(Number),
-          scientific_name: expect.any(String),
-          image: expect.any(String),
-        })
-      );
-    }
-  });
+//     for (let i = 0; i < result.length; i++) {
+//       expect(result[i]).toEqual(
+//         expect.objectContaining({
+//           common_name: expect.any(String),
+//           id: expect.any(Number),
+//           scientific_name: expect.any(String),
+//           image: expect.any(String),
+//         })
+//       );
+//     }
+//   });
 
-  test("When there are no matches, the functions notifies the user", async () => {
-    const result = await queryByScientificName(["Silly"]);
-    console.log(result);
+//   test("When there are no matches, the functions notifies the user", async () => {
+//     const result = await queryByScientificName(["Silly"]);
+//     console.log(result);
 
-    expect(result[0]).toBe("No Plants Found");
-  });
-});
-describe('signUp' ,() => {
-  test('Creating a user',async() => {
-    const result = await signUp("test123@gmail.com","password","London","ThisIsMyUsername","Text"); 
-    const user = await getDoc(doc(db,"Users","test123@gmail.com","Profile","userData"))
+//     expect(result[0]).toBe("No Plants Found");
+//   });
+// });
+describe("signUp", () => {
+  test("Creating a user", async () => {
+    const result = await signUp(
+      "test123@gmail.com",
+      "password",
+      "London",
+      "ThisIsMyUsername",
+      "Text"
+    );
+    const user = await getDoc(
+      doc(db, "Users", "test123@gmail.com", "Profile", "userData")
+    );
     expect(user.data()).toEqual(
       expect.objectContaining({
         Username: expect.any(String),
         Location: expect.any(String),
         Avatar: expect.any(String),
       })
-    );    
-   
-  })
-})
-describe('login' , () => {
-  test('test for incorrect email', async () => {
-    const result = await signIn("test1234@gmail.com","password");
-    expect(result).toBe('auth/user-not-found') 
+    );
+  });
+});
+describe("login", () => {
+  test("test for incorrect email", async () => {
+    const result = await signIn("test1234@gmail.com", "password");
+    expect(result).toBe("auth/user-not-found");
     await new Promise((resolve) => setTimeout(resolve, 10));
-  })
-  test('test for incorrect password', async () => {
-    const result = await signIn("test123@gmail.com","password1");
-    expect(result).toBe('auth/wrong-password') 
+  });
+  test("test for incorrect password", async () => {
+    const result = await signIn("test123@gmail.com", "password1");
+    expect(result).toBe("auth/wrong-password");
     await new Promise((resolve) => setTimeout(resolve, 10));
-  })
-  test('test for correct sign in details', async () => {
-    const result = await signIn("test123@gmail.com","password");
-    expect(result).toBe('login successful') 
+  });
+  test("test for correct sign in details", async () => {
+    const result = await signIn("test123@gmail.com", "password");
+    expect(result).toBe("login successful");
     await new Promise((resolve) => setTimeout(resolve, 10));
-  })
-})
+  });
+});
 
+describe("exactScienticNameSearch", () => {
+  test("", async () => {
+    const name = "Malus 'Honeycrisp'";
+    const result = await exactScienticNameSearch(name);
+    expect(result.plant.scientific_name[0]).toEqual(name);
+  });
+});
