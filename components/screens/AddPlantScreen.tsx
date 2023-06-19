@@ -11,7 +11,10 @@ import {
   Image,
 } from "react-native";
 import addPlantToUser from "../utils/addPlantToUser";
-import { queryBySearchTerm } from "../utils/api";
+import {
+  queryBySearchTerm,
+  querySinglePlantByScientificName,
+} from "../utils/api";
 
 export function AddPlantScreen({ navigation, route }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -19,6 +22,7 @@ export function AddPlantScreen({ navigation, route }) {
   const [tempNickName, setTempNickName] = useState("");
   const [selectedPlant, setSelectedPlant] = useState(null);
   const [filteredPlants, setFilteredPlants] = useState([]);
+  const [selectedPlantWithId, setSelectedPlantWithId] = useState(null);
 
   useEffect(() => {
     if (searchTerm.length < 3) return;
@@ -29,13 +33,19 @@ export function AddPlantScreen({ navigation, route }) {
       });
     }
 
-    if (searchTerm !== selectedPlant.scientific_name[0]) {
+    if (searchTerm !== selectedPlant?.scientific_name[0]) {
       setSelectedPlant(null);
     }
   }, [searchTerm]);
 
   useEffect(() => {
-    // TODO: get selected plant ID from firebase and add it to the object
+    if (selectedPlant !== null) {
+      querySinglePlantByScientificName(selectedPlant.scientific_name[0]).then(
+        (plant) => {
+          setSelectedPlantWithId({ ...selectedPlant, id: plant.id });
+        }
+      );
+    }
   }, [selectedPlant]);
 
   useEffect(() => {
@@ -48,7 +58,7 @@ export function AddPlantScreen({ navigation, route }) {
     setNickName(tempNickName);
     // TODO: get user based on context
     const user = "test_user";
-    const plantId = selectedPlant.id;
+    const plantId = selectedPlantWithId.id;
     addPlantToUser(user, plantId, nickName)
       .then(() => {
         setNickName("");

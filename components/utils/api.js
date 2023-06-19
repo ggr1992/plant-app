@@ -18,3 +18,14 @@ export async function queryBySearchTerm(searchTerm) {
       return plants;
     });
 }
+
+export async function querySinglePlantByScientificName(scientificName) {
+  return axios
+    .get(
+      "https://plant-app-backend.onrender.com/plants/get-plant-by-name/" +
+        scientificName
+    )
+    .then(({ data: { plant } }) => {
+      return plant;
+    });
+}
