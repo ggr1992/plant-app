@@ -15,10 +15,14 @@ export function LoginScreen() {
   const [successfullSignUp,setSuccessfullSignUp] = useState<Boolean>(false)
   const [successfullSignIn,setSuccessfulSignIn] = useState<Boolean>(false)
   const [showSignUp,setShowSignup] = useState<Boolean>(false)
+  
 
   const handleSignup = () => {
     setError('')
     signUp(emailSignUp,passwordSignUp,location,username,"AvatarHere")
+    .then(() => {
+      setSuccessfullSignUp(true)
+    })
     .catch((error) => {
       if (error) {setError(error.code);}  
       setSuccessfullSignUp(false)
@@ -27,14 +31,15 @@ export function LoginScreen() {
 
   const handleLogin = () => {
     setErrorLogin('')
-    signIn(email,password)
+    signIn(email,password).then(() => {
+      setSuccessfulSignIn(true)
+    })
     .catch((error) => {
       if(error) {
         setErrorLogin(error.code)
         setSuccessfulSignIn(false)
     }
     }) 
-    setSuccessfulSignIn(true)
   }
 
 
@@ -67,7 +72,7 @@ const toggleSignUp = () => {
            <Text style={styles.buttonText}>Login</Text>        
            </TouchableOpacity>
            {errorLogin ? <Text style={styles.error}>{errorLogin}</Text> : null}
-           {successfullSignIn ? <Text style={styles.error}>login sucess</Text> : null}
+           {successfullSignIn ? <Text style={styles.error}>login success</Text> : null}
            </View>
           
             <TouchableOpacity style={styles.button} onPress={toggleSignUp}>
