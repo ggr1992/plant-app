@@ -22,7 +22,8 @@ export function LoginScreen({ navigation }) {
 		let location = {
 			"latitude": 52.48,
 			"longitude": -1.90}
-		signUp(emailSignUp, passwordSignUp,location)
+		let avatar = 'https://static.wikia.nocookie.net/toweroffantasy/images/6/6f/Avatar_Desert_Plant.png'
+		signUp(emailSignUp, passwordSignUp,location,"ILoveGardening", avatar)
 			.then(() => {
 				setSuccessfullSignUp(true)
         setUserEmail(emailSignUp)
