@@ -19,7 +19,10 @@ export function LoginScreen({ navigation }) {
 
 	const handleSignup = () => {
 		setError('')
-		signUp(emailSignUp, passwordSignUp, null)
+		let location = {
+			"latitude": 52.48,
+			"longitude": -1.90}
+		signUp(emailSignUp, passwordSignUp,location)
 			.then(() => {
 				setSuccessfullSignUp(true)
         setUserEmail(emailSignUp)
