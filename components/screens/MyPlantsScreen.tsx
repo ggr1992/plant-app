@@ -35,7 +35,7 @@ export function MyPlantsScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
+    <View>
       {loading ? (
         <View style={styles.loadingContainer}>
           <Text style={styles.loading}>Loading...</Text>
