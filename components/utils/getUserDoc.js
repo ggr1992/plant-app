@@ -12,4 +12,4 @@ function getUserDoc(name) {
     });
 }
 
-module.exports = getUserDoc;
+export default getUserDoc;
