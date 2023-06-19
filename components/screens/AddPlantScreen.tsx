@@ -11,54 +11,55 @@ import {
   Image,
 } from "react-native";
 import addPlantToUser from "../utils/addPlantToUser";
-import getAllPlantNames from "../utils/getAllPlantNames";
+import {
+  queryBySearchTerm,
+  querySinglePlantByScientificName,
+} from "../utils/api";
 
 export function AddPlantScreen({ navigation, route }) {
-  const [plantList, setPlantList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [nickName, setNickName] = useState("");
   const [tempNickName, setTempNickName] = useState("");
   const [selectedPlant, setSelectedPlant] = useState(null);
   const [filteredPlants, setFilteredPlants] = useState([]);
+  const [selectedPlantWithId, setSelectedPlantWithId] = useState(null);
 
   useEffect(() => {
-    getAllPlantNames().then((plants) => {
-      setPlantList(plants);
-    });
-  }, []);
+    if (searchTerm.length < 3) return;
 
-  useEffect(() => {
-    if (searchTerm.length >= 3) {
-      if (
-        selectedPlant !== null &&
-        searchTerm !== selectedPlant.scientific_name
-      ) {
-        setSelectedPlant(null);
-      }
-      setFilteredPlants(() => {
-        return plantList.filter((plant) => {
-          const searchTermLowerCase = searchTerm.toLowerCase();
-          const scientificNameLowerCase = plant.scientific_name.toLowerCase();
-          const commonNameLowerCase = plant.common_name.toLowerCase();
-          return (
-            scientificNameLowerCase.includes(searchTermLowerCase) ||
-            commonNameLowerCase.includes(searchTermLowerCase)
-          );
-        });
+    if (selectedPlant === null) {
+      queryBySearchTerm(searchTerm).then((results) => {
+        setFilteredPlants(results);
       });
+    }
+
+    if (searchTerm !== selectedPlant?.scientific_name[0]) {
+      setSelectedPlant(null);
     }
   }, [searchTerm]);
 
   useEffect(() => {
-    if (route?.params?.query && searchTerm !== route.params.query) {
-      setSearchTerm(route.params.query);
+    if (selectedPlant !== null) {
+      querySinglePlantByScientificName(selectedPlant.scientific_name[0]).then(
+        (plant) => {
+          setSelectedPlantWithId({ ...selectedPlant, id: plant.id });
+        }
+      );
+    }
+  }, [selectedPlant]);
+
+  useEffect(() => {
+    if (route?.params?.plant) {
+      setSearchTerm(route.params.plant.scientific_name[0]);
+      setSelectedPlant(route.params.plant);
     }
   }, [route]);
 
   const addPlant = () => {
     setNickName(tempNickName);
+    // TODO: get user based on context
     const user = "test_user";
-    const plantId = selectedPlant.id;
+    const plantId = selectedPlantWithId.id;
     addPlantToUser(user, plantId, nickName)
       .then(() => {
         setNickName("");
@@ -110,7 +111,7 @@ export function AddPlantScreen({ navigation, route }) {
                   <Pressable
                     onPress={() => {
                       setSelectedPlant(item);
-                      setSearchTerm(item.scientific_name);
+                      setSearchTerm(item.scientific_name[0]);
                     }}
                   >
                     <Text style={styles.suggestionText}>
@@ -126,7 +127,7 @@ export function AddPlantScreen({ navigation, route }) {
           )}
         {selectedPlant !== null && (
           <Image
-            source={{ uri: selectedPlant.image }}
+            source={{ uri: selectedPlant.image_url }}
             style={{ width: 200, height: 200 }}
           />
         )}
