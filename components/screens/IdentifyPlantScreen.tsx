@@ -178,7 +178,6 @@ export function IdentifyPlantScreen({ navigation }) {
           {isLoading === true && (
             <View style={{ margin: 40 }}>
               <ImageBackground
-                // source={require("../../assets/plant.jpg")}
                 source={{ uri: image.uri }}
                 style={styles.loadingBackgroundImage}
               >
@@ -285,7 +284,7 @@ const styles = StyleSheet.create({
     marginTop: 600,
   },
   takePictureIcon: { height: 96, width: 96 },
-  errorMsg: { color: "red", fontWeight: "bold" },
+  errorMsg: { color: "red", fontFamily: 'BDO-Grotesk-Med' },
   loadingBackgroundImage: { width: "100%", aspectRatio: 1 },
   loadingAnimatedIcon: {
     position: "absolute",
@@ -294,19 +293,19 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   identifyingSubtext: {
-    fontFamily: "BDO-Grotesk-Med",
+    fontFamily: "BDO-Grotesk-Light",
     color: "#333",
     textAlign: "center",
     fontSize: 24,
     marginTop: 20,
   },
   searchResultHeader: {
-    fontFamily: "BDO-Grotesk-Med",
+    fontFamily: "BDO-Grotesk-Reg",
     fontSize: 36,
     textAlign: "center",
   },
   searchResultSubtext: {
-    fontFamily: "BDO-Grotesk-Med",
+    fontFamily: "BDO-Grotesk-Reg",
     fontSize: 24,
     textAlign: "center",
   },
@@ -316,7 +315,7 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   resultListHeader: {
-    fontFamily: "BDO-Grotesk-Med",
+    fontFamily: "BDO-Grotesk-Reg",
     fontSize: 30,
     marginBottom: 10,
     textAlign: "center",
@@ -335,7 +334,7 @@ const styles = StyleSheet.create({
     fontFamily: "BDO-Grotesk-Med",
     backgroundColor: "black",
     opacity: 0.6,
-    color: "#fff",
+    color: "#ffffff",
     width: "100%",
     fontSize: 20,
     paddingBottom: 10,
@@ -361,10 +360,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 40,
+    marginTop: 30,
   },
   tryAgainButton: {
-    fontFamily: "BDO-Grotesk-Bold",
+    fontFamily: "BDO-Grotesk-Med",
     fontSize: 16,
     color: "#333",
     marginLeft: 10,
@@ -374,11 +373,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 40,
-    marginBottom: 100,
+    marginTop: 20,
+    marginBottom: 30,
   },
   addPlantManuallyText: {
-    fontFamily: "BDO-Grotesk-Bold",
+    fontFamily: "BDO-Grotesk-Med",
     fontSize: 16,
     color: "#333",
     marginLeft: 10,
