@@ -2,25 +2,10 @@ import { db } from "../../Firebase_Config/firebaseConfig";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
 async function addPlantToUser(user, plantID, nickname) {
-  plantID = String(plantID)
-  async function userExists(user) {
-    const usersData = doc(db, "Users", user);
-    const docSnapshot = await getDoc(usersData);
-    return docSnapshot.exists();
-  }
+  plantID = String(plantID);
 
-  const userExists2 = await userExists(user);
-
-  if (!userExists2) {
-    return Promise.reject({
-      msg: "User does not exist",
-    }).catch((err) => {
-      return err;
-    });
-  }
-
-  const usersData = doc(db, "Users", user);
-  const plantToAdd = doc(db, "Plants List", plantID);
+  const usersData = await doc(db, "Users", user);
+  const plantToAdd = await doc(db, "Plants List", plantID);
   getDoc(usersData)
     .then((result) => {
       let allUsersData = result.data();

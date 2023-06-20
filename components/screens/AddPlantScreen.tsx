@@ -58,14 +58,12 @@ export function AddPlantScreen({ navigation, route }) {
   };
 
   const addPlant = () => {
-    // TODO: get user based on context
     setShowNicknameInput(false);
-    let plantId;
     querySinglePlantByScientificName(selectedPlant.scientific_name[0])
       .then((result) => {
-        plantId = result.id;
+        return result.id;
       })
-      .then(() => {
+      .then((plantId) => {
         return addPlantToUser(userEmail, plantId, nickname);
       })
       .then(() => {
