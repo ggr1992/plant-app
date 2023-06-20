@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
   View,
   Text,
@@ -19,6 +19,7 @@ import {
   querySinglePlantByScientificName,
 } from "../utils/api";
 import { Entypo } from "@expo/vector-icons";
+import { UserContext } from "../context/User";
 
 export function AddPlantScreen({ navigation, route }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -26,6 +27,7 @@ export function AddPlantScreen({ navigation, route }) {
   const [selectedPlant, setSelectedPlant] = useState(null);
   const [filteredPlants, setFilteredPlants] = useState([]);
   const [showNicknameInput, setShowNicknameInput] = useState(false);
+  const { userEmail } = useContext(UserContext);
 
   const [fontsLoaded] = useFonts({
     "BDO-Grotesk-Med": require("../../assets/BDOGrotesk-Medium.ttf"),
@@ -57,13 +59,12 @@ export function AddPlantScreen({ navigation, route }) {
     // TODO: get user based on context
     setShowNicknameInput(false);
     let plantId;
-    const user = "test_user";
     querySinglePlantByScientificName(selectedPlant.scientific_name[0])
       .then((result) => {
         plantId = result.id;
       })
       .then(() => {
-        return addPlantToUser(user, plantId, nickname);
+        return addPlantToUser(userEmail, plantId, nickname);
       })
       .then(() => {
         setNickname("");
