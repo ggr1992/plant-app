@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
+  ImageBackground,
 } from "react-native";
 import signUp from "../utils/signUpData";
 import signIn from "../utils/signInUser";
@@ -145,8 +146,8 @@ export function LoginScreen({ navigation }) {
           </View>
         </>
       )}
-      <Image
-        style={styles.backgroundFeature}
+      <ImageBackground
+        style={styles.backgroundImage}
         source={require("../../assets/bg-leaf.png")}
       />
     </View>
@@ -201,14 +202,9 @@ const styles = StyleSheet.create({
   },
   changeModeText: { color: "#009172", fontWeight: "bold" },
   errorMessage: { marginTop: 10, color: "red" },
-  backgroundFeature: {
-    // backgroundColor: "red",
-    // marginTop: 20,
-    width: "100%",
-    position: "absolute",
-    bottom: -200,
-    // marginHorizontal: 20,
-    resizeMode: "contain",
+  backgroundImage: {
+    flex: 1,
+    marginTop: 50,
   },
 });
 
