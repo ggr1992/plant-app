@@ -26,6 +26,8 @@ export function AddPlantScreen({ navigation, route }) {
 	const [displayAutocomplete, setDisplayAutocomplete] = useState(false)
 
 	const [fontsLoaded] = useFonts({
+		'BDO-Grotesk-Light': require('../../assets/BDOGrotesk-Light.ttf'),
+		'BDO-Grotesk-Reg': require('../../assets/BDOGrotesk-Regular.ttf'),
 		'BDO-Grotesk-Med': require('../../assets/BDOGrotesk-Medium.ttf'),
 		'BDO-Grotesk-Bold': require('../../assets/BDOGrotesk-Bold.ttf')
 	})
@@ -101,12 +103,12 @@ export function AddPlantScreen({ navigation, route }) {
 							placeholder='Give it a nickname...'
 							value={nickname}
 							onChangeText={setNickname}
-							style={styles.nicknameInput}></TextInput>
+							style={styles.inputBox}></TextInput>
 						<TextInput
 							placeholder='Search for a plant...'
 							value={searchTerm}
 							onChangeText={setSearchTerm}
-							style={styles.searchBox}
+							style={styles.inputBox}
 						/>
 					</View>
 
@@ -140,9 +142,6 @@ export function AddPlantScreen({ navigation, route }) {
 						/>
 					)}
 
-					{!selectedPlant && (
-						<Text style={{ fontFamily: 'BDO-Grotesk-Med', fontSize: 16 }}>Select a plant to continue...</Text>
-					)}
 					<Pressable
 						onPress={() => {
 							setSearchTerm('')
@@ -173,7 +172,7 @@ const styles = StyleSheet.create({
 		height: '89.5%'
 	},
 	content: {
-		rowGap: 10,
+		rowGap: 20,
 		backgroundColor: 'white',
 		borderColor: 'red',
 		marginHorizontal: 10,
@@ -183,12 +182,13 @@ const styles = StyleSheet.create({
 		paddingTop: 40
 	},
 	container: {
+		rowGap: 20,
 		width: '95%',
 		marginHorizontal: 10,
-		backgroundColor: 'whitesmoke'
+		backgroundColor: '#ffffff'
 	},
-	searchBox: {
-		fontFamily: 'BDO-Grotesk-Med',
+	inputBox: {
+		fontFamily: 'BDO-Grotesk-Reg',
 		padding: 10,
 		borderColor: 'black',
 		borderRadius: 15,
@@ -212,15 +212,6 @@ const styles = StyleSheet.create({
 	suggestionTextBold: {
 		fontFamily: 'BDO-Grotesk-Bold',
 		fontSize: 16
-	},
-	nicknameInput: {
-		fontFamily: 'BDO-Grotesk-Med',
-		padding: 10,
-		borderColor: 'black',
-		borderRadius: 15,
-		borderWidth: 2,
-		fontSize: 16,
-		marginBottom: 5
 	},
 	camera: {
 		height: 200,
