@@ -29,6 +29,8 @@ export function IdentifyPlantScreen({ navigation }) {
 	const [resultsWithMatchedData, setResultsWithMatchedData] = useState([])
 
 	const [fontsLoaded] = useFonts({
+		'BDO-Grotesk-Light': require('../../assets/BDOGrotesk-Light.ttf'),
+		'BDO-Grotesk-Reg': require('../../assets/BDOGrotesk-Regular.ttf'),
 		'BDO-Grotesk-Med': require('../../assets/BDOGrotesk-Medium.ttf'),
 		'BDO-Grotesk-Bold': require('../../assets/BDOGrotesk-Bold.ttf')
 	})
@@ -123,7 +125,7 @@ export function IdentifyPlantScreen({ navigation }) {
 	}
 
 	if (hasCameraPermission === false) {
-		return <Text>No access to camera!</Text>
+		return <Text style={{ fontFamily: 'BDO-Grotesk-Reg' }}>No access to camera!</Text>
 	}
 
 	if (!fontsLoaded) {
@@ -146,39 +148,39 @@ export function IdentifyPlantScreen({ navigation }) {
 					</TouchableOpacity>
 				</Camera>
 			) : (
-				<View>
+				<View style={{paddingTop: 25}}>
 					{errorMsg.length > 0 && <Text style={{ color: 'red', fontWeight: 'bold' }}>{errorMsg}</Text>}
 					{isLoading === true && (
 						<View>
 							<Image source={require('../../assets/groot.gif')} />
 							<Text
 								style={{
-									fontFamily: 'BDO-Grotesk-Med',
+									fontFamily: 'BDO-Grotesk-Light',
 									color: '#333',
+									marginTop: 20,
 									marginBottom: 40,
 									textAlign: 'center',
 									fontSize: 24
 								}}>
-								Identifying...
+								Identifying ...
 							</Text>
 						</View>
 					)}
 					{isLoading === false && resultsWithMatchedData.length === 0 && (
 						<View>
-							<Text style={{ fontFamily: 'BDO-Grotesk-Med', fontSize: 36, textAlign: 'center' }}>Oh no...</Text>
-							<Text style={{ fontFamily: 'BDO-Grotesk-Med', fontSize: 24, textAlign: 'center' }}>
+							<Text style={{ fontFamily: 'BDO-Grotesk-Reg', fontSize: 36, textAlign: 'center' }}>Oh no...</Text>
+							<Text style={{ fontFamily: 'BDO-Grotesk-Reg', fontSize: 24, textAlign: 'center' }}>
 								Sorry, no matches found!
 							</Text>
 						</View>
 					)}
 					{isLoading === false && resultsWithMatchedData.length > 0 && (
 						<ScrollView
+							style={{marginBottom: 20}}
 							contentContainerStyle={{
 								width: '100%',
-								marginTop: 25,
-								paddingBottom: 40
 							}}>
-							<Text style={{ fontFamily: 'BDO-Grotesk-Med', fontSize: 30, marginBottom: 10, textAlign: 'center' }}>
+							<Text style={{ fontFamily: 'BDO-Grotesk-Reg', fontSize: 30, marginBottom: 10, textAlign: 'center' }}>
 								Matches
 							</Text>
 							{resultsWithMatchedData.map((result, index) => {
@@ -196,9 +198,9 @@ export function IdentifyPlantScreen({ navigation }) {
 											source={
 												result.image_url ? { uri: result.image_url } : require('../../assets/image-not-found.jpg')
 											}
-                      imageStyle={{
-                        borderRadius: 20,
-                      }}
+											imageStyle={{
+												borderRadius: 20
+											}}
 											style={{
 												width: '100%',
 												height: '100%'
@@ -209,7 +211,7 @@ export function IdentifyPlantScreen({ navigation }) {
 														fontFamily: 'BDO-Grotesk-Med',
 														backgroundColor: 'black',
 														opacity: 0.6,
-														color: '#fff',
+														color: '#ffffff',
 														width: '100%',
 														fontSize: 20,
 														paddingBottom: 10,
@@ -252,12 +254,11 @@ export function IdentifyPlantScreen({ navigation }) {
 									flexDirection: 'row',
 									justifyContent: 'center',
 									alignItems: 'center',
-									marginTop: 40
 								}}>
 								<Entypo name='camera' size={28} color={'#333'} />
 								<Text
 									style={{
-										fontFamily: 'BDO-Grotesk-Bold',
+										fontFamily: 'BDO-Grotesk-Med',
 										fontSize: 16,
 										color: '#333',
 										marginLeft: 10
@@ -272,13 +273,13 @@ export function IdentifyPlantScreen({ navigation }) {
 									flexDirection: 'row',
 									justifyContent: 'center',
 									alignItems: 'center',
-									marginTop: 40,
-									marginBottom: 100
+									marginTop: 20,
+									marginBottom: 30
 								}}>
 								<Entypo name='edit' size={28} color={'#333'} />
 								<Text
 									style={{
-										fontFamily: 'BDO-Grotesk-Bold',
+										fontFamily: 'BDO-Grotesk-Med',
 										fontSize: 16,
 										color: '#333',
 										marginLeft: 10
