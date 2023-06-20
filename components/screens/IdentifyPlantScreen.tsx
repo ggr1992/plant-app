@@ -29,6 +29,8 @@ export function IdentifyPlantScreen({ navigation }) {
   const [resultsWithMatchedData, setResultsWithMatchedData] = useState([]);
 
   const [fontsLoaded] = useFonts({
+    "BDO-Grotesk-Light": require("../../assets/BDOGrotesk-Light.ttf"),
+    "BDO-Grotesk-Reg": require("../../assets/BDOGrotesk-Regular.ttf"),
     "BDO-Grotesk-Med": require("../../assets/BDOGrotesk-Medium.ttf"),
     "BDO-Grotesk-Bold": require("../../assets/BDOGrotesk-Bold.ttf"),
   });
@@ -117,15 +119,32 @@ export function IdentifyPlantScreen({ navigation }) {
   };
 
   const addPlantManually = () => {
-    navigation.navigate("Add Plant");
+    navigation.navigate("App", {
+      screen: "Add Plant Stack",
+      params: {
+        screen: "Add Plant",
+      },
+    });
   };
 
   const pickThisPlant = (plant) => {
-    navigation.navigate("Add Plant", { plant });
+    navigation.navigate("App", {
+      screen: "Add Plant Stack",
+      params: {
+        screen: "Add Plant",
+        params: {
+          plant,
+        },
+      },
+    });
   };
 
   if (hasCameraPermission === false) {
-    return <Text>No access to camera!</Text>;
+    return (
+      <Text style={{ fontFamily: "BDO-Grotesk-Reg" }}>
+        No access to camera!
+      </Text>
+    );
   }
 
   if (!fontsLoaded) {

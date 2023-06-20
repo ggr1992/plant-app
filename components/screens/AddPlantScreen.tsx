@@ -30,6 +30,8 @@ export function AddPlantScreen({ navigation, route }) {
   const { userEmail } = useContext(UserContext);
 
   const [fontsLoaded] = useFonts({
+    "BDO-Grotesk-Light": require("../../assets/BDOGrotesk-Light.ttf"),
+    "BDO-Grotesk-Reg": require("../../assets/BDOGrotesk-Regular.ttf"),
     "BDO-Grotesk-Med": require("../../assets/BDOGrotesk-Medium.ttf"),
     "BDO-Grotesk-Bold": require("../../assets/BDOGrotesk-Bold.ttf"),
   });

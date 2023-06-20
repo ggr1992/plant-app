@@ -1,5 +1,6 @@
 import { useContext, useState } from 'react'
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Pressable, Button } from 'react-native'
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ImageBackground } from 'react-native'
+import { useFonts } from 'expo-font'
 import signUp from '../utils/signUpData'
 import signIn from '../utils/signInUser'
 import { UserContext } from '../context/User'
@@ -9,165 +10,207 @@ export function LoginScreen({ navigation }) {
 	const [email, setEmailLogin] = useState<string>('')
 	const [passwordSignUp, setPasswordSignUp] = useState<string>('')
 	const [password, setPassword] = useState<string>('')
-	const [error, setError] = useState<string>('')
-	const [errorLogin, setErrorLogin] = useState<string>('')
-	const [successfullSignUp, setSuccessfullSignUp] = useState<Boolean>(false)
-	const [successfullSignIn, setSuccessfulSignIn] = useState<Boolean>(false)
+	const [errorMsg, setErrorMsg] = useState<string>('')
 	const [showSignUp, setShowSignup] = useState<Boolean>(false)
 
-  const {setUserEmail} = useContext(UserContext)
+	const { setUserEmail } = useContext(UserContext)
+
+	const [fontsLoaded] = useFonts({
+		'BDO-Grotesk-Light': require('../../assets/BDOGrotesk-Light.ttf'),
+		'BDO-Grotesk-Reg': require('../../assets/BDOGrotesk-Regular.ttf'),
+		'BDO-Grotesk-Med': require('../../assets/BDOGrotesk-Medium.ttf'),
+		'BDO-Grotesk-Bold': require('../../assets/BDOGrotesk-Bold.ttf')
+	})
 
 	const handleSignup = () => {
-		setError('')
+		const statusMap = {
+			'auth/invalid-email': 'Invalid e-mail address!',
+			'auth/missing-password': 'Please enter a password!',
+			'auth/weak-password': 'Please enter a more secure password!',
+			'auth/email-already-in-use': 'An account already exists for that e-mail address!'
+		}
+		setErrorMsg('')
 		let location = {
-			"latitude": 52.48,
-			"longitude": -1.90}
-		signUp(emailSignUp, passwordSignUp,location)
+			latitude: 52.48,
+			longitude: -1.9
+		}
+		signUp(emailSignUp, passwordSignUp, location)
 			.then(() => {
-				setSuccessfullSignUp(true)
-        setUserEmail(emailSignUp)
-        navigation.navigate('App')
+				setUserEmail(emailSignUp)
+				setEmailSignup('')
+				setEmailLogin('')
+				setPasswordSignUp('')
+				setPassword('')
+				navigation.navigate('App')
 			})
 			.catch((error) => {
-				if (error) {
-					setError(error.code)
+				console.log(error)
+				if (statusMap.hasOwnProperty(error.code)) {
+					setErrorMsg(statusMap[error.code])
+				} else {
+					setErrorMsg(error.code)
 				}
-				setSuccessfullSignUp(false)
 			})
 	}
 
 	const handleLogin = () => {
-		setErrorLogin('')
+		const statusMap = {
+			'auth/invalid-email': 'Invalid e-mail address!',
+			'auth/missing-password': 'Please enter a password!',
+			'auth/user-not-found': 'User not found!',
+			'auth/wrong-password': 'Wrong password!'
+		}
+		setErrorMsg('')
 		signIn(email, password)
 			.then(() => {
-				setSuccessfulSignIn(true)
-        setUserEmail(email)
-        navigation.navigate('App')
+				setUserEmail(email)
+				setEmailSignup('')
+				setEmailLogin('')
+				setPasswordSignUp('')
+				setPassword('')
+				navigation.navigate('App')
 			})
 			.catch((error) => {
 				if (error) {
-					setErrorLogin(error.code)
-					setSuccessfulSignIn(false)
+					if (statusMap.hasOwnProperty(error.code)) {
+						setErrorMsg(statusMap[error.code])
+					} else {
+						setErrorMsg(error.code)
+					}
 				}
 			})
 	}
 
-	const toggleSignUp = () => {
-		if (!showSignUp) setShowSignup(true)
-		else setShowSignup(false)
+	const toggleSignUp = () => setShowSignup((prevVal) => !prevVal)
+
+	if (!fontsLoaded) {
+		return null
 	}
 
 	return (
 		<View style={styles.container}>
-			<Text style={styles.header}>Happy Seeds</Text>
-			<View style={styles.fields}>
-				<View>
-					<TextInput
-						style={styles.input}
-						placeholder='Email....'
-						onChangeText={(text) => setEmailLogin(text)}
-						value={email}
-					/>
-					<TextInput
-						style={styles.input}
-						placeholder='Password ..'
-						onChangeText={(text) => setPassword(text)}
-						value={password}
-						secureTextEntry
-					/>
-					<TouchableOpacity style={styles.button} onPress={handleLogin}>
-						<Text style={styles.buttonText}>Login</Text>
-					</TouchableOpacity>
-					{errorLogin ? <Text style={styles.error}>{errorLogin}</Text> : null}
-					{successfullSignIn ? <Text style={styles.error}>login success</Text> : null}
-				</View>
-
-				<TouchableOpacity style={styles.button} onPress={toggleSignUp}>
-					{!showSignUp ? (
-						<Text style={styles.buttonText}>Show Sign Up </Text>
-					) : (
-						<Text style={styles.buttonText}>Hide Sign Up</Text>
-					)}
-				</TouchableOpacity>
-				{showSignUp && (
-					<View>
+			<Image style={styles.logo} source={require('../../assets/logo.png')} />
+			{showSignUp === false && (
+				<>
+					<View style={styles.formContainer}>
 						<TextInput
-							style={styles.input}
-							placeholder='Email....'
-							onChangeText={(text) => setEmailSignup(text)}
-							value={emailSignUp}
+							style={styles.credentialsInput}
+							placeholder='Your Email'
+							onChangeText={(text) => setEmailLogin(text)}
+							value={email}
 						/>
 						<TextInput
-							style={styles.input}
-							placeholder='Password ..'
-							onChangeText={(text) => setPasswordSignUp(text)}
-							value={passwordSignUp}
+							style={styles.credentialsInput}
+							placeholder='Password'
+							onChangeText={(text) => setPassword(text)}
+							value={password}
 							secureTextEntry
 						/>
-						<TouchableOpacity style={styles.button} onPress={handleSignup}>
-							<Text style={styles.buttonText}>Sign-up</Text>
+						<TouchableOpacity onPress={handleLogin} style={styles.formButton}>
+							<Text style={styles.formButtonText}>Login</Text>
 						</TouchableOpacity>
-						{error ? <Text style={styles.error}>{error}</Text> : null}
-						{successfullSignUp ? <Text style={styles.error}>Signed up</Text> : null}
+						{errorMsg !== '' && <Text style={styles.errorMessage}>{errorMsg}</Text>}
 					</View>
-				)}
-			</View>
+					<View style={styles.changeModeContainer}>
+						<Text style={styles.changeModeSectionText}>Don't have an account yet?</Text>
+						<Text style={styles.changeModeText} onPress={toggleSignUp}>
+							Click here to sign up.
+						</Text>
+					</View>
+				</>
+			)}
+
+			{showSignUp === true && (
+				<>
+					<View style={styles.formContainer}>
+						<View style={styles.formContainer}>
+							<TextInput
+								style={styles.credentialsInput}
+								placeholder='Your Email'
+								onChangeText={(text) => setEmailSignup(text)}
+								value={emailSignUp}
+							/>
+							<TextInput
+								style={styles.credentialsInput}
+								placeholder='Password'
+								onChangeText={(text) => setPasswordSignUp(text)}
+								value={passwordSignUp}
+								secureTextEntry
+							/>
+							<TouchableOpacity onPress={handleSignup} style={styles.formButton}>
+								<Text style={styles.formButtonText}>Sign-up</Text>
+							</TouchableOpacity>
+							{errorMsg !== '' && <Text style={styles.errorMessage}>{errorMsg}</Text>}
+						</View>
+						<View style={styles.changeModeContainer}></View>
+						<Text style={styles.changeModeSectionText}>Already have an account?</Text>
+						<Text style={styles.changeModeText} onPress={toggleSignUp}>
+							Click here to log in.
+						</Text>
+					</View>
+				</>
+			)}
+			<ImageBackground style={styles.backgroundImage} source={require('../../assets/bg-leaf.png')} />
 		</View>
 	)
 }
+
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		alignItems: 'center',
-		padding: 16,
-		backgroundColor: '#AAFFAA'
+	container: { width: '100%', height: '100%', backgroundColor: '#fff' },
+	logo: {
+		width: 300,
+		height: 120,
+		alignSelf: 'center',
+		marginTop: 100,
+		marginBottom: 60
 	},
-	input: {
+	formContainer: {
 		width: '100%',
-		height: 40,
-		borderWidth: 1,
-		borderColor: 'gray',
-		marginBottom: 12,
-		paddingHorizontal: 8
+		alignSelf: 'center',
+		alignItems: 'center'
 	},
-	button: {
-		backgroundColor: '#2196F3',
-		paddingVertical: 12,
-		paddingHorizontal: 24,
-		borderRadius: 4,
-		marginBottom: 10
-	},
-	buttonText: {
-		color: '#FFF',
-		fontSize: 16,
-		fontWeight: 'bold',
-		textAlign: 'center'
-	},
-	error: {
-		color: 'red',
-		fontSize: 16,
-		marginTop: 8
-	},
-	fields: {
+	credentialsInput: {
+		width: '60%',
+		borderColor: '#009172',
 		borderWidth: 2,
-		margin: 10,
+		borderRadius: 50,
+		height: 40,
+		marginBottom: 10,
 		padding: 10,
-		width: 400,
-		top: 200,
-		borderRadius: 20,
-		backgroundColor: 'white',
-		shadowColor: 'black',
-		shadowOffset: {
-			width: 0,
-			height: 5
-		},
-		shadowOpacity: 0.5,
-		shadowRadius: 3.84,
-		elevation: 10
+		paddingHorizontal: 20,
+		color: '#00745b',
+		fontFamily: 'BDO-Grotesk-Reg',
+		fontSize: 16
 	},
-	header: {
-		fontSize: 30,
-		top: 300
+	formButton: {
+		width: '60%',
+		backgroundColor: '#009172',
+		height: 40,
+		alignItems: 'center',
+		justifyContent: 'center',
+		borderRadius: 50
+	},
+	formButtonText: {
+		color: 'white',
+		fontSize: 18,
+		textTransform: 'uppercase',
+		fontFamily: 'BDO-Grotesk-Bold'
+	},
+	changeModeContainer: {
+		width: '100%',
+		alignSelf: 'center',
+		alignItems: 'center',
+		marginTop: 20
+	},
+	changeModeSectionText: {
+		fontSize: 14,
+		fontFamily: 'BDO-Grotesk-Light'
+	},
+	changeModeText: { color: '#009172', fontSize: 14, fontFamily: 'BDO-Grotesk-Med' },
+	errorMessage: { marginTop: 20, color: 'red', fontFamily: 'BDO-Grotesk-Reg', fontSize: 16 },
+	backgroundImage: {
+		flex: 1,
+		marginTop: 50
 	}
 })
 
