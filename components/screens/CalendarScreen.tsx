@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Text, Button , TouchableOpacity} from "react-native";
+import { View, StyleSheet, Text, Button , TouchableOpacity, TextInput} from "react-native";
 import { Calendar } from "react-native-calendars";
 import { db } from "../../Firebase_Config/firebaseConfig";
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import removeTask from "../utils/removeTaskFromUser";
 import getUserDoc from "../utils/getUserDoc";
+import addTaskToUser from "../utils/addTaskToUser";
 
 
 export const CalendarScreen: React.FC = (nickName) => {
@@ -14,6 +15,8 @@ export const CalendarScreen: React.FC = (nickName) => {
   const [nickNames, setNickNames] = useState<string[]>([])
   const [isVisible, setIsVisible] = useState(false);
   const [selectedNickname, setSelectedNickname] = useState(null);
+  const [isVisibleTasks, setIsVisibleTasks] = useState(false);
+  const [wateringDays, setWateringDays] = useState(null)
   nickName = "Bubbles";
  
   const handleDropdownToggle = () => {
@@ -23,8 +26,11 @@ export const CalendarScreen: React.FC = (nickName) => {
   const handleDropdownSelect = (nickNames) => {
     setSelectedNickname(nickNames);
     setIsVisible(false);
+    setSelectedTasks([])
   };
-console.log(selectedNickname)
+  const handleDropdownTasks = () => {
+    setIsVisibleTasks(!isVisibleTasks);
+  };
 
   useEffect(() => {
     getUserDoc('Bill').then((result) => {
@@ -42,13 +48,14 @@ console.log(selectedNickname)
         querySnapshot.forEach((doc) => {
           const date = doc.id;
         
-          const markedData = doc.data().nickName;
-          
-          markedDatesData[date] = {
-            marked: true,
-            //dotColor: markedData.nickName.dotColor, // Assuming dotColor field exists in the database
-          //  task: markedData.nickName.task, // Assuming task field exists in the database
-          };
+          const markedData = doc.data()[selectedNickname];
+          if(markedData) {
+            markedDatesData[date]= {
+              marked: true,
+              //dotColor: markedData.nickName.dotColor, // Assuming dotColor field exists in the database
+            //  task: markedData.nickName.task, // Assuming task field exists in the database
+            };           
+          }
         });
         setMarkedDates(markedDatesData);
       } catch (error) {
@@ -57,7 +64,7 @@ console.log(selectedNickname)
     };
 
     fetchMarkedDates();
-  }, []);
+  }, [selectedNickname]);
   
   
   
@@ -69,9 +76,10 @@ console.log(selectedNickname)
 		  const selectedDate = day.dateString;
 		  const docRef = doc(db, 'Users', "Bill", "Schedule", selectedDate);
       const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
+      if (docSnap.exists() && docSnap.data()[selectedNickname]) {
 		
-        const tasks = docSnap.data()[nickName].task;
+        const tasks = docSnap.data()[selectedNickname].task;
+
         if (tasks && Array.isArray(tasks) && tasks.length > 0) {
           setSelectedTasks(tasks);
         } else {
@@ -84,11 +92,17 @@ console.log(selectedNickname)
     } catch (error) {
       console.error('Error fetching tasks for selected date:', error);
     }
+   
   };
 
   function onPress ({task},index) {
-   removeTask(selectedDate,{task},nickName)
+   removeTask(selectedDate,{task},selectedNickname)
    setSelectedTasks(selectedTasks.toSpliced(index,1))
+  }
+
+  function addATask () {
+
+    addTaskToUser()
   }
 
   return (
@@ -100,7 +114,7 @@ console.log(selectedNickname)
       </TouchableOpacity>
 
       {isVisible && (
-        <View style={styles.dropdownList}>
+        <View>
           {nickNames.map((nickName) => (
             <TouchableOpacity
               key={nickName}
@@ -125,9 +139,40 @@ console.log(selectedNickname)
               <Text  style={styles.taskText}>{task}</Text>
         <Button title="Delete Task" onPress={()=>{onPress({task},index)}}/>
         </View>
+
             ))}
+            
           </View>
+      
       )}
+    <View>
+    {selectedDate ? (
+						<TouchableOpacity style={styles.addTaskButton} onPress={handleDropdownTasks}>
+              <Text>add a task for {selectedNickname} for {selectedDate}</Text>
+            </TouchableOpacity>
+					) : (
+						null
+					)}
+      
+    </View>
+    <View>
+    {isVisibleTasks ? (			
+              <>
+              <Text>How often do you want to water {selectedNickname} :</Text>
+              <TextInput
+              placeholder="enter days here"
+              onChangeText={(text) => setWateringDays(text)}
+              >
+              </TextInput>
+              <Text>Days</Text>
+              <TouchableOpacity style={styles.addTaskButton} >
+							<Text >Confirm</Text>
+						</TouchableOpacity>
+              </>      
+					) : (
+						null
+					)}
+    </View>
     </View>
   );
 };
@@ -157,7 +202,13 @@ const styles = StyleSheet.create({
   dropdownText: {
     fontSize: 14,
   },
-  dropdownList: {
-   
-  },
+  addTaskButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#2196F3',
+		paddingVertical: 12,
+		paddingHorizontal: 24,
+		borderRadius: 4,
+		marginBottom: 10,
+  }
   });
