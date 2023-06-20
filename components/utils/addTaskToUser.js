@@ -1,6 +1,6 @@
 import { db } from "../../Firebase_Config/firebaseConfig";
 import { doc, setDoc, arrayUnion } from "firebase/firestore";
-import { UserContext } from '../context/User'
+import { UserContext } from "../context/User";
 import { useContext } from "react";
 
 function addTaskToUser(date, task, nickName) {

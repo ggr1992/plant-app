@@ -5,7 +5,6 @@ const getAllPlantNames = require("../components/utils/getAllPlantNames");
 //const queryByScientificName = require("../components/utils/queryByScientificName");
 const signUp = require("../components/utils/signUpData");
 const signIn = require("../components/utils/signInUser");
-
 import { db, auth } from "../Firebase_Config/firebaseConfig";
 import { setDoc, doc, getDoc } from "firebase/firestore";
 import exactScienticNameSearch from "../components/utils/exactScienticNameSearch";
