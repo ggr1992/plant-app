@@ -15,7 +15,7 @@ export function LoginScreen({ navigation }) {
 
 	const { setUserEmail } = useContext(UserContext)
 
-  const [fontsLoaded] = useFonts({
+	const [fontsLoaded] = useFonts({
 		'BDO-Grotesk-Light': require('../../assets/BDOGrotesk-Light.ttf'),
 		'BDO-Grotesk-Reg': require('../../assets/BDOGrotesk-Regular.ttf'),
 		'BDO-Grotesk-Med': require('../../assets/BDOGrotesk-Medium.ttf'),
@@ -37,6 +37,10 @@ export function LoginScreen({ navigation }) {
 		signUp(emailSignUp, passwordSignUp, location)
 			.then(() => {
 				setUserEmail(emailSignUp)
+				setEmailSignup('')
+				setEmailLogin('')
+				setPasswordSignUp('')
+				setPassword('')
 				navigation.navigate('App')
 			})
 			.catch((error) => {
@@ -60,6 +64,10 @@ export function LoginScreen({ navigation }) {
 		signIn(email, password)
 			.then(() => {
 				setUserEmail(email)
+				setEmailSignup('')
+				setEmailLogin('')
+				setPasswordSignUp('')
+				setPassword('')
 				navigation.navigate('App')
 			})
 			.catch((error) => {
@@ -75,9 +83,9 @@ export function LoginScreen({ navigation }) {
 
 	const toggleSignUp = () => setShowSignup((prevVal) => !prevVal)
 
-  if (!fontsLoaded) {
-    return null
-  }
+	if (!fontsLoaded) {
+		return null
+	}
 
 	return (
 		<View style={styles.container}>
@@ -172,14 +180,14 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 20,
 		color: '#00745b',
 		fontFamily: 'BDO-Grotesk-Reg',
-    fontSize: 16
+		fontSize: 16
 	},
 	formButton: {
 		width: '60%',
 		backgroundColor: '#009172',
 		height: 40,
 		alignItems: 'center',
-    justifyContent: 'center',
+		justifyContent: 'center',
 		borderRadius: 50
 	},
 	formButtonText: {
@@ -194,10 +202,10 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		marginTop: 20
 	},
-  changeModeSectionText: {
-    fontSize: 14,
-    fontFamily: 'BDO-Grotesk-Light'
-  },
+	changeModeSectionText: {
+		fontSize: 14,
+		fontFamily: 'BDO-Grotesk-Light'
+	},
 	changeModeText: { color: '#009172', fontSize: 14, fontFamily: 'BDO-Grotesk-Med' },
 	errorMessage: { marginTop: 20, color: 'red', fontFamily: 'BDO-Grotesk-Reg', fontSize: 16 },
 	backgroundImage: {
@@ -206,4 +214,4 @@ const styles = StyleSheet.create({
 	}
 })
 
-export default LoginScreen;
+export default LoginScreen
