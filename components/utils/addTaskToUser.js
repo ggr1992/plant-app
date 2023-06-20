@@ -1,12 +1,12 @@
 import { db } from "../../Firebase_Config/firebaseConfig";
 import { doc, setDoc, arrayUnion } from "firebase/firestore";
-import { UserContext } from '../context/User'
+import { UserContext } from "../context/User";
 import { useContext } from "react";
 
 function addTaskToUser(date, task) {
-    const { userEmail } = useContext(UserContext)
-   date = "2023-06-1";
-   task = "test8";
+  const { userEmail } = useContext(UserContext);
+  date = "2023-06-1";
+  task = "test8";
   const orderData = {
     task: arrayUnion(task),
   };

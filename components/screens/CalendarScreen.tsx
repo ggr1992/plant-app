@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Button } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { db } from "../../Firebase_Config/firebaseConfig";
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
+import removeTask from "../utils/removeTaskFromUser";
 
 
 export const CalendarScreen: React.FC = () => {
@@ -72,8 +73,10 @@ export const CalendarScreen: React.FC = () => {
       {selectedTasks.length > 0 && (
         <View style={styles.taskContainer}>
           <Text style={styles.taskTitle}>Tasks for {selectedDate}:</Text>
-          {selectedTasks.map((task: string, index: number) => (
+          {selectedTasks.map((task: string, index: number) => (<>
             <Text key={index} style={styles.taskText}>{task}</Text>
+		  <Button key={index} title="Delete Task" onPress={()=>{removeTask(selectedDate,{task})}}/>
+		  </>
           ))}
         </View>
       )}

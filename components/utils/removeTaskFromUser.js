@@ -1,17 +1,18 @@
 import { db } from "../../Firebase_Config/firebaseConfig";
 import { doc, setDoc, arrayRemove } from "firebase/firestore";
-import { UserContext } from '../context/User'
+import { UserContext } from "../context/User";
 import { useContext } from "react";
 
-function removeTask(date, task) {
-const { userEmail } = useContext(UserContext)
-   date = "2023-06-1";
-   task = "things";
+function removeTask(date, { task }) {
+  // const { userEmail } = useContext(UserContext)
+  console.log(date);
+  console.log(task);
+
   const orderData = {
     task: arrayRemove(task),
   };
 
-  return setDoc(doc(db, "Users", userEmail, "Schedule", date), orderData, {
+  return setDoc(doc(db, "Users", "Bill", "Schedule", date), orderData, {
     merge: true,
   })
     .then(() => {
