@@ -5,7 +5,7 @@ function getUserProfile(name) {
   const user = doc(db, "Users", name, "Profile", "userData");
   return getDoc(user)
     .then((result) => {
-      console.log(result);
+      console.log(result.data());
       return result.data();
     })
     .catch((err) => {
