@@ -90,7 +90,7 @@ export function AddPlantScreen({ navigation, route }) {
   };
 
   return (
-    <ScrollView style={{ marginTop: 40, marginBottom: 60, padding: 20 }}>
+    <ScrollView style={styles.container}>
       <Dialog.Container visible={showNicknameInput}>
         <Dialog.Title>Nickname</Dialog.Title>
         <Dialog.Description>
@@ -100,11 +100,11 @@ export function AddPlantScreen({ navigation, route }) {
           value={nickname}
           onChangeText={(text) => setNickname(text)}
         />
-        <Dialog.Button label="Submit" onPress={addPlant} />
         <Dialog.Button
           label="Cancel"
           onPress={() => setShowNicknameInput(false)}
         />
+        <Dialog.Button label="Submit" onPress={addPlant} />
       </Dialog.Container>
       <View>
         <TextInput
@@ -117,22 +117,18 @@ export function AddPlantScreen({ navigation, route }) {
           name="cross"
           size={28}
           color={"#333"}
-          style={{ position: "absolute", right: 14, top: 16, color: "red" }}
+          style={styles.searchInputClearIcon}
           onPress={handleClearSearch}
         />
       </View>
 
       {searchTerm.length >= 3 && filteredPlants.length <= 0 && (
-        <Text style={{ color: "#b0112b", alignSelf: "center", fontSize: 16 }}>
+        <Text style={styles.resultStatusMsg}>
           Oh no... could not find any matching plants!
         </Text>
       )}
       <FlatList
-        style={{
-          flexDirection: "row",
-          width: "100%",
-          marginBottom: 20,
-        }}
+        style={styles.plantCard}
         numColumns={2}
         data={filteredPlants}
         renderItem={({ item, index }) => {
@@ -140,11 +136,7 @@ export function AddPlantScreen({ navigation, route }) {
             <TouchableOpacity
               key={index}
               onPress={() => selectPlant(item)}
-              style={{
-                width: 172,
-                aspectRatio: 1,
-                margin: 6,
-              }}
+              style={styles.plantCardContainer}
             >
               <ImageBackground
                 source={
@@ -152,25 +144,9 @@ export function AddPlantScreen({ navigation, route }) {
                     ? { uri: item.image_url }
                     : require("../../assets/image-not-found.jpg")
                 }
-                style={{
-                  width: "100%",
-                  height: "100%",
-                }}
+                style={styles.plantCardBackgroundImage}
               >
-                <Text
-                  style={{
-                    fontFamily: "BDO-Grotesk-Med",
-                    backgroundColor: "rgba(0,0,0,.4)",
-                    color: "#fff",
-                    width: "100%",
-                    fontSize: 16,
-                    paddingBottom: 10,
-                    position: "absolute",
-                    top: 0,
-                    paddingHorizontal: 10,
-                  }}
-                  numberOfLines={2}
-                >
+                <Text style={styles.plantCardName} numberOfLines={2}>
                   {capitalise(item.common_name) ??
                     capitalise(item.scientific_name)}
                 </Text>
@@ -178,12 +154,7 @@ export function AddPlantScreen({ navigation, route }) {
                   name="circle-with-plus"
                   size={48}
                   color={"#333"}
-                  style={{
-                    position: "absolute",
-                    right: 4,
-                    bottom: 4,
-                    color: "rgba(255,255,255,.8)",
-                  }}
+                  style={styles.addPlantIcon}
                 />
               </ImageBackground>
             </TouchableOpacity>
@@ -191,44 +162,17 @@ export function AddPlantScreen({ navigation, route }) {
         }}
       />
       <View style={{ marginBottom: 40 }}>
-        <Text
-          style={{
-            alignSelf: "center",
-            fontSize: 20,
-            marginTop: 40,
-            marginBottom: 10,
-            fontWeight: "bold",
-          }}
-        >
-          Identify Automatically
-        </Text>
+        <Text style={styles.identifyPlantHeader}>Identify Automatically</Text>
         <TouchableOpacity
-          style={{
-            width: 100,
-            height: 100,
-            alignSelf: "center",
-            margin: 10,
-            marginBottom: 20,
-            borderWidth: 2,
-            borderColor: "rgba(0,0,0,.3)",
-            padding: 20,
-            borderRadius: 100,
-          }}
+          style={styles.identifyPlantIconContainer}
           onPress={identifyPlant}
         >
           <Image
             source={require("../../assets/magnifying-glass.png")}
-            style={{
-              width: "100%",
-              height: "100%",
-              transform: [{ scaleX: -1 }, { scaleY: 1 }],
-            }}
+            style={styles.identifyPlantIcon}
           />
         </TouchableOpacity>
-        <Text
-          style={{ alignSelf: "center", textAlign: "center" }}
-          numberOfLines={2}
-        >
+        <Text style={styles.identifyPlantDescription} numberOfLines={2}>
           Click the icon above to use your{"\n"}camera to identify your plant.
         </Text>
       </View>
@@ -237,6 +181,7 @@ export function AddPlantScreen({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
+  container: { marginTop: 40, marginBottom: 60, padding: 20 },
   searchInput: {
     width: "100%",
     borderColor: "#009172",
@@ -249,5 +194,67 @@ const styles = StyleSheet.create({
     color: "#00745b",
     fontWeight: "bold",
     fontSize: 20,
+  },
+  searchInputClearIcon: {
+    position: "absolute",
+    right: 14,
+    top: 16,
+    color: "red",
+  },
+  identifyPlantHeader: {
+    alignSelf: "center",
+    fontSize: 20,
+    marginTop: 40,
+    marginBottom: 10,
+    fontWeight: "bold",
+  },
+  identifyPlantDescription: { alignSelf: "center", textAlign: "center" },
+  identifyPlantIconContainer: {
+    width: 100,
+    height: 100,
+    alignSelf: "center",
+    margin: 10,
+    marginBottom: 20,
+    borderWidth: 2,
+    borderColor: "rgba(0,0,0,.3)",
+    padding: 20,
+    borderRadius: 100,
+  },
+  identifyPlantIcon: {
+    width: "100%",
+    height: "100%",
+    transform: [{ scaleX: -1 }, { scaleY: 1 }],
+  },
+  addPlantIcon: {
+    position: "absolute",
+    right: 4,
+    bottom: 4,
+    color: "rgba(255,255,255,.8)",
+  },
+  plantCardName: {
+    fontFamily: "BDO-Grotesk-Med",
+    backgroundColor: "rgba(0,0,0,.4)",
+    color: "#fff",
+    width: "100%",
+    fontSize: 16,
+    paddingBottom: 10,
+    position: "absolute",
+    top: 0,
+    paddingHorizontal: 10,
+  },
+  plantCard: {
+    flexDirection: "row",
+    width: "100%",
+    marginBottom: 20,
+  },
+  resultStatusMsg: { color: "#b0112b", alignSelf: "center", fontSize: 16 },
+  plantCardContainer: {
+    width: 172,
+    aspectRatio: 1,
+    margin: 6,
+  },
+  plantCardBackgroundImage: {
+    width: "100%",
+    height: "100%",
   },
 });
