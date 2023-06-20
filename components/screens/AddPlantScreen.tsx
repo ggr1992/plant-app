@@ -128,16 +128,14 @@ export function AddPlantScreen({ navigation, route }) {
           Oh no... could not find any matching plants!
         </Text>
       )}
-      <FlatList
-        style={styles.plantCard}
-        numColumns={2}
-        data={filteredPlants}
-        renderItem={({ item, index }) => {
+
+      <View style={styles.plantCardWrapper}>
+        {filteredPlants.map((item, index) => {
           return (
             <TouchableOpacity
               key={index}
               onPress={() => selectPlant(item)}
-              style={styles.plantCardContainer}
+              style={styles.plantCardTouchable}
             >
               <ImageBackground
                 source={
@@ -160,8 +158,8 @@ export function AddPlantScreen({ navigation, route }) {
               </ImageBackground>
             </TouchableOpacity>
           );
-        }}
-      />
+        })}
+      </View>
       <View style={{ marginBottom: 40 }}>
         <Text style={styles.identifyPlantHeader}>Identify Automatically</Text>
         <TouchableOpacity
@@ -243,13 +241,13 @@ const styles = StyleSheet.create({
     top: 0,
     paddingHorizontal: 10,
   },
-  plantCard: {
+  plantCardWrapper: {
     flexDirection: "row",
-    width: "100%",
+    flexWrap: "wrap",
     marginBottom: 20,
   },
   resultStatusMsg: { color: "#b0112b", alignSelf: "center", fontSize: 16 },
-  plantCardContainer: {
+  plantCardTouchable: {
     width: 172,
     aspectRatio: 1,
     margin: 6,
