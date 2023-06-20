@@ -178,7 +178,8 @@ export function IdentifyPlantScreen({ navigation }) {
           {isLoading === true && (
             <View style={{ margin: 40 }}>
               <ImageBackground
-                source={require("../../assets/plant.jpg")}
+                // source={require("../../assets/plant.jpg")}
+                source={{ uri: image.uri }}
                 style={styles.loadingBackgroundImage}
               >
                 <Image
