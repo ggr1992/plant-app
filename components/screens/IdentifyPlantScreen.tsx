@@ -143,104 +143,48 @@ export function IdentifyPlantScreen({ navigation }) {
         >
           <TouchableOpacity
             onPress={takePicture}
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center",
-              marginTop: 600,
-            }}
+            style={styles.takePictureContainer}
           >
             <Image
-              style={{ height: 96, width: 96 }}
+              style={styles.takePictureIcon}
               source={require("../../assets/circle.png")}
             />
           </TouchableOpacity>
         </Camera>
       ) : (
         <View>
-          {errorMsg.length > 0 && (
-            <Text style={{ color: "red", fontWeight: "bold" }}>{errorMsg}</Text>
-          )}
+          {errorMsg.length > 0 && <Text style={errorMsg}>{errorMsg}</Text>}
           {isLoading === true && (
             <View style={{ margin: 40 }}>
               <ImageBackground
                 source={require("../../assets/plant.jpg")}
-                style={{ width: "100%", aspectRatio: 1 }}
+                style={styles.loadingBackgroundImage}
               >
                 <Image
                   source={require("../../assets/loading-glass.gif")}
-                  style={{
-                    position: "absolute",
-                    bottom: 20,
-                    right: 20,
-                    opacity: 0.6,
-                  }}
+                  style={styles.loadingAnimatedIcon}
                 />
               </ImageBackground>
-              <Text
-                style={{
-                  fontFamily: "BDO-Grotesk-Med",
-                  color: "#333",
-                  textAlign: "center",
-                  fontSize: 24,
-                  marginTop: 20,
-                }}
-              >
-                Identifying...
-              </Text>
+              <Text style={styles.identifyingSubtext}>Identifying...</Text>
             </View>
           )}
           {isLoading === false && resultsWithMatchedData.length === 0 && (
             <View>
-              <Text
-                style={{
-                  fontFamily: "BDO-Grotesk-Med",
-                  fontSize: 36,
-                  textAlign: "center",
-                }}
-              >
-                Oh no...
-              </Text>
-              <Text
-                style={{
-                  fontFamily: "BDO-Grotesk-Med",
-                  fontSize: 24,
-                  textAlign: "center",
-                }}
-              >
+              <Text style={styles.searchResultHeader}>Oh no...</Text>
+              <Text style={styles.searchResultSubtext}>
                 Sorry, no matches found!
               </Text>
             </View>
           )}
           {isLoading === false && resultsWithMatchedData.length > 0 && (
-            <ScrollView
-              contentContainerStyle={{
-                width: "100%",
-                marginTop: 25,
-                paddingBottom: 40,
-              }}
-            >
-              <Text
-                style={{
-                  fontFamily: "BDO-Grotesk-Med",
-                  fontSize: 30,
-                  marginBottom: 10,
-                  textAlign: "center",
-                }}
-              >
-                Matches
-              </Text>
+            <ScrollView contentContainerStyle={styles.resultListContainer}>
+              <Text style={styles.resultListHeader}>Matches</Text>
               {resultsWithMatchedData.map((result, index) => {
                 return (
                   <TouchableOpacity
                     key={index}
                     onPress={() => pickThisPlant(result)}
-                    style={{
-                      width: 300,
-                      height: 250,
-                      marginBottom: 20,
-                      elevation: 10,
-                    }}
+                    style={styles.resultCard}
                   >
                     <ImageBackground
                       source={
@@ -251,45 +195,14 @@ export function IdentifyPlantScreen({ navigation }) {
                       imageStyle={{
                         borderRadius: 20,
                       }}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                      }}
+                      style={styles.resultCardImage}
                     >
                       <View>
-                        <Text
-                          style={{
-                            fontFamily: "BDO-Grotesk-Med",
-                            backgroundColor: "black",
-                            opacity: 0.6,
-                            color: "#fff",
-                            width: "100%",
-                            fontSize: 20,
-                            paddingBottom: 10,
-                            position: "absolute",
-                            top: 190,
-                            paddingHorizontal: 10,
-                          }}
-                          numberOfLines={1}
-                        >
+                        <Text style={styles.resultCardName} numberOfLines={1}>
                           {capitalise(result.common_name) ??
                             capitalise(result.scientific_name)}
                         </Text>
-                        <Text
-                          style={{
-                            fontFamily: "BDO-Grotesk-Bold",
-                            position: "absolute",
-                            backgroundColor: "black",
-                            opacity: 0.6,
-                            color: "#fff",
-                            padding: 10,
-                            fontSize: 20,
-                            top: 20,
-                            right: 0,
-                            borderTopLeftRadius: 20,
-                            borderBottomLeftRadius: 20,
-                          }}
-                        >
+                        <Text style={styles.resultCardProbability}>
                           {parseInt(result.probability)}%
                         </Text>
                       </View>
@@ -303,46 +216,17 @@ export function IdentifyPlantScreen({ navigation }) {
             <>
               <TouchableOpacity
                 onPress={resetPicture}
-                style={{
-                  height: 40,
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginTop: 40,
-                }}
+                style={styles.resetPictureButton}
               >
                 <Entypo name="camera" size={28} color={"#333"} />
-                <Text
-                  style={{
-                    fontFamily: "BDO-Grotesk-Bold",
-                    fontSize: 16,
-                    color: "#333",
-                    marginLeft: 10,
-                  }}
-                >
-                  Try Again
-                </Text>
+                <Text style={styles.tryAgainButton}>Try Again</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={addPlantManually}
-                style={{
-                  height: 40,
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginTop: 40,
-                  marginBottom: 100,
-                }}
+                style={styles.addPlantManuallyButton}
               >
                 <Entypo name="edit" size={28} color={"#333"} />
-                <Text
-                  style={{
-                    fontFamily: "BDO-Grotesk-Bold",
-                    fontSize: 16,
-                    color: "#333",
-                    marginLeft: 10,
-                  }}
-                >
+                <Text style={styles.addPlantManuallyText}>
                   Add Plant Manually
                 </Text>
               </TouchableOpacity>
@@ -371,5 +255,110 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#3c635d",
+  },
+  takePictureContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 600,
+  },
+  takePictureIcon: { height: 96, width: 96 },
+  errorMsg: { color: "red", fontWeight: "bold" },
+  loadingBackgroundImage: { width: "100%", aspectRatio: 1 },
+  loadingAnimatedIcon: {
+    position: "absolute",
+    bottom: 20,
+    right: 20,
+    opacity: 0.6,
+  },
+  identifyingSubtext: {
+    fontFamily: "BDO-Grotesk-Med",
+    color: "#333",
+    textAlign: "center",
+    fontSize: 24,
+    marginTop: 20,
+  },
+  searchResultHeader: {
+    fontFamily: "BDO-Grotesk-Med",
+    fontSize: 36,
+    textAlign: "center",
+  },
+  searchResultSubtext: {
+    fontFamily: "BDO-Grotesk-Med",
+    fontSize: 24,
+    textAlign: "center",
+  },
+  resultListContainer: {
+    width: "100%",
+    marginTop: 25,
+    paddingBottom: 40,
+  },
+  resultListHeader: {
+    fontFamily: "BDO-Grotesk-Med",
+    fontSize: 30,
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  resultCard: {
+    width: 300,
+    height: 250,
+    marginBottom: 20,
+    elevation: 10,
+  },
+  resultCardImage: {
+    width: "100%",
+    height: "100%",
+  },
+  resultCardName: {
+    fontFamily: "BDO-Grotesk-Med",
+    backgroundColor: "black",
+    opacity: 0.6,
+    color: "#fff",
+    width: "100%",
+    fontSize: 20,
+    paddingBottom: 10,
+    position: "absolute",
+    top: 190,
+    paddingHorizontal: 10,
+  },
+  resultCardProbability: {
+    fontFamily: "BDO-Grotesk-Bold",
+    position: "absolute",
+    backgroundColor: "black",
+    opacity: 0.6,
+    color: "#fff",
+    padding: 10,
+    fontSize: 20,
+    top: 20,
+    right: 0,
+    borderTopLeftRadius: 20,
+    borderBottomLeftRadius: 20,
+  },
+  resetPictureButton: {
+    height: 40,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 40,
+  },
+  tryAgainButton: {
+    fontFamily: "BDO-Grotesk-Bold",
+    fontSize: 16,
+    color: "#333",
+    marginLeft: 10,
+  },
+  addPlantManuallyButton: {
+    height: 40,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 40,
+    marginBottom: 100,
+  },
+  addPlantManuallyText: {
+    fontFamily: "BDO-Grotesk-Bold",
+    fontSize: 16,
+    color: "#333",
+    marginLeft: 10,
   },
 });
