@@ -6,6 +6,8 @@ import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import removeTask from "../utils/removeTaskFromUser";
 import getUserDoc from "../utils/getUserDoc";
 import addTaskToUser from "../utils/addTaskToUser";
+import dayjs from "dayjs";
+dayjs().format()
 
 
 export const CalendarScreen: React.FC = (nickName) => {
@@ -16,9 +18,11 @@ export const CalendarScreen: React.FC = (nickName) => {
   const [isVisible, setIsVisible] = useState(false);
   const [selectedNickname, setSelectedNickname] = useState(null);
   const [isVisibleTasks, setIsVisibleTasks] = useState(false);
-  const [wateringDays, setWateringDays] = useState(null)
-  nickName = "Bubbles";
- 
+  const [wateringDays, setWateringDays] = useState(0)
+  const [repeatedDays, setRepeatedDays] = useState(0)
+  
+ let alteredDate = dayjs(selectedDate).add(wateringDays, 'day').format()
+ const slicedDate = alteredDate.slice(0,10)
   const handleDropdownToggle = () => {
     setIsVisible(!isVisible);
   };
@@ -101,8 +105,14 @@ export const CalendarScreen: React.FC = (nickName) => {
   }
 
   function addATask () {
-
-    addTaskToUser()
+    // if repeat counter = sliced date every time this happens 
+    let counter = slicedDate
+    for (let i= 0 ; i<= repeatedDays; i++) {
+      let water = `Water ${selectedNickname}`
+      addTaskToUser(counter,water,selectedNickname)
+      setMarkedDates({...markedDates,[counter]: {marked: true}})
+      counter = dayjs(counter).add(wateringDays, 'day').format().slice(0,10)
+    }
   }
 
   return (
@@ -162,10 +172,15 @@ export const CalendarScreen: React.FC = (nickName) => {
               <TextInput
               placeholder="enter days here"
               onChangeText={(text) => setWateringDays(text)}
-              >
+              >      
+              </TextInput>
+              <TextInput
+              placeholder="How many times"
+              onChangeText={(text) => setRepeatedDays(text)}
+              >             
               </TextInput>
               <Text>Days</Text>
-              <TouchableOpacity style={styles.addTaskButton} >
+              <TouchableOpacity style={styles.addTaskButton}  onPress={addATask}>
 							<Text >Confirm</Text>
 						</TouchableOpacity>
               </>      
