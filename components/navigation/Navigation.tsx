@@ -21,7 +21,7 @@ const LoginPageStack = createNativeStackNavigator()
 
 export function LoginPageStackNavigator() {
 	return (
-		<LoginPageStack.Navigator initialRouteName='App'>
+		<LoginPageStack.Navigator initialRouteName='Login Page'>
 			<LoginPageStack.Screen name='Login Page' component={LoginScreen} options={{ headerShown: false }} />
 			<LoginPageStack.Screen name='App' component={TabNavigator} options={{ headerShown: false }} />
 		</LoginPageStack.Navigator>

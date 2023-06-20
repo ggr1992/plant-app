@@ -9,9 +9,7 @@ export function signUp(email, password, location,userName,avatar) {
     .then(() => {
       console.log('hello')
       return setDoc(doc(db, "Users", email, "Profile", "userData"), {
-        "Location": location,
-        "Username": userName,
-        "Avatar": avatar
+        "email": email,
       })
     })
 }

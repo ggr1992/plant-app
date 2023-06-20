@@ -1,23 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import { View, Text, Image, Pressable, StyleSheet } from "react-native";
-import getUserProfile from "../utils/getUser";
+import getUserDoc from "../utils/getUserDoc";
 import { UserContext } from "../context/User";
 
-type resultsType = {
-  Avatar: string;
-  Location: {
-    longitude?: number;
-    latitude?: number;
-  };
-  Username: string;
-};
-
 export function ProfileScreen({ navigation }) {
-  const [userName, setUserName] = useState<string>("");
-  const [location, setLocation] = useState<object>({});
-  const [avatar, setAvatar] = useState<string>("");
   const [successfullLogOut, setSuccessfulLogout] = useState<boolean>(false);
-
   const { userEmail } = useContext(UserContext);
 
   if (!userEmail) {
@@ -27,11 +14,10 @@ export function ProfileScreen({ navigation }) {
       if (successfullLogOut) {
         setSuccessfulLogout(true);
       } else {
-        getUserProfile(userEmail).then((result: resultsType) => {
-          setAvatar(result.Avatar);
-          setLocation(result.Location);
-          setUserName(result.Username);
-        });
+        getUserDoc(userEmail)
+        .then((result: object[]) => {
+          console.log(result)
+        })
       }
     }, [userEmail, successfullLogOut]);
 
@@ -42,9 +28,7 @@ export function ProfileScreen({ navigation }) {
 
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Image style={{ width: 200, height: 200 }} source={{ uri: avatar }} />
-        <Text>User Name: {userName}</Text>
-        <Text>User Email: {userEmail}</Text>
+        <Text>Account email: {userEmail}</Text>
         <Pressable style={styles.button} onPress={handleLogOut}>
           <Text>Logout</Text>
         </Pressable>
