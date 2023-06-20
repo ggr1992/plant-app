@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, SafeAreaView, StyleSheet, Text } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { db } from "../../Firebase_Config/firebaseConfig";
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
@@ -62,27 +62,39 @@ export const CalendarScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Calendar
-        onDayPress={handleDayPress}
-        style={styles.calendar}
-        markingType="period"
-        markedDates={markedDates}
-      />
-      {selectedTasks.length > 0 && (
-        <View style={styles.taskContainer}>
-          <Text style={styles.taskTitle}>Tasks for {selectedDate}:</Text>
-          {selectedTasks.map((task: string, index: number) => (
-            <Text key={index} style={styles.taskText}>{task}</Text>
-          ))}
+    <View style={styles.page}>
+      <SafeAreaView style={styles.areaView}>
+        <View style={styles.container}>
+          <Calendar
+            onDayPress={handleDayPress}
+            style={styles.calendar}
+            markingType="period"
+            markedDates={markedDates}
+          />
+          {selectedTasks.length > 0 && (
+            <View style={styles.taskContainer}>
+              <Text style={styles.taskTitle}>Tasks for {selectedDate}:</Text>
+              {selectedTasks.map((task: string, index: number) => (
+                <Text key={index} style={styles.taskText}>{task}</Text>
+              ))}
+            </View>
+          )}
         </View>
-      )}
+      </SafeAreaView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  page: {
+    backgroundColor: '#ffffff',
+    height: '100%'
+  },
+  areaView: {
+    height: '89.5%'
+  },
 	container: {
+    height: '100%',
 	  flex: 1,
 	  backgroundColor: '#ffffff',
 	},

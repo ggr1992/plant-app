@@ -143,13 +143,6 @@ export function AddPlantScreen({ navigation, route }) {
 					{!selectedPlant && (
 						<Text style={{ fontFamily: 'BDO-Grotesk-Med', fontSize: 16 }}>Select a plant to continue...</Text>
 					)}
-					{/* {selectedPlant && (
-						<Pressable onPress={addPlant}>
-							<View style={styles.button}>
-								<Text style={{...styles.buttonText, color: 'green'}}>Add plant</Text>
-							</View>
-						</Pressable>
-					)} */}
 					<Pressable
 						onPress={() => {
 							setSearchTerm('')
@@ -173,7 +166,7 @@ export function AddPlantScreen({ navigation, route }) {
 
 const styles = StyleSheet.create({
 	page: {
-		backgroundColor: 'black',
+		backgroundColor: 'white',
 		height: '100%'
 	},
 	contentWrapper: {
@@ -187,7 +180,7 @@ const styles = StyleSheet.create({
 		borderRadius: 15,
 		height: '100%',
 		alignItems: 'center',
-		paddingTop: 20
+		paddingTop: 40
 	},
 	container: {
 		width: '95%',
