@@ -13,9 +13,10 @@ import { Camera, CameraType, FlashMode } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import { Entypo } from "@expo/vector-icons";
 import { useFonts } from "expo-font";
-import { identifyPlant } from "../utils/utils";
 import { queryByScientificName } from "../utils/api";
 import { capitalise } from "../utils/capitalise";
+import { manipulateAsync, FlipType, SaveFormat } from "expo-image-manipulator";
+import { identifyPlantFromPlantId } from "../utils/utils";
 
 export function IdentifyPlantScreen({ navigation }) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
@@ -71,15 +72,18 @@ export function IdentifyPlantScreen({ navigation }) {
 
   useEffect(() => {
     if (isLoading && image) {
-      identifyPlant(image, "plantid")
-        .then((results) => {
-          setResults(results.slice(0, 5));
-          setIsLoading(false);
-        })
-        .catch((err) => {
-          setIsLoading(false);
-          setImage(null);
-        });
+      setIsLoading(true);
+      setTimeout(() => {
+        identifyPlantFromPlantId(image)
+          .then((results) => {
+            setResults(results.slice(0, 5));
+            setIsLoading(false);
+          })
+          .catch((err) => {
+            setIsLoading(false);
+            setImage(null);
+          });
+      }, 3000);
     }
   }, [image, isLoading]);
 
@@ -93,18 +97,21 @@ export function IdentifyPlantScreen({ navigation }) {
   }, []);
 
   const takePicture = async () => {
+    setImage(null);
     if (cameraRef) {
       try {
-        const options = {
-          quality: 0.5,
-          maxWidth: 1000,
-          maxHeight: 1000,
-          base64: true,
-          skipProcessing: true,
-        };
-        const data = await cameraRef.current.takePictureAsync(options);
-        setImage(data);
         setIsLoading(true);
+        const data = await cameraRef.current.takePictureAsync({ base64: true });
+        const compressedImage = await manipulateAsync(
+          data.uri,
+          [{ resize: { width: 600 } }],
+          {
+            compress: 0.5,
+            format: SaveFormat.JPEG,
+            base64: true,
+          }
+        );
+        setImage(compressedImage);
         setErrorMsg("");
       } catch (err) {
         setErrorMsg("Could not identify plant! Please try again...");
@@ -284,12 +291,18 @@ const styles = StyleSheet.create({
     marginTop: 600,
   },
   takePictureIcon: { height: 96, width: 96 },
-  errorMsg: { color: "red", fontFamily: 'BDO-Grotesk-Med' },
-  loadingBackgroundImage: { width: "100%", aspectRatio: 1 },
+  errorMsg: { color: "red", fontFamily: "BDO-Grotesk-Med" },
+  loadingBackgroundImage: {
+    width: "100%",
+    aspectRatio: 1,
+    resizeMode: "center",
+  },
   loadingAnimatedIcon: {
     position: "absolute",
-    bottom: 20,
-    right: 20,
+    width: 200,
+    resizeMode: "center",
+    right: 0,
+    bottom: -100,
     opacity: 0.6,
   },
   identifyingSubtext: {
