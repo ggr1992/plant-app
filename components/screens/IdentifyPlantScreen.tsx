@@ -172,7 +172,9 @@ export function IdentifyPlantScreen({ navigation }) {
         </Camera>
       ) : (
         <View>
-          {errorMsg.length > 0 && <Text style={errorMsg}>{errorMsg}</Text>}
+          {errorMsg.length > 0 && (
+            <Text style={styles.errorMsg}>{errorMsg}</Text>
+          )}
           {isLoading === true && (
             <View style={{ margin: 40 }}>
               <ImageBackground
