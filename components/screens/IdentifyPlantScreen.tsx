@@ -117,11 +117,24 @@ export function IdentifyPlantScreen({ navigation }) {
 	}
 
 	const addPlantManually = () => {
-		navigation.navigate('Add Plant')
+		navigation.navigate('App', {
+			screen: 'Add Plant Stack',
+			params: {
+				screen: 'Add Plant'
+			}
+		})
 	}
 
 	const pickThisPlant = (plant) => {
-		navigation.navigate('Add Plant', { plant })
+		navigation.navigate('App', {
+			screen: 'Add Plant Stack',
+			params: {
+				screen: 'Add Plant',
+				params: {
+					plant
+				}
+			}
+		})
 	}
 
 	if (hasCameraPermission === false) {
@@ -148,7 +161,7 @@ export function IdentifyPlantScreen({ navigation }) {
 					</TouchableOpacity>
 				</Camera>
 			) : (
-				<View style={{paddingTop: 25}}>
+				<View style={{ paddingTop: 25 }}>
 					{errorMsg.length > 0 && <Text style={{ color: 'red', fontWeight: 'bold' }}>{errorMsg}</Text>}
 					{isLoading === true && (
 						<View>
@@ -176,9 +189,9 @@ export function IdentifyPlantScreen({ navigation }) {
 					)}
 					{isLoading === false && resultsWithMatchedData.length > 0 && (
 						<ScrollView
-							style={{marginBottom: 20}}
+							style={{ marginBottom: 20 }}
 							contentContainerStyle={{
-								width: '100%',
+								width: '100%'
 							}}>
 							<Text style={{ fontFamily: 'BDO-Grotesk-Reg', fontSize: 30, marginBottom: 10, textAlign: 'center' }}>
 								Matches
@@ -253,7 +266,7 @@ export function IdentifyPlantScreen({ navigation }) {
 									height: 40,
 									flexDirection: 'row',
 									justifyContent: 'center',
-									alignItems: 'center',
+									alignItems: 'center'
 								}}>
 								<Entypo name='camera' size={28} color={'#333'} />
 								<Text

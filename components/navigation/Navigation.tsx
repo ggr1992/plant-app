@@ -22,8 +22,8 @@ const LoginPageStack = createNativeStackNavigator()
 export function LoginPageStackNavigator() {
 	return (
 		<LoginPageStack.Navigator initialRouteName='App'>
-			<LoginPageStack.Screen name='Login Page' component={LoginScreen} options={{headerShown: false}}/>
-			<LoginPageStack.Screen name='App' component={TabNavigator} options={{headerShown: false}}/>
+			<LoginPageStack.Screen name='Login Page' component={LoginScreen} options={{ headerShown: false }} />
+			<LoginPageStack.Screen name='App' component={TabNavigator} options={{ headerShown: false }} />
 		</LoginPageStack.Navigator>
 	)
 }
@@ -111,10 +111,13 @@ export function TabNavigator() {
 	)
 }
 
-
 export function AddPlantStackNavigator() {
 	return (
 		<AddPlantStack.Navigator initialRouteName='Add Plant'>
+			<AddPlantStack.Screen
+				name='App'
+				component={TabNavigator}
+				options={{ headerShown: false }}></AddPlantStack.Screen>
 			<AddPlantStack.Screen
 				name='Add Plant'
 				component={AddPlantScreen}
