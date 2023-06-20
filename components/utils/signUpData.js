@@ -3,12 +3,15 @@ import { createUserWithEmailAndPassword, signInWithPopup, signOut, signInWithEma
 import { setDoc, doc } from "firebase/firestore";
 import { db } from "../../Firebase_Config/firebaseConfig";
 
-export function signUp(email, password, location) {
-  return createUserWithEmailAndPassword(auth, email, password)
+export function signUp(email, password, location,userName,avatar) {
+  
+  return createUserWithEmailAndPassword(auth, email, password,avatar,userName)
     .then(() => {
       console.log('hello')
       return setDoc(doc(db, "Users", email, "Profile", "userData"), {
-        "Location": location
+        "Location": location,
+        "Username": userName,
+        "Avatar": avatar
       })
     })
 }
