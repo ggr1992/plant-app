@@ -6,7 +6,7 @@ import { useContext } from "react";
 function addTaskToUser(date, task, nickName) {
   //  const { userEmail } = useContext(UserContext)
     
-   date = "2023-06-1";
+   date = "2023-06-01";
    task = "test8";
    nickName = "Bubbles";
   const orderData = { 

@@ -3,13 +3,16 @@ import { doc, setDoc, arrayRemove } from "firebase/firestore";
 import { UserContext } from "../context/User";
 import { useContext } from "react";
 
-function removeTask(date, { task }) {
+function removeTask(date, { task }, nickName) {
   // const { userEmail } = useContext(UserContext)
   console.log(date);
   console.log(task);
+  nickName = "Bubbles";
 
   const orderData = {
-    task: arrayRemove(task),
+    [nickName] : {
+      task: arrayRemove(task),
+    }
   };
 
   return setDoc(doc(db, "Users", "Bill", "Schedule", date), orderData, {
