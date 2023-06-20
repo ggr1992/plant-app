@@ -142,7 +142,7 @@ export function IdentifyPlantScreen({ navigation }) {
 							alignItems: 'center',
 							marginTop: 600
 						}}>
-						<Image style={{ height: 100, width: 100 }} source={require('../../assets/circle.png')} />
+						<Image style={{ height: 96, width: 96 }} source={require('../../assets/circle.png')} />
 					</TouchableOpacity>
 				</Camera>
 			) : (
