@@ -2,13 +2,14 @@ const getUserDoc = require("../components/utils/getUserDoc");
 const getPlantInfo = require("../components/utils/getPlantsInfo");
 const addPlantToUser = require("../components/utils/addPlantToUser");
 const getAllPlantNames = require("../components/utils/getAllPlantNames");
-const queryByScientificName = require("../components/utils/queryByScientificName");
+//const queryByScientificName = require("../components/utils/queryByScientificName");
 const signUp = require("../components/utils/signUpData");
 const signIn = require("../components/utils/signInUser");
 
 import { db, auth } from "../Firebase_Config/firebaseConfig";
 import { setDoc, doc, getDoc } from "firebase/firestore";
 import exactScienticNameSearch from "../components/utils/exactScienticNameSearch";
+import addTaskToUser from "../components/utils/addTaskToUser";
 
 afterEach(() => {
   const currentTestName = expect.getState().currentTestName.trim();
@@ -217,3 +218,9 @@ describe("exactScienticNameSearch", () => {
     expect(result.plant.scientific_name[0]).toEqual(name);
   });
 });
+describe.only('CalenderTesting' , () => {
+ test('', async () => {
+  const result = await addTaskToUser()
+  console.log(result)
+ })
+})

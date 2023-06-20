@@ -19,7 +19,9 @@ export const CalendarScreen: React.FC = () => {
         const markedDatesData: { [date: string]: any } = {};
         querySnapshot.forEach((doc) => {
           const date = doc.id;
+          console.log(date)
           const markedData = doc.data();
+          console.log(markedData)
           markedDatesData[date] = {
             marked: true,
             dotColor: markedData.dotColor, // Assuming dotColor field exists in the database
@@ -46,7 +48,7 @@ export const CalendarScreen: React.FC = () => {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
 		
-        const tasks = docSnap.data().task;
+        const tasks = docSnap.data().Bubbles.task;
         if (tasks && Array.isArray(tasks) && tasks.length > 0) {
           setSelectedTasks(tasks);
         } else {

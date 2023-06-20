@@ -3,15 +3,19 @@ import { doc, setDoc, arrayUnion } from "firebase/firestore";
 import { UserContext } from '../context/User'
 import { useContext } from "react";
 
-function addTaskToUser(date, task) {
-    const { userEmail } = useContext(UserContext)
+function addTaskToUser(date, task, nickName) {
+  //  const { userEmail } = useContext(UserContext)
+    
    date = "2023-06-1";
    task = "test8";
-  const orderData = {
-    task: arrayUnion(task),
+   nickName = "Bubbles";
+  const orderData = { 
+    [nickName] : {
+      task: arrayUnion(task),
+    }
   };
 
-  return setDoc(doc(db, "Users", userEmail, "Schedule", date), orderData, {
+  return setDoc(doc(db, "Users", 'Bill', "Schedule", date), orderData, {
     merge: true,
   })
     .then(() => {
