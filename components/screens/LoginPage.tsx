@@ -50,6 +50,7 @@ export function LoginScreen({ navigation }) {
         setEmailLogin("");
         setPasswordSignUp("");
         setPassword("");
+
         navigation.navigate("App");
       })
       .catch((error) => {
