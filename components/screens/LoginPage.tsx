@@ -245,8 +245,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   backgroundImage: {
-    flex: 1,
-    marginTop: 50,
+    width: 400,
+    aspectRatio: 1,
+    resizeMode: "contain",
   },
 });
 
