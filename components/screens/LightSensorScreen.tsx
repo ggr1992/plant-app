@@ -13,8 +13,7 @@ const conditionMap = {
   500: {
     image: require("../../assets/light-deep-shade.png"),
     name: "Deep Shade",
-    description:
-      "Low light intensity. This is almost deep-shade. Not appropriate for most plants.",
+    description: "Low light intensity. Not appropriate for most plants.",
   },
   1000: {
     image: require("../../assets/light-full-shade.png"),
@@ -24,7 +23,7 @@ const conditionMap = {
   },
   2000: {
     image: require("../../assets/light-part-shade.png"),
-    name: "Indirect Sunslight",
+    name: "Indirect Sunlight",
     description:
       "Bright but indirect sunlight. This may produce a defined shadow. Appropriate for plants that require indirect sunlight.",
   },
@@ -32,7 +31,7 @@ const conditionMap = {
     image: require("../../assets/light-half-sun.png"),
     name: "Bright Light",
     description:
-      "This light intensity is about 40% of midday sun as well as direct light coming through windows. This is considered bright light. It is ideal for many plants that require good and consistent light intensity.",
+      "This light intensity is about 40% of midday sun as well as direct light coming through windows. Ideal for plants that require good and consistent light intensity.",
   },
   5000: {
     image: require("../../assets/light-half-sun.png"),
@@ -240,6 +239,6 @@ const styles = StyleSheet.create({
     color: "#e59700",
     fontWeight: "bold",
   },
-  conditionDescription: { textAlign: "center", fontSize: 16 },
+  conditionDescription: { textAlign: "center", fontSize: 16, height: 60 },
   buttonText: { color: "white" },
 });
