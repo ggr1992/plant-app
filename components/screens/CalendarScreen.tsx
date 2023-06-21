@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Text, Button , TouchableOpacity, TextInput} from "react-native";
-import { Calendar } from "react-native-calendars";
+import { Calendar , CalendarUtils} from "react-native-calendars";
 import { db } from "../../Firebase_Config/firebaseConfig";
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import removeTask from "../utils/removeTaskFromUser";
@@ -63,6 +63,7 @@ export const CalendarScreen: React.FC = () => {
             if(markedData.task.length > 0) {
               markedDatesData[date]= {
                 marked: true,
+                selectedColor: 'blue'
                 //dotColor: markedData.nickName.dotColor, // Assuming dotColor field exists in the database
               //  task: markedData.nickName.task, // Assuming task field exists in the database
               }; 
@@ -149,12 +150,27 @@ export const CalendarScreen: React.FC = () => {
         </View>
       )}
       </View>
+      
         <Calendar
           onDayPress={handleDayPress}
-          style={styles.calendar}
-          markingType="period"
+          
+          // enableSwipeMonths
+          theme={{
+            backgroundColor: '#E9EBEC',
+            calendarBackground: '#E9EBEC',
+            textSectionTitleColor: '#b6c1cd',
+            selectedDayBackgroundColor: '#00adf5',
+            selectedDayTextColor: '#8DC267',
+            todayTextColor: '#8DC267',
+            dayTextColor: '#2d4150',
+            textDisabledColor: '#d9e'
+          }}
+         // style={styles.calendar}    
           markedDates={markedDates}
-        />
+          
+          />
+
+     
         {selectedTasks.length > 0 && (
           <View style={styles.taskContainer}>
             <Text style={styles.taskTitle}>Tasks for {selectedDate}:</Text>
@@ -212,6 +228,8 @@ const styles = StyleSheet.create({
 	},
 	calendar: {
 	  marginTop: 20,
+    borderWidth: 1,
+    borderColor: 'gray',
 	},
 	taskContainer: {
 	  alignItems: 'center',
