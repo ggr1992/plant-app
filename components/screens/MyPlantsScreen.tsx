@@ -13,13 +13,15 @@ import {
 import getUserDoc from "../utils/getUserDoc";
 import { UserContext } from "../context/User";
 
+
 export function MyPlantsScreen({ navigation }) {
+  const { userEmail } = useContext(UserContext)
   const [loading, setLoading] = useState(true);
   const [savedPlants, setSavedPlants] = useState([]);
   let scrollViewRef = useRef(null);
 
   useEffect(() => {
-    let name = "Bill";
+    let name = userEmail;
     getUserDoc(name).then((plants: {}) => {
       const arr = [];
       Object.keys(plants).forEach((plant) => {

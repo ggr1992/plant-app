@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { View, SafeAreaView, StyleSheet, Text } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { db } from "../../Firebase_Config/firebaseConfig";
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
-
+import { UserContext } from '../context/User'
 
 export const CalendarScreen: React.FC = () => {
+  const { userEmail } = useContext(UserContext)
   const [markedDates, setMarkedDates] = useState<{ [date: string]: any }>({});
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
@@ -15,7 +16,7 @@ export const CalendarScreen: React.FC = () => {
     // Fetch the marked dates from Firestore
     const fetchMarkedDates = async () => {
       try {
-		const querySnapshot = await getDocs(collection(db, 'Users', "Bill", "Schedule"));
+		const querySnapshot = await getDocs(collection(db, 'Users', userEmail, "Schedule"));
         const markedDatesData: { [date: string]: any } = {};
         querySnapshot.forEach((doc) => {
           const date = doc.id;
@@ -42,7 +43,7 @@ export const CalendarScreen: React.FC = () => {
 	  
 	  try {
 		  const selectedDate = day.dateString;
-		  const docRef = doc(db, 'Users', "Bill", "Schedule", selectedDate);
+		  const docRef = doc(db, 'Users', userEmail, "Schedule", selectedDate);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
 		
