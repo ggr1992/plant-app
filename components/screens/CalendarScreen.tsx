@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Text, Button , TouchableOpacity, TextInput} from "react-native";
+import { View, SafeAreaView, StyleSheet, Text, Button , TouchableOpacity, TextInput} from "react-native";
 import { Calendar , CalendarUtils} from "react-native-calendars";
 import { db } from "../../Firebase_Config/firebaseConfig";
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
@@ -130,98 +130,105 @@ export const CalendarScreen: React.FC = () => {
   }
 
   return (
-    
-    <View style={styles.container}>
-       <View>
-      <TouchableOpacity onPress={handleDropdownToggle} >
-        <Text style={styles.dropdownText}>{selectedNickname || 'Select your plant'}</Text>
-      </TouchableOpacity>
-
-      {isVisible && (
-        <View>
-          {nickNames.map((nickName) => (
-            <TouchableOpacity
-              key={nickName}
-              onPress={() => handleDropdownSelect(nickName)}
-            >
-              <Text>{nickName}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
-      </View>
-      
-        <Calendar
-          onDayPress={handleDayPress}
-          
-          // enableSwipeMonths
-          theme={{
-            backgroundColor: '#E9EBEC',
-            calendarBackground: '#E9EBEC',
-            textSectionTitleColor: '#b6c1cd',
-            selectedDayBackgroundColor: '#00adf5',
-            selectedDayTextColor: '#8DC267',
-            todayTextColor: '#8DC267',
-            dayTextColor: '#2d4150',
-            textDisabledColor: '#d9e'
-          }}
-         // style={styles.calendar}    
-          markedDates={markedDates}
-          
-          />
-
-     
-        {selectedTasks.length > 0 && (
-          <View style={styles.taskContainer}>
-            <Text style={styles.taskTitle}>Tasks for {selectedDate}:</Text>
-            {selectedTasks.map((task: string, index: number) => (<View style={styles.taskText} key={index}>
-              <Text  style={styles.taskText}>{task}</Text>
-        <Button title="Delete Task" onPress={()=>{onPress({task},index)}}/>
-        </View>
-
-            ))}
-            
+    <View style={styles.page}>
+      <SafeAreaView style={styles.containerWrapper}>
+        <View style={styles.container}>
+           <View>
+          <TouchableOpacity onPress={handleDropdownToggle} >
+            <Text style={styles.dropdownText}>{selectedNickname || 'Select your plant'}</Text>
+          </TouchableOpacity>
+          {isVisible && (
+            <View>
+              {nickNames.map((nickName) => (
+                <TouchableOpacity
+                  key={nickName}
+                  onPress={() => handleDropdownSelect(nickName)}
+                >
+                  <Text>{nickName}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
           </View>
-      
-      )}
-    <View>
-    {selectedDate /*&& selectedNickname */? (
-						<TouchableOpacity style={styles.addTaskButton} onPress={handleDropdownTasks}>
-              <Text>Add a schedule for {selectedNickname} starting from {selectedDate}.</Text>
-            </TouchableOpacity>
-					) : (
-						null
-					)}
-      
-    </View>
-    <View>
-    {isVisibleTasks ? (			
-              <>
-              <Text>How often do you want to water {selectedNickname} :</Text>
-              <TextInput
-              placeholder="enter days here"
-              onChangeText={(text) => setWateringDays(text)}
-              >      
-              </TextInput>
-              <TextInput
-              placeholder="How many times"
-              onChangeText={(text) => setRepeatedDays(text)}
-              >             
-              </TextInput>
-              <Text>Days</Text>
-              <TouchableOpacity style={styles.addTaskButton}  onPress={addATask}>
-							<Text >Confirm</Text>
-						</TouchableOpacity>
-              </>      
-					) : (
-						null
-					)}
-    </View>
+        
+            <Calendar
+              onDayPress={handleDayPress}
+        
+              // enableSwipeMonths
+              theme={{
+                backgroundColor: '#E9EBEC',
+                calendarBackground: '#E9EBEC',
+                textSectionTitleColor: '#b6c1cd',
+                selectedDayBackgroundColor: '#00adf5',
+                selectedDayTextColor: '#8DC267',
+                todayTextColor: '#8DC267',
+                dayTextColor: '#2d4150',
+                textDisabledColor: '#d9e'
+              }}
+             // style={styles.calendar}
+              markedDates={markedDates}
+        
+              />
+        
+            {selectedTasks.length > 0 && (
+              <View style={styles.taskContainer}>
+                <Text style={styles.taskTitle}>Tasks for {selectedDate}:</Text>
+                {selectedTasks.map((task: string, index: number) => (<View style={styles.taskText} key={index}>
+                  <Text  style={styles.taskText}>{task}</Text>
+            <Button title="Delete Task" onPress={()=>{onPress({task},index)}}/>
+            </View>
+                ))}
+        
+              </View>
+        
+          )}
+        <View>
+        {selectedDate /*&& selectedNickname */? (
+                    <TouchableOpacity style={styles.addTaskButton} onPress={handleDropdownTasks}>
+                  <Text>Add a schedule for {selectedNickname} starting from {selectedDate}.</Text>
+                </TouchableOpacity>
+                  ) : (
+                    null
+                  )}
+        
+        </View>
+        <View>
+        {isVisibleTasks ? (
+                  <>
+                  <Text>How often do you want to water {selectedNickname} :</Text>
+                  <TextInput
+                  placeholder="enter days here"
+                  onChangeText={(text) => setWateringDays(text)}
+                  >
+                  </TextInput>
+                  <TextInput
+                  placeholder="How many times"
+                  onChangeText={(text) => setRepeatedDays(text)}
+                  >
+                  </TextInput>
+                  <Text>Days</Text>
+                  <TouchableOpacity style={styles.addTaskButton}  onPress={addATask}>
+                      <Text >Confirm</Text>
+                    </TouchableOpacity>
+                  </>      
+                  ) : (
+                    null
+                  )}
+        </View>
+        </View>
+      </SafeAreaView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  page: {
+    height: '100%',
+    backgroundColor: '#ffffff'
+  },
+  containerWrapper: {
+    height: '89.5%',
+  },
 	container: {
 	  flex: 1,
 	  backgroundColor: '#ffffff',
