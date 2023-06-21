@@ -8,7 +8,7 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Pressable,
+  RefreshControl,
   ImageBackground,
 } from "react-native";
 
@@ -22,6 +22,7 @@ export function MyPlantsScreen({ navigation }) {
   const { userEmail } = useContext(UserContext);
   const [loading, setLoading] = useState(true);
   const [savedPlants, setSavedPlants] = useState([]);
+  const [refreshing, setRefreshing] = React.useState(false);
 
   const [fontsLoaded] = useFonts({
     "BDO-Grotesk-Light": require("../../assets/BDOGrotesk-Light.ttf"),
@@ -29,6 +30,13 @@ export function MyPlantsScreen({ navigation }) {
     "BDO-Grotesk-Med": require("../../assets/BDOGrotesk-Medium.ttf"),
     "BDO-Grotesk-Bold": require("../../assets/BDOGrotesk-Bold.ttf"),
   });
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  }, []);
 
   useEffect(() => {
     getUserDoc(userEmail)
@@ -39,18 +47,30 @@ export function MyPlantsScreen({ navigation }) {
             plantsArr.push(plants[plant]);
           });
         }
+        plantsArr.sort((a, b) => {
+          const nicknameA = a.nickname.toLowerCase();
+          const nicknameB = b.nickname.toLowerCase();
+          if (nicknameA > nicknameB) return 1;
+          if (nicknameA < nicknameB) return -1;
+          return 0;
+        });
         setLoading(false);
         setSavedPlants(plantsArr);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [refreshing]);
 
   return (
     <>
       <Text style={styles.header}>My Plants</Text>
-      <ScrollView style={styles.container}>
+      <ScrollView
+        style={styles.container}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         {savedPlants.length === 0 && (
           <Text
             style={{
