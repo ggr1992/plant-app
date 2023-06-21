@@ -1,6 +1,7 @@
 import { FC, useState, useEffect, useContext } from 'react'
-import { View, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, Button } from 'react-native'
+import { View, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, Button, Pressable } from 'react-native'
 import { Calendar } from 'react-native-calendars'
+import { useFonts } from 'expo-font'
 import { db } from '../../Firebase_Config/firebaseConfig'
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore'
 import removeTask from '../utils/removeTaskFromUser'
@@ -10,7 +11,7 @@ import dayjs from 'dayjs'
 import { UserContext } from '../context/User'
 dayjs().format()
 
-import Icon from 'react-native-vector-icons/FontAwesome'
+import Icon from 'react-native-vector-icons/AntDesign'
 
 export const CalendarScreen: FC = () => {
 	const { userEmail } = useContext(UserContext)
@@ -21,9 +22,16 @@ export const CalendarScreen: FC = () => {
 	const [selectedNickname, setSelectedNickname] = useState(null)
 	const [wateringDays, setWateringDays] = useState<number>(0)
 	const [repeatedDays, setRepeatedDays] = useState<number>(0)
-  
-  const [savedPlantsVisible, setSavedPlantsVisible] = useState(false)
-  const [addTasksVisible, setAddTasksVisible] = useState(false)
+
+	const [savedPlantsVisible, setSavedPlantsVisible] = useState(false)
+	const [addTasksVisible, setAddTasksVisible] = useState(false)
+
+	const [fontsLoaded] = useFonts({
+		'BDO-Grotesk-Light': require('../../assets/BDOGrotesk-Light.ttf'),
+		'BDO-Grotesk-Reg': require('../../assets/BDOGrotesk-Regular.ttf'),
+		'BDO-Grotesk-Med': require('../../assets/BDOGrotesk-Medium.ttf'),
+		'BDO-Grotesk-Bold': require('../../assets/BDOGrotesk-Bold.ttf')
+	})
 
 	let alteredDate = dayjs(selectedDate).add(wateringDays, 'day').format()
 	const slicedDate = alteredDate.slice(0, 10)
@@ -34,32 +42,32 @@ export const CalendarScreen: FC = () => {
 		})
 	}, [])
 
-  function addATask() {
-    // if repeat counter = sliced date every time this happens
-    if (!selectedNickname) {
-      return
-    }
-    let counter = slicedDate
-    const startDate = dayjs(selectedDate).format().slice(0, 10)
-    let water = `Water ${selectedNickname}`
-    addTaskToUser(startDate, water, selectedNickname)
-    setMarkedDates({ ...markedDates, [counter]: { marked: true } })
-    for (let i = 1; i < repeatedDays; i++) {
-      let markedDatesObject = { ...markedDates } // Hasn't been tested if it doesn't work spread marked dated in line 122
-      let water = `Water ${selectedNickname}`
-      addTaskToUser(counter, water, selectedNickname)
-      setMarkedDates({ markedDatesObject, [counter]: { marked: true } })
-      counter = dayjs(counter).add(wateringDays, 'day').format().slice(0, 10)
-    }
-  }
+	function addATask() {
+		// if repeat counter = sliced date every time this happens
+		if (!selectedNickname) {
+			return
+		}
+		let counter = slicedDate
+		const startDate = dayjs(selectedDate).format().slice(0, 10)
+		let water = `Water ${selectedNickname}`
+		addTaskToUser(startDate, water, selectedNickname)
+		setMarkedDates({ ...markedDates, [counter]: { marked: true } })
+		for (let i = 1; i < repeatedDays; i++) {
+			let markedDatesObject = { ...markedDates } // Hasn't been tested if it doesn't work spread marked dated in line 122
+			let water = `Water ${selectedNickname}`
+			addTaskToUser(counter, water, selectedNickname)
+			setMarkedDates({ markedDatesObject, [counter]: { marked: true } })
+			counter = dayjs(counter).add(wateringDays, 'day').format().slice(0, 10)
+		}
+	}
+
+	//start of nested function component
 
 	interface DropdownProps {
 		label: string
 	}
 
 	function Dropdown({ label }: DropdownProps) {
-    
-
 		const togglePlantDropDown = () => {
 			setSavedPlantsVisible(!savedPlantsVisible)
 		}
@@ -75,19 +83,24 @@ export const CalendarScreen: FC = () => {
 
 		if (label === 'plant') {
 			return (
-				<TouchableOpacity style={styles.button} onPress={togglePlantDropDown}>
-					<Text style={styles.buttonText}>Select your plant</Text>
-					<Icon size={10} name='chevron-down' />
+				<Pressable onPress={togglePlantDropDown}>
+					<View style={styles.filterDropdown}>
+						<Text style={styles.buttonText}>{selectedNickname || 'Select your plant'}</Text>
+						<Icon size={30} name='down' />
+					</View>
 					{savedPlantsVisible && (
 						<View>
 							{nickNames.map((nickName) => (
-								<TouchableOpacity key={nickName} onPress={() => handleDropdownSelect(nickName)}>
+								<Pressable
+									style={styles.filterDropdownOptions}
+									key={nickName}
+									onPress={() => handleDropdownSelect(nickName)}>
 									<Text style={styles.dropdownText}>{nickName}</Text>
-								</TouchableOpacity>
+								</Pressable>
 							))}
 						</View>
 					)}
-				</TouchableOpacity>
+				</Pressable>
 			)
 		} else if (label === 'schedule') {
 			return (
@@ -103,12 +116,12 @@ export const CalendarScreen: FC = () => {
 							<TextInput
 								placeholder='enter days here'
 								keyboardType='number-pad'
-                value={String(wateringDays)}
+								value={String(wateringDays)}
 								onChangeText={(text) => setWateringDays(parseInt(text))}></TextInput>
 							<TextInput
 								placeholder='How many times'
 								keyboardType='number-pad'
-                value={String(repeatedDays)}
+								value={String(repeatedDays)}
 								onChangeText={(text) => setRepeatedDays(parseInt(text))}></TextInput>
 							<Text>Days</Text>
 							<TouchableOpacity style={styles.addTaskButton} onPress={addATask}>
@@ -120,6 +133,8 @@ export const CalendarScreen: FC = () => {
 			)
 		}
 	}
+
+	// end of nested function component
 
 	useEffect(() => {
 		// Fetch the marked dates from Firestore
@@ -179,11 +194,15 @@ export const CalendarScreen: FC = () => {
 		setSelectedTasks(selectedTasks.splice(index, 1))
 	}
 
+	if (!fontsLoaded) {
+		return null
+	}
+
 	return (
 		<View style={styles.page}>
 			<SafeAreaView style={styles.containerWrapper}>
 				<View style={styles.container}>
-					<View>
+					<View style={styles.button}>
 						<Dropdown label='plant' />
 						{/* <TouchableOpacity onPress={handleDropdownToggle} >
             <Text style={styles.dropdownText}>{selectedNickname || 'Select your plant'}</Text>
@@ -201,23 +220,24 @@ export const CalendarScreen: FC = () => {
             </View>
           )} */}
 					</View>
-
-					<Calendar
-						onDayPress={handleDayPress}
-						// enableSwipeMonths
-						theme={{
-							backgroundColor: '#E9EBEC',
-							calendarBackground: '#E9EBEC',
-							textSectionTitleColor: '#b6c1cd',
-							selectedDayBackgroundColor: '#00adf5',
-							selectedDayTextColor: '#8DC267',
-							todayTextColor: '#8DC267',
-							dayTextColor: '#2d4150',
-							textDisabledColor: '#d9e'
-						}}
-						// style={styles.calendar}
-						markedDates={markedDates}
-					/>
+					<View style={styles.calendarContainer}>
+						<Calendar
+							onDayPress={handleDayPress}
+							// enableSwipeMonths
+							theme={{
+								backgroundColor: '#E9EBEC',
+								calendarBackground: '#E9EBEC',
+								textSectionTitleColor: '#b6c1cd',
+								selectedDayBackgroundColor: '#00adf5',
+								selectedDayTextColor: '#8DC267',
+								todayTextColor: '#8DC267',
+								dayTextColor: '#2d4150',
+								textDisabledColor: '#d9e'
+							}}
+							// style={styles.calendar}
+							markedDates={markedDates}
+						/>
+					</View>
 
 					{selectedTasks.length > 0 && (
 						<View style={styles.taskContainer}>
@@ -256,13 +276,42 @@ const styles = StyleSheet.create({
 		backgroundColor: '#ffffff',
 		alignContent: 'center'
 	},
-	button: {
-		width: 200,
-		borderWidth: 5
+	filterDropdownContainer: {
+		marginTop: 20
 	},
-	buttonText: {},
-	calendar: {
+	filterDropdown: {
+		flexDirection: 'row',
+		justifyContent: 'space-evenly',
+		alignItems: 'center'
+	},
+	filterDropdownOptions: {
+		borderWidth: 2,
+		width: '100%',
+		alignItems: 'center',
+		position: 'absolute',
+		backgroundColor: 'white',
+		bottom: -50,
+	},
+	button: {
 		marginTop: 20,
+		zIndex: 2,
+		borderWidth: 2,
+		borderRadius: 50,
+		borderColor: '#009172',
+		width: '90%',
+		alignSelf: 'center',
+		justifyContent: 'center',
+		height: 60
+	},
+	buttonText: {
+		fontFamily: 'BDO-Grotesk-Med',
+		fontSize: 20
+	},
+	calendarContainer: {
+		marginTop: 20,
+		zIndex: 1
+	},
+	calendar: {
 		borderWidth: 1,
 		borderColor: 'gray'
 	},
@@ -281,7 +330,8 @@ const styles = StyleSheet.create({
 		marginBottom: 5
 	},
 	dropdownText: {
-		fontSize: 14
+		fontSize: 20,
+		fontFamily: 'BDO-Grotesk-Reg',
 	},
 	addTaskButton: {
 		justifyContent: 'center',
