@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { View, SafeAreaView, StyleSheet, Text, Button , TouchableOpacity, TextInput} from "react-native";
-import { Calendar , CalendarUtils} from "react-native-calendars";
+import { FC, useState, useEffect, useContext } from "react";
+import { View, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, Button } from "react-native";
+import { Calendar } from "react-native-calendars";
 import { db } from "../../Firebase_Config/firebaseConfig";
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import removeTask from "../utils/removeTaskFromUser";
@@ -8,12 +8,12 @@ import getUserDoc from "../utils/getUserDoc";
 import addTaskToUser from "../utils/addTaskToUser";
 import dayjs from "dayjs";
 import { UserContext } from "../context/User";
-import { useContext } from "react";
 dayjs().format()
 
+import Icon from 'react-native-vector-icons/FontAwesome'
 
-export const CalendarScreen: React.FC = () => {
-  let { userEmail } = useContext(UserContext)
+export const CalendarScreen: FC = () => {
+  const { userEmail } = useContext(UserContext)
   const [markedDates, setMarkedDates] = useState<{ [date: string]: any }>({});
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
@@ -24,7 +24,6 @@ export const CalendarScreen: React.FC = () => {
   const [wateringDays, setWateringDays] = useState(0)
   const [repeatedDays, setRepeatedDays] = useState(0)
 
-  userEmail = 'Bill'
  let alteredDate = dayjs(selectedDate).add(wateringDays, 'day').format()
  const slicedDate = alteredDate.slice(0,10)
   const handleDropdownToggle = () => {
@@ -41,11 +40,45 @@ export const CalendarScreen: React.FC = () => {
   };
 
   useEffect(() => {
-    getUserDoc(userEmail).then((result) => {
+    getUserDoc(userEmail).then((result: object) => {
       setNickNames(Object.keys(result))
    })
   },[])
+
+  interface DropdownProps {
+    label: string, 
+    arr: object[]
+  }
  
+  function Dropdown({ label, arr }) {
+		const [savedPlantsVisible, setSavedPlantsVisible] = useState(false)
+
+		const togglePlantDropDown = () => {
+			setSavedPlantsVisible(!savedPlantsVisible)
+		}
+
+    if (label ==='Select your plant') {
+      return (
+        <TouchableOpacity style={styles.button} onPress={togglePlantDropDown}>
+          <Text style={styles.buttonText}>{label}</Text>
+          <Icon size={10} name='chevron-down' />
+          {savedPlantsVisible &&<View>
+                {nickNames.map((nickName) => (
+                  <TouchableOpacity
+                    key={nickName}
+                    onPress={() => handleDropdownSelect(nickName)}
+                  >
+                    <Text style={styles.dropdownText}>{nickName}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>}
+  
+        </TouchableOpacity>
+  
+      )
+
+    }
+	}
 
   useEffect(() => {
     // Fetch the marked dates from Firestore
@@ -109,7 +142,7 @@ export const CalendarScreen: React.FC = () => {
 
   function onPress ({task},index) {
    removeTask(selectedDate,{task},selectedNickname)
-   setSelectedTasks(selectedTasks.toSpliced(index,1))
+   setSelectedTasks(selectedTasks.splice(index,1))
   }
 
   function addATask () {
@@ -134,7 +167,8 @@ export const CalendarScreen: React.FC = () => {
       <SafeAreaView style={styles.containerWrapper}>
         <View style={styles.container}>
            <View>
-          <TouchableOpacity onPress={handleDropdownToggle} >
+            <Dropdown label='Select your plant' arr={nickNames} />
+           {/* <TouchableOpacity onPress={handleDropdownToggle} >
             <Text style={styles.dropdownText}>{selectedNickname || 'Select your plant'}</Text>
           </TouchableOpacity>
           {isVisible && (
@@ -148,7 +182,7 @@ export const CalendarScreen: React.FC = () => {
                 </TouchableOpacity>
               ))}
             </View>
-          )}
+          )} */}
           </View>
         
             <Calendar
@@ -198,12 +232,12 @@ export const CalendarScreen: React.FC = () => {
                   <Text>How often do you want to water {selectedNickname} :</Text>
                   <TextInput
                   placeholder="enter days here"
-                  onChangeText={(text) => setWateringDays(text)}
+                  onChangeText={(text) => setWateringDays(parseInt(text))}
                   >
                   </TextInput>
                   <TextInput
                   placeholder="How many times"
-                  onChangeText={(text) => setRepeatedDays(text)}
+                  onChangeText={(text) => setRepeatedDays(parseInt(text))}
                   >
                   </TextInput>
                   <Text>Days</Text>
@@ -232,7 +266,15 @@ const styles = StyleSheet.create({
 	container: {
 	  flex: 1,
 	  backgroundColor: '#ffffff',
+    alignContent: 'center'
 	},
+  button: {
+    width: 200,
+    borderWidth: 5,
+  },
+  buttonText: {
+
+  },
 	calendar: {
 	  marginTop: 20,
     borderWidth: 1,
