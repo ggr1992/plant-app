@@ -10,6 +10,7 @@ import getUserProfile from "../components/utils/getUser";
 import { db, auth } from "../Firebase_Config/firebaseConfig";
 import { setDoc, doc, getDoc } from "firebase/firestore";
 import exactScienticNameSearch from "../components/utils/exactScienticNameSearch";
+import addTaskToUser from "../components/utils/addTaskToUser";
 
 afterEach(() => {
   const currentTestName = expect.getState().currentTestName.trim();
@@ -218,7 +219,12 @@ describe("exactScienticNameSearch", () => {
     expect(result.plant.scientific_name[0]).toEqual(name);
   });
 });
-
+describe.only('CalenderTesting' , () => {
+ test('', async () => {
+  const result = await addTaskToUser()
+  console.log(result)
+ })
+})
 describe.only("UserProfile" , () => {
   test('' , async () => {
       const email = 'Charliestorer97@gmail.com'
