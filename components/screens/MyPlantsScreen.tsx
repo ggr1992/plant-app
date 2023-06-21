@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useEffect, useState, useRef } from "react";
 import {
   View,
+  SafeAreaView,
   Text,
   Image,
   StyleSheet,
@@ -10,14 +11,17 @@ import {
   Pressable,
 } from "react-native";
 import getUserDoc from "../utils/getUserDoc";
+import { UserContext } from "../context/User";
+
 
 export function MyPlantsScreen({ navigation }) {
+  const { userEmail } = useContext(UserContext)
   const [loading, setLoading] = useState(true);
   const [savedPlants, setSavedPlants] = useState([]);
   let scrollViewRef = useRef(null);
 
   useEffect(() => {
-    let name = "Bill";
+    let name = userEmail;
     getUserDoc(name).then((plants: {}) => {
       const arr = [];
       Object.keys(plants).forEach((plant) => {
@@ -35,66 +39,80 @@ export function MyPlantsScreen({ navigation }) {
   };
 
   return (
-    <View>
-      {loading ? (
-        <View style={styles.loadingContainer}>
-          <Text style={styles.loading}>Loading...</Text>
-        </View>
-      ) : (
-        <>
-          <ScrollView
-            contentContainerStyle={styles.contentContainer}
-            showsVerticalScrollIndicator={false}
-            ref={scrollViewRef}
-          >
-            {savedPlants.map((plant) => (
-              <Pressable
-                key={plant.id}
-                style={styles.tile}
-                onPress={() =>
-                  navigation.navigate("Plant Details", {
-                    plantId: plant.id,
-                  })
-                }
+    <View style={styles.page}>
+      <SafeAreaView style={styles.areaView}>
+        <View style={styles.mainSection}>
+          {loading ? (
+            <View style={styles.loadingContainer}>
+              <Text style={styles.loading}>Loading...</Text>
+            </View>
+          ) : (
+            <>
+              <ScrollView
+                contentContainerStyle={styles.contentContainer}
+                showsVerticalScrollIndicator={false}
+                ref={scrollViewRef}
               >
-                <View key={plant.id}>
-                  <View key={plant.common_name} style={styles.card}>
-                    <Text key={plant.nickname} style={styles.nickname}>
-                      {plant.nickname}
-                    </Text>
-                    <Image
-                      key={plant.name}
-                      source={{ uri: plant.Image }}
-                      style={styles.image}
-                    />
-                    <Text key={plant.common_name} style={styles.name}>
-                      {plant.common_name}
-                    </Text>
-                    <Text key={plant.type} style={styles.type}>
-                      {plant.scientific_name}
-                    </Text>
-                  </View>
-                </View>
-              </Pressable>
-            ))}
-          </ScrollView>
-        </>
-      )}
-      <TouchableOpacity style={styles.button} onPress={handleScrollToTop}>
-        <Text>Back to top</Text>
-      </TouchableOpacity>
+                {savedPlants.map((plant) => (
+                  <Pressable
+                    key={plant.id}
+                    style={styles.tile}
+                    onPress={() =>
+                      navigation.navigate("Plant Details", {
+                        plantId: plant.id,
+                      })
+                    }
+                  >
+                    <View key={plant.id}>
+                      <View key={plant.common_name} style={styles.card}>
+                        <Text key={plant.nickname} style={styles.nickname}>
+                          {plant.nickname}
+                        </Text>
+                        <Image
+                          key={plant.name}
+                          source={{ uri: plant.Image }}
+                          style={styles.image}
+                        />
+                        <Text key={plant.common_name} style={styles.name}>
+                          {plant.common_name}
+                        </Text>
+                        <Text key={plant.type} style={styles.type}>
+                          {plant.scientific_name}
+                        </Text>
+                      </View>
+                    </View>
+                  </Pressable>
+                ))}
+              </ScrollView>
+            </>
+          )}
+          <TouchableOpacity style={styles.button} onPress={handleScrollToTop}>
+            <Text>Back to top</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  page: {
+    height: '100%',
+    backgroundColor: 'white'
+  },
+  areaView: {
+    height: '89.5%'
+  },
+  mainSection: {
+    height: '100%'
+  },
   contentContainer: {
+    paddingTop: 10,
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-evenly",
     overflow: "visible",
-    backgroundColor: "lightgreen",
-    height: "100%",
+    backgroundColor: "white",
     rowGap: 20,
   },
   tile: {

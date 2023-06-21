@@ -5,6 +5,8 @@ const getAllPlantNames = require("../components/utils/getAllPlantNames");
 //const queryByScientificName = require("../components/utils/queryByScientificName");
 const signUp = require("../components/utils/signUpData");
 const signIn = require("../components/utils/signInUser");
+import getUserProfile from "../components/utils/getUser";
+
 import { db, auth } from "../Firebase_Config/firebaseConfig";
 import { setDoc, doc, getDoc } from "firebase/firestore";
 import exactScienticNameSearch from "../components/utils/exactScienticNameSearch";
@@ -222,4 +224,11 @@ describe.only('CalenderTesting' , () => {
   const result = await addTaskToUser()
   console.log(result)
  })
+})
+describe.only("UserProfile" , () => {
+  test('' , async () => {
+      const email = 'Charliestorer97@gmail.com'
+      const result = await getUserProfile(email);
+      console.log(result)
+  })
 })

@@ -264,6 +264,7 @@ const styles = StyleSheet.create({
     height: '89.5%',
   },
 	container: {
+    height: '100%',
 	  flex: 1,
 	  backgroundColor: '#ffffff',
     alignContent: 'center'
