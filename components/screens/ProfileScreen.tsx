@@ -1,54 +1,81 @@
-import { useContext, useEffect, useState } from "react";
-import { View, Text, Image, Pressable, StyleSheet } from "react-native";
-import getUserDoc from "../utils/getUserDoc";
-import { UserContext } from "../context/User";
+import { useContext, useEffect, useState } from 'react'
+import { View, Text, Image, Pressable, StyleSheet } from 'react-native'
+import { useFonts } from 'expo-font'
+import getUserDoc from '../utils/getUserDoc'
+import { UserContext } from '../context/User'
 
 export function ProfileScreen({ navigation }) {
-  const [successfullLogOut, setSuccessfulLogout] = useState<boolean>(false);
-  const { userEmail } = useContext(UserContext);
+	const [successfullLogOut, setSuccessfulLogout] = useState<boolean>(false)
+	const [buttonPressed, setButtonPressed] = useState(false)
 
-  if (!userEmail) {
-    return <Text style={styles.signInMessage}>Please Sign In!</Text>;
-  } else {
-    useEffect(() => {
-      if (successfullLogOut) {
-        setSuccessfulLogout(true);
-      } else {
-        getUserDoc(userEmail)
-        .then((result: object[]) => {
-          console.log(result)
-        })
-      }
-    }, [userEmail, successfullLogOut]);
+	const { userEmail } = useContext(UserContext)
 
-    const handleLogOut = () => {
-      setSuccessfulLogout(true);
-      navigation.navigate("Login Page");
-    };
+	const [fontsLoaded] = useFonts({
+		'BDO-Grotesk-Light': require('../../assets/BDOGrotesk-Light.ttf'),
+		'BDO-Grotesk-Reg': require('../../assets/BDOGrotesk-Regular.ttf'),
+		'BDO-Grotesk-Med': require('../../assets/BDOGrotesk-Medium.ttf'),
+		'BDO-Grotesk-Bold': require('../../assets/BDOGrotesk-Bold.ttf')
+	})
 
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Account email: {userEmail}</Text>
-        <Pressable style={styles.button} onPress={handleLogOut}>
-          <Text>Logout</Text>
-        </Pressable>
-      </View>
-    );
-  }
+	if (!userEmail) {
+		return <Text style={styles.signInMessage}>Please Sign In!</Text>
+	} else {
+		useEffect(() => {
+			if (successfullLogOut) {
+				setSuccessfulLogout(true)
+			}
+		}, [userEmail, successfullLogOut])
+
+		const handleLogOut = () => {
+			setSuccessfulLogout(true)
+			navigation.navigate('Login Page')
+		}
+
+		if (!fontsLoaded) {
+			return null
+		}
+
+		return (
+			<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', rowGap: 20 }}>
+				<Text style={styles.accountInfo}>
+					Account email:
+					<Text style={styles.accountInfoValue}> {userEmail}</Text>
+				</Text>
+				<Pressable
+					style={!buttonPressed ? styles.button : { ...styles.button, opacity: 0.7 }}
+					onPress={handleLogOut}
+					onPressIn={() => setButtonPressed(true)}
+          onPressOut={() => setButtonPressed(false)}>
+					<Text style={styles.buttonText}>Logout</Text>
+				</Pressable>
+			</View>
+		)
+	}
 }
 const styles = StyleSheet.create({
-  button: {
-    backgroundColor: "#2196F3",
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 4,
-    marginBottom: 10,
-  },
-  signInMessage: {
-    textAlign: "center",
-    fontSize: 30,
-    justifyContent: "center",
-    top: "50%",
-    fontWeight: "bold",
-  },
-});
+	accountInfo: {
+		fontFamily: 'BDO-Grotesk-Reg',
+    fontSize: 18
+	},
+	accountInfoValue: {
+		fontFamily: 'BDO-Grotesk-Light'
+	},
+	button: {
+		backgroundColor: '#2196F3',
+		paddingVertical: 9,
+		paddingHorizontal: 18,
+		borderRadius: 5
+	},
+	buttonText: {
+		fontFamily: 'BDO-Grotesk-Med',
+		fontSize: 18
+	},
+	signInMessage: {
+		fontFamily: 'BDO-Grotesk-Reg',
+		textAlign: 'center',
+		fontSize: 28,
+		justifyContent: 'center',
+		top: '50%',
+		fontWeight: 'bold'
+	}
+})
