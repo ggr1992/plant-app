@@ -9,173 +9,222 @@ import {
   ScrollView,
   TouchableOpacity,
   Pressable,
+  ImageBackground,
 } from "react-native";
+
+import { Entypo } from "@expo/vector-icons";
 import getUserDoc from "../utils/getUserDoc";
 import { UserContext } from "../context/User";
-
+import { useFonts } from "expo-font";
+import { capitalise } from "../utils/capitalise";
 
 export function MyPlantsScreen({ navigation }) {
-  const { userEmail } = useContext(UserContext)
+  const { userEmail } = useContext(UserContext);
   const [loading, setLoading] = useState(true);
   const [savedPlants, setSavedPlants] = useState([]);
-  let scrollViewRef = useRef(null);
+
+  const [fontsLoaded] = useFonts({
+    "BDO-Grotesk-Light": require("../../assets/BDOGrotesk-Light.ttf"),
+    "BDO-Grotesk-Reg": require("../../assets/BDOGrotesk-Regular.ttf"),
+    "BDO-Grotesk-Med": require("../../assets/BDOGrotesk-Medium.ttf"),
+    "BDO-Grotesk-Bold": require("../../assets/BDOGrotesk-Bold.ttf"),
+  });
 
   useEffect(() => {
-    let name = userEmail;
-    getUserDoc(name).then((plants: {}) => {
-      const arr = [];
-      Object.keys(plants).forEach((plant) => {
-        arr.push(plants[plant]);
+    getUserDoc(userEmail)
+      .then((plants: Object) => {
+        const plantsArr = [];
+        if (plants) {
+          Object.keys(plants).forEach((plant) => {
+            plantsArr.push(plants[plant]);
+          });
+        }
+        setLoading(false);
+        setSavedPlants(plantsArr);
+      })
+      .catch((err) => {
+        console.log(err);
       });
-      setLoading(false);
-      setSavedPlants(arr);
-    });
   }, []);
 
-  const handleScrollToTop = () => {
-    if (scrollViewRef.current) {
-      scrollViewRef.current.scrollTo({ y: 0, animated: true });
-    }
-  };
-
   return (
-    <View style={styles.page}>
-      <SafeAreaView style={styles.areaView}>
-        <View style={styles.mainSection}>
-          {loading ? (
-            <View style={styles.loadingContainer}>
-              <Text style={styles.loading}>Loading...</Text>
-            </View>
-          ) : (
-            <>
-              <ScrollView
-                contentContainerStyle={styles.contentContainer}
-                showsVerticalScrollIndicator={false}
-                ref={scrollViewRef}
+    <>
+      <Text style={styles.header}>My Plants</Text>
+      <ScrollView style={styles.container}>
+        {savedPlants.length === 0 && (
+          <Text
+            style={{
+              alignSelf: "center",
+              marginVertical: 20,
+              fontSize: 18,
+              textAlign: "center",
+              width: "60%",
+            }}
+          >
+            No saved plants found! Click the button below to add a plant to your
+            collection.
+          </Text>
+        )}
+        <View style={styles.plantCardWrapper}>
+          {savedPlants.map((item, index) => {
+            return (
+              <TouchableOpacity
+                key={index}
+                onPress={() =>
+                  navigation.navigate("Plant Details", {
+                    plantId: item.id,
+                  })
+                }
+                style={styles.plantCardTouchable}
               >
-                {savedPlants.map((plant) => (
-                  <Pressable
-                    key={plant.id}
-                    style={styles.tile}
-                    onPress={() =>
-                      navigation.navigate("Plant Details", {
-                        plantId: plant.id,
-                      })
-                    }
-                  >
-                    <View key={plant.id}>
-                      <View key={plant.common_name} style={styles.card}>
-                        <Text key={plant.nickname} style={styles.nickname}>
-                          {plant.nickname}
-                        </Text>
-                        <Image
-                          key={plant.name}
-                          source={{ uri: plant.Image }}
-                          style={styles.image}
-                        />
-                        <Text key={plant.common_name} style={styles.name}>
-                          {plant.common_name}
-                        </Text>
-                        <Text key={plant.type} style={styles.type}>
-                          {plant.scientific_name}
-                        </Text>
-                      </View>
-                    </View>
-                  </Pressable>
-                ))}
-              </ScrollView>
-            </>
-          )}
-          <TouchableOpacity style={styles.button} onPress={handleScrollToTop}>
-            <Text>Back to top</Text>
-          </TouchableOpacity>
+                <ImageBackground
+                  source={
+                    item.Image
+                      ? { uri: item.Image }
+                      : require("../../assets/image-not-found.jpg")
+                  }
+                  style={styles.plantCardBackgroundImage}
+                >
+                  <Text style={styles.plantCardName} numberOfLines={2}>
+                    {capitalise(item.nickname) ?? capitalise(item.common_name)}
+                  </Text>
+                  <Entypo
+                    name="magnifying-glass"
+                    size={48}
+                    color={"#333"}
+                    style={styles.addPlantIcon}
+                  />
+                </ImageBackground>
+              </TouchableOpacity>
+            );
+          })}
         </View>
-      </SafeAreaView>
-    </View>
+        <TouchableOpacity
+          style={{
+            marginBottom: 200,
+            marginTop: 60,
+            backgroundColor: "rgba(255,255,255,.4)",
+            borderWidth: 1,
+            borderColor: "rgba(0,0,0,.2)",
+            width: 180,
+            alignSelf: "center",
+            borderRadius: 20,
+          }}
+          onPress={() => navigation.navigate("Add Plant")}
+        >
+          <View style={styles.addPlantContainer}>
+            <Entypo
+              name="circle-with-plus"
+              size={60}
+              color={"#333"}
+              style={{
+                color: "#009172",
+                position: "absolute",
+                left: 5,
+                top: 5,
+              }}
+            />
+          </View>
+          <Text style={styles.addPlantHeader}>Add New Plant</Text>
+        </TouchableOpacity>
+      </ScrollView>
+      <Image
+        source={require("../../assets/bg-leaf.png")}
+        style={{
+          position: "absolute",
+          bottom: -300,
+          zIndex: -1,
+          transform: [{ scaleX: -1 }, { scaleY: 1 }],
+        }}
+      />
+      <Image
+        source={require("../../assets/bg-leaf2.png")}
+        style={{
+          position: "absolute",
+          top: -330,
+          right: -160,
+          zIndex: -1,
+          transform: [{ scaleX: 1 }, { scaleY: -1 }],
+        }}
+      />
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  page: {
-    height: '100%',
-    backgroundColor: 'white'
+  container: { padding: 20 },
+  searchInputContainer: {
+    paddingHorizontal: 15,
   },
-  areaView: {
-    height: '89.5%'
-  },
-  mainSection: {
-    height: '100%'
-  },
-  contentContainer: {
-    paddingTop: 10,
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-evenly",
-    overflow: "visible",
-    backgroundColor: "white",
-    rowGap: 20,
-  },
-  tile: {
-    width: "45%",
-    aspectRatio: 0.75,
-  },
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  name: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 5,
-  },
-  image: {
+  searchInput: {
     width: "100%",
-    height: "70%",
-    borderRadius: 10,
+    borderColor: "#009172",
+    borderWidth: 2,
+    borderRadius: 50,
+    height: 60,
     marginBottom: 10,
-  },
-  type: {
-    fontSize: 14,
+    padding: 10,
+    paddingHorizontal: 20,
+    color: "#00745b",
     fontWeight: "bold",
-  },
-  nickname: {
-    textAlign: "center",
-    fontSize: 16,
-    fontWeight: "bold",
-    marginTop: 10,
-  },
-  button: {
-    position: "absolute",
-    bottom: 100,
-    left: 10,
-    width: 120,
-    height: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "black",
-  },
-  loading: {
     fontSize: 20,
-    fontWeight: "bold",
-    textAlign: "center",
   },
-  loadingContainer: {
-    flex: 1,
+  searchInputClearIcon: {
+    position: "absolute",
+    right: 30,
+    top: 16,
+    color: "red",
+  },
+  addPlantHeader: {
+    alignSelf: "center",
+    fontSize: 20,
+    marginBottom: 10,
+    fontWeight: "bold",
+  },
+  addPlantDescription: { alignSelf: "center", textAlign: "center" },
+  addPlantContainer: {
+    width: 70,
+    aspectRatio: 1,
+    alignSelf: "center",
+  },
+  addPlantIcon: {
+    position: "absolute",
+    right: 4,
+    bottom: 4,
+    color: "rgba(255,255,255,.8)",
+  },
+  plantCardName: {
+    fontFamily: "BDO-Grotesk-Med",
+    backgroundColor: "rgba(0,0,0,.4)",
+    color: "#fff",
+    width: "100%",
+    fontSize: 16,
+    paddingBottom: 10,
+    position: "absolute",
+    top: 0,
+    paddingHorizontal: 10,
+  },
+  plantCardWrapper: {
+    width: "100%",
+    flexDirection: "row",
     justifyContent: "center",
-    alignItems: "center",
+    flexWrap: "wrap",
+  },
+  resultStatusMsg: { color: "#b0112b", alignSelf: "center", fontSize: 16 },
+  plantCardTouchable: {
+    width: 160,
+    aspectRatio: 1,
+    margin: 6,
+  },
+  plantCardBackgroundImage: {
+    width: "100%",
+    height: "100%",
+  },
+  header: {
+    marginTop: 100,
+    fontFamily: "BDO-Grotesk-Med",
+    fontSize: 36,
+    textAlign: "center",
+    color: "#009172",
   },
 });
