@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
     borderColor: "#009172",
     borderWidth: 2,
     borderRadius: 50,
-    height: 40,
+    height: 50,
     marginBottom: 10,
     padding: 10,
     paddingHorizontal: 20,
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   formButton: {
-    width: "60%",
+    width: 125,
     backgroundColor: "#009172",
     height: 40,
     alignItems: "center",
