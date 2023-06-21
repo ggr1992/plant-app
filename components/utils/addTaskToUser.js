@@ -4,14 +4,14 @@ import { UserContext } from "../context/User";
 import { useContext } from "react";
 
 function addTaskToUser(date, task, nickName) {
-  //  const { userEmail } = useContext(UserContext)
+    const { userEmail } = useContext(UserContext)
   const orderData = { 
     [nickName] : {
       task: arrayUnion(task),
     }
   };
 
-  return setDoc(doc(db, "Users", 'Bill', "Schedule", date), orderData, {
+  return setDoc(doc(db, "Users", userEmail, "Schedule", date), orderData, {
     merge: true,
   })
     .then(() => {

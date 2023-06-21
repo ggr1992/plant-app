@@ -7,10 +7,13 @@ import removeTask from "../utils/removeTaskFromUser";
 import getUserDoc from "../utils/getUserDoc";
 import addTaskToUser from "../utils/addTaskToUser";
 import dayjs from "dayjs";
+import { UserContext } from "../context/User";
+import { useContext } from "react";
 dayjs().format()
 
 
-export const CalendarScreen: React.FC = (nickName) => {
+export const CalendarScreen: React.FC = () => {
+  let { userEmail } = useContext(UserContext)
   const [markedDates, setMarkedDates] = useState<{ [date: string]: any }>({});
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
@@ -20,7 +23,8 @@ export const CalendarScreen: React.FC = (nickName) => {
   const [isVisibleTasks, setIsVisibleTasks] = useState(false);
   const [wateringDays, setWateringDays] = useState(0)
   const [repeatedDays, setRepeatedDays] = useState(0)
-  
+
+  userEmail = 'Bill'
  let alteredDate = dayjs(selectedDate).add(wateringDays, 'day').format()
  const slicedDate = alteredDate.slice(0,10)
   const handleDropdownToggle = () => {
@@ -37,7 +41,7 @@ export const CalendarScreen: React.FC = (nickName) => {
   };
 
   useEffect(() => {
-    getUserDoc('Bill').then((result) => {
+    getUserDoc(userEmail).then((result) => {
       setNickNames(Object.keys(result))
    })
   },[])
@@ -47,28 +51,31 @@ export const CalendarScreen: React.FC = (nickName) => {
     // Fetch the marked dates from Firestore
     const fetchMarkedDates = async () => {
       try {
-		const querySnapshot = await getDocs(collection(db, 'Users', "Bill", "Schedule"));
+		const querySnapshot = await getDocs(collection(db, 'Users', userEmail, "Schedule"));
         const markedDatesData: { [date: string]: any } = {};
         querySnapshot.forEach((doc) => {
           const date = doc.id;
-        
-          const markedData = doc.data()[selectedNickname];
+        let markedData
+         if(doc.data()[selectedNickname]) {
+          markedData = doc.data()[selectedNickname];
+         }      
           if(markedData) {
-            markedDatesData[date]= {
-              marked: true,
-              //dotColor: markedData.nickName.dotColor, // Assuming dotColor field exists in the database
-            //  task: markedData.nickName.task, // Assuming task field exists in the database
-            };           
-          }
+            if(markedData.task.length > 0) {
+              markedDatesData[date]= {
+                marked: true,
+                //dotColor: markedData.nickName.dotColor, // Assuming dotColor field exists in the database
+              //  task: markedData.nickName.task, // Assuming task field exists in the database
+              }; 
+            }
+           }
         });
         setMarkedDates(markedDatesData);
       } catch (error) {
         console.error('Error fetching marked dates:', error);
       }
     };
-
     fetchMarkedDates();
-  }, [selectedNickname]);
+  }, [selectedNickname,selectedTasks]);
   
   
   
@@ -78,7 +85,7 @@ export const CalendarScreen: React.FC = (nickName) => {
 	  
 	  try {
 		  const selectedDate = day.dateString;
-		  const docRef = doc(db, 'Users', "Bill", "Schedule", selectedDate);
+		  const docRef = doc(db, 'Users', userEmail, "Schedule", selectedDate);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists() && docSnap.data()[selectedNickname]) {
 		
@@ -106,11 +113,17 @@ export const CalendarScreen: React.FC = (nickName) => {
 
   function addATask () {
     // if repeat counter = sliced date every time this happens 
+    if(!selectedNickname) {return}
     let counter = slicedDate
-    for (let i= 0 ; i<= repeatedDays; i++) {
+    const startDate= dayjs(selectedDate).format().slice(0,10)
+    let water = `Water ${selectedNickname}`
+    addTaskToUser(startDate,water,selectedNickname)
+    setMarkedDates({...markedDates,[counter]: {marked: true}})
+    for (let i= 1 ; i< repeatedDays; i++) {
+      let markedDatesObject =  {...markedDates}  // Hasn't been tested if it doesn't work spread marked dated in line 122
       let water = `Water ${selectedNickname}`
       addTaskToUser(counter,water,selectedNickname)
-      setMarkedDates({...markedDates,[counter]: {marked: true}})
+      setMarkedDates({markedDatesObject,[counter]: {marked: true}})
       counter = dayjs(counter).add(wateringDays, 'day').format().slice(0,10)
     }
   }
@@ -156,9 +169,9 @@ export const CalendarScreen: React.FC = (nickName) => {
       
       )}
     <View>
-    {selectedDate ? (
+    {selectedDate /*&& selectedNickname */? (
 						<TouchableOpacity style={styles.addTaskButton} onPress={handleDropdownTasks}>
-              <Text>add a task for {selectedNickname} for {selectedDate}</Text>
+              <Text>Add a schedule for {selectedNickname} starting from {selectedDate}.</Text>
             </TouchableOpacity>
 					) : (
 						null
