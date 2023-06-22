@@ -7,18 +7,22 @@ import {
   Image,
   ImageSourcePropType,
   Pressable,
+  Button,
+  Alert,
 } from "react-native";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { useFonts } from "expo-font";
 import { getPlantInfo } from "../utils/getPlantsInfo";
 import { capitalise } from "../utils/capitalise";
 import Icon from "react-native-vector-icons/AntDesign";
-import LoadingScreen from "../navigation/LoadingScreen";
+import deleteAPlant from "../utils/deleteAPlant";
+import { UserContext } from "../context/User";
 
-export function PlantDetailsScreen({ route }) {
+export function PlantDetailsScreen({ navigation, route }) {
+  const { userEmail } = useContext(UserContext);
   const scrollRef = useRef<ScrollView>();
   const [coordinate, setCoordinate] = useState(0);
-  const { plantId } = route.params;
+  const { plantId, nickname } = route.params;
   const [plantDetails, setPlantDetails] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [displayCareGuide, setDisplayCareGuide] = useState(false);
@@ -29,6 +33,29 @@ export function PlantDetailsScreen({ route }) {
     "BDO-Grotesk-Med": require("../../assets/BDOGrotesk-Medium.ttf"),
     "BDO-Grotesk-Bold": require("../../assets/BDOGrotesk-Bold.ttf"),
   });
+
+  const promptDelete = () => {
+    Alert.alert(
+      "Delete This Plant?",
+      "Are you sure you want to delete this plant?",
+      [
+        { text: "OK", onPress: handleDelete },
+        {
+          text: "Cancel",
+        },
+      ]
+    );
+  };
+
+  const handleDelete = () => {
+    deleteAPlant(userEmail, nickname)
+      .then(() => {
+        navigation.navigate("My Plants", { refresh: true });
+      })
+      .catch((err) => {
+        Alert.alert("Oops", "Could not delete plant! Try again later...");
+      });
+  };
 
   useEffect(() => {
     getPlantInfo(plantId.toString()).then((plant: object) => {
@@ -81,7 +108,7 @@ export function PlantDetailsScreen({ route }) {
   if (isLoading) {
     return (
       <View style={styles.container}>
-        <LoadingScreen />
+        <Text>Loading</Text>
       </View>
     );
   }
@@ -114,6 +141,7 @@ export function PlantDetailsScreen({ route }) {
               style={styles.image}
               source={{ uri: plantDetails["image_url"] } as ImageSourcePropType}
             />
+            <Button title="Delete Plant" color="red" onPress={promptDelete} />
           </View>
           {plantDetails["family"] && (
             <Text style={styles.bodyText}>
@@ -281,10 +309,11 @@ export function PlantDetailsScreen({ route }) {
 const styles = StyleSheet.create({
   page: {
     backgroundColor: "#ffffff",
-    height: "100%",
+    paddingHorizontal: 20,
+    paddingTop: 40,
   },
   containerWrapper: {
-    height: "89.5%",
+    marginBottom: 80,
   },
   container: {
     paddingTop: 5,
@@ -301,16 +330,18 @@ const styles = StyleSheet.create({
     width: "100%",
     aspectRatio: 1,
     alignSelf: "center",
-    borderRadius: 15,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
   },
   headerText: {
     fontFamily: "BDO-Grotesk-Med",
     fontSize: 24,
     textAlign: "center",
+    color: "#009172",
   },
   headerTextBold: {
     fontFamily: "BDO-Grotesk-Bold",
-    fontSize: 24,
+    fontSize: 18,
     textAlign: "center",
   },
   subHeaderText: {

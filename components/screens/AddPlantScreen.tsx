@@ -71,7 +71,7 @@ export function AddPlantScreen({ navigation, route }) {
         setNickname("");
         setSelectedPlant(null);
         setSearchTerm("");
-        navigation.navigate("My Plants Stack");
+        navigation.navigate("My Plants", { refresh: true });
       })
       .catch((err) => {
         console.log(err);
@@ -183,7 +183,7 @@ export function AddPlantScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: { marginTop: 50, marginBottom: 60, padding: 5 },
   searchInputContainer: {
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
   },
   searchInput: {
     width: "100%",
@@ -246,9 +246,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   plantCardWrapper: {
-    width: '100%',
+    width: "100%",
     flexDirection: "row",
-    justifyContent: 'center',
+    justifyContent: "center",
     flexWrap: "wrap",
   },
   resultStatusMsg: { color: "#b0112b", alignSelf: "center", fontSize: 16 },
