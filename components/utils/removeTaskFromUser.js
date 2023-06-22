@@ -1,11 +1,7 @@
 import { db } from "../../Firebase_Config/firebaseConfig";
 import { doc, setDoc, arrayRemove } from "firebase/firestore";
-import { UserContext } from "../context/User";
-import { useContext } from "react";
 
-function removeTask(date, { task }, nickName) {
-   const { userEmail } = useContext(UserContext)
- 
+function removeTask(date, { task }, nickName, userEmail) {
   const orderData = {
     [nickName] : {
       task: arrayRemove(task),
