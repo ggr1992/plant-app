@@ -55,7 +55,6 @@ export const CalendarScreen: FC = () => {
 
 	function addATask(switchState) {
 		const taskName = switchState ? 'Prune' : 'Water'
-		// if repeat counter = sliced date every time this happens
 		if (!selectedNickname) {
 			return
 		}
@@ -72,8 +71,6 @@ export const CalendarScreen: FC = () => {
 		}
 		setRefresh(!refresh)
 	}
-
-	//start of nested function component
 
 	interface DropdownProps {
 		label: string
@@ -178,10 +175,7 @@ export const CalendarScreen: FC = () => {
 		}
 	}
 
-	// end of nested function component
-
 	useEffect(() => {
-		// Fetch the marked dates from Firestore
 		const fetchMarkedDates = async () => {
 			try {
 				const querySnapshot = await getDocs(collection(db, 'Users', userEmail, 'Schedule'))
@@ -271,7 +265,6 @@ export const CalendarScreen: FC = () => {
 					<View style={styles.calendarContainer}>
 						<Calendar
 							onDayPress={handleDayPress}
-							// enableSwipeMonths
 							theme={{
 								backgroundColor: '#ffffff',
 								calendarBackground: '#ffffff',
