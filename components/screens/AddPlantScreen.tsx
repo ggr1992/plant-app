@@ -67,11 +67,10 @@ export function AddPlantScreen({ navigation, route }) {
         return addPlantToUser(userEmail, plantId, nickname);
       })
       .then(() => {
-        const tempPlant = { ...selectedPlant };
         setNickname("");
         setSelectedPlant(null);
         setSearchTerm("");
-        navigation.navigate("My Plants Stack", tempPlant);
+        navigation.navigate("My Plants", { refresh: true });
       })
       .catch((err) => {
         console.log(err);

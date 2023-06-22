@@ -18,11 +18,17 @@ import { UserContext } from "../context/User";
 import { useFonts } from "expo-font";
 import { capitalise } from "../utils/capitalise";
 
-export function MyPlantsScreen({ navigation }) {
+export function MyPlantsScreen({ navigation, route }) {
   const { userEmail } = useContext(UserContext);
-  const [loading, setLoading] = useState(true);
   const [savedPlants, setSavedPlants] = useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
+
+  useEffect(() => {
+    if (route?.params?.refresh) {
+      delete route.params.refresh;
+      setRefreshing(true);
+    }
+  }, [route]);
 
   const [fontsLoaded] = useFonts({
     "BDO-Grotesk-Light": require("../../assets/BDOGrotesk-Light.ttf"),
@@ -33,33 +39,34 @@ export function MyPlantsScreen({ navigation }) {
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 1000);
   }, []);
 
   useEffect(() => {
-    getUserDoc(userEmail)
-      .then((plants: Object) => {
-        const plantsArr = [];
-        if (plants) {
-          Object.keys(plants).forEach((plant) => {
-            plantsArr.push(plants[plant]);
+    setTimeout(() => {
+      if (refreshing) {
+        getUserDoc(userEmail)
+          .then((plants: Object) => {
+            const plantsArr = [];
+            if (plants) {
+              Object.keys(plants).forEach((plant) => {
+                plantsArr.push(plants[plant]);
+              });
+            }
+            plantsArr.sort((a, b) => {
+              const nicknameA = a.nickname.toLowerCase();
+              const nicknameB = b.nickname.toLowerCase();
+              if (nicknameA > nicknameB) return 1;
+              if (nicknameA < nicknameB) return -1;
+              return 0;
+            });
+            setRefreshing(false);
+            setSavedPlants(plantsArr);
+          })
+          .catch((err) => {
+            console.log(err);
           });
-        }
-        plantsArr.sort((a, b) => {
-          const nicknameA = a.nickname.toLowerCase();
-          const nicknameB = b.nickname.toLowerCase();
-          if (nicknameA > nicknameB) return 1;
-          if (nicknameA < nicknameB) return -1;
-          return 0;
-        });
-        setLoading(false);
-        setSavedPlants(plantsArr);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      }
+    }, 500);
   }, [refreshing]);
 
   return (
@@ -93,6 +100,7 @@ export function MyPlantsScreen({ navigation }) {
                 onPress={() =>
                   navigation.navigate("Plant Details", {
                     plantId: item.id,
+                    nickname: item.nickname,
                   })
                 }
                 style={styles.plantCardTouchable}
@@ -130,7 +138,7 @@ export function MyPlantsScreen({ navigation }) {
             alignSelf: "center",
             borderRadius: 20,
           }}
-          onPress={() => navigation.navigate("Add Plant")}
+          onPress={() => navigation.navigate("Add Plant Stack")}
         >
           <View style={styles.addPlantContainer}>
             <Entypo
