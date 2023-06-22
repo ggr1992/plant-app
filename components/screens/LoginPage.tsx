@@ -14,8 +14,7 @@ import signIn from "../utils/signInUser";
 import { UserContext } from "../context/User";
 
 export function LoginScreen({ navigation }) {
-  const [emailSignUp, setEmailSignup] = useState<string>("");
-  const [email, setEmailLogin] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
   const [passwordSignUp, setPasswordSignUp] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [errorMsg, setErrorMsg] = useState<string>("");
@@ -43,11 +42,11 @@ export function LoginScreen({ navigation }) {
       latitude: 52.48,
       longitude: -1.9,
     };
-    signUp(emailSignUp, passwordSignUp, location)
+    signUp(email, passwordSignUp, location)
       .then(() => {
-        setUserEmail(emailSignUp);
-        setEmailSignup("");
-        setEmailLogin("");
+        setUserEmail(email);
+        setEmail("");
+        setEmail("");
         setPasswordSignUp("");
         setPassword("");
         navigation.navigate("App");
@@ -73,8 +72,8 @@ export function LoginScreen({ navigation }) {
     signIn(email, password)
       .then(() => {
         setUserEmail(email);
-        setEmailSignup("");
-        setEmailLogin("");
+        setEmail("");
+        setEmail("");
         setPasswordSignUp("");
         setPassword("");
         navigation.navigate("App");
@@ -109,7 +108,7 @@ export function LoginScreen({ navigation }) {
             <TextInput
               style={styles.credentialsInput}
               placeholder="Your Email"
-              onChangeText={(text) => setEmailLogin(text)}
+              onChangeText={(text) => setEmail(text)}
               value={email}
             />
             <TextInput
@@ -144,8 +143,8 @@ export function LoginScreen({ navigation }) {
               <TextInput
                 style={styles.credentialsInput}
                 placeholder="Your Email"
-                onChangeText={(text) => setEmailSignup(text)}
-                value={emailSignUp}
+                onChangeText={(text) => setEmail(text)}
+                value={email}
               />
               <TextInput
                 style={styles.credentialsInput}
@@ -245,8 +244,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   backgroundImage: {
-    flex: 1,
-    marginTop: 50,
+    width: 400,
+    aspectRatio: 1,
+    resizeMode: "contain",
   },
 });
 

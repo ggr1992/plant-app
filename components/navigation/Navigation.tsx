@@ -1,4 +1,3 @@
-import { HomeScreen } from "../screens/HomeScreen";
 import { CalendarScreen } from "../screens/CalendarScreen";
 import { AddPlantScreen } from "../screens/AddPlantScreen";
 import { MyPlantsScreen } from "../screens/MyPlantsScreen";
@@ -10,9 +9,11 @@ import { View } from "react-native";
 
 import { StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
+import { Entypo } from "@expo/vector-icons";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { LightSensorScreen } from "../screens/LightSensorScreen";
 
 const Tab = createBottomTabNavigator();
 const AddPlantStack = createNativeStackNavigator();
@@ -39,7 +40,7 @@ export function LoginPageStackNavigator() {
 export function TabNavigator() {
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="My Plants Stack"
       screenOptions={() => ({
         headerShown: false,
         tabBarShowLabel: false,
@@ -47,17 +48,17 @@ export function TabNavigator() {
       })}
     >
       <Tab.Screen
-        name="Home"
-        component={HomeScreen}
+        name="Light Sensor"
+        component={LightSensorScreen}
         options={{
           tabBarIcon: ({ focused }) => {
             return (
               <View>
-                <Icon
-                  name="home"
+                <Entypo
+                  name="light-up"
                   size={30}
                   color={focused ? "#00ff7f" : "white"}
-                ></Icon>
+                />
               </View>
             );
           },
@@ -90,7 +91,7 @@ export function TabNavigator() {
             return (
               <View>
                 <Icon
-                  name="pluscircle"
+                  name="pluscircleo"
                   size={45}
                   color={focused ? "#00ff7f" : "white"}
                 />
@@ -156,6 +157,11 @@ export function AddPlantStackNavigator() {
       <AddPlantStack.Screen
         name="Identify Plant"
         component={IdentifyPlantScreen}
+        options={{ headerShown: false }}
+      ></AddPlantStack.Screen>
+      <AddPlantStack.Screen
+        name="Light Sensor"
+        component={LightSensorScreen}
         options={{ headerShown: false }}
       ></AddPlantStack.Screen>
     </AddPlantStack.Navigator>
