@@ -36,6 +36,7 @@ export const CalendarScreen: FC = () => {
 
 	const [savedPlantsVisible, setSavedPlantsVisible] = useState(false)
 	const [addTasksVisible, setAddTasksVisible] = useState(false)
+	const [displayTasks, setDisplayTasks] = useState(false)
 
 	const [fontsLoaded] = useFonts({
 		'BDO-Grotesk-Light': require('../../assets/BDOGrotesk-Light.ttf'),
@@ -103,9 +104,9 @@ export const CalendarScreen: FC = () => {
 					{savedPlantsVisible && (
 						<View style={styles.filterDropdownOptions}>
 							{nickNames.map((nickName) => (
-								<Pressable key={nickName} onPress={() => handleDropdownSelect(nickName)}>
+								<TouchableOpacity key={nickName} onPress={() => handleDropdownSelect(nickName)}>
 									<Text style={styles.dropdownText}>{nickName}</Text>
-								</Pressable>
+								</TouchableOpacity>
 							))}
 						</View>
 					)}
@@ -116,58 +117,86 @@ export const CalendarScreen: FC = () => {
 				<>
 					{selectedDate && selectedNickname ? (
 						<TouchableOpacity style={styles.addTaskButton} onPress={toggleTasksDropDown}>
-							<Text>
-								Add a schedule for {selectedNickname} starting from {selectedDate}.
-							</Text>
+							{!displayTasks ? (
+								<Text style={{ fontFamily: 'BDO-Grotesk-Light', fontSize: 18 }}>
+									<Text style={{ fontFamily: 'BDO-Grotesk-Med' }}>Set Schedule</Text> / View Tasks
+								</Text>
+							) : (
+								<Text style={{ fontFamily: 'BDO-Grotesk-Light', fontSize: 18 }}>
+									Set Schedule / <Text style={{ fontFamily: 'BDO-Grotesk-Med' }}>View Tasks</Text>
+								</Text>
+							)}
 						</TouchableOpacity>
 					) : (
 						<></>
 					)}
 					{addTasksVisible && (
-						<View>
+						<View style={styles.scheduleDropdown}>
 							<View style={styles.switch}>
-								<Text>Watering</Text>
+								<Text style={styles.switchText}>Watering</Text>
 								<Switch
 									trackColor={{ false: '#1CAC78', true: '#D3D3D3' }}
 									thumbColor={isEnabled ? '#00A36C' : '#4B9CD3'}
 									onValueChange={toggleSwitch}
 									value={isEnabled}
 								/>
-								<Text>Pruning</Text>
+								<Text style={styles.switchText}>Pruning</Text>
 							</View>
-							<Text>Set the schedule for {selectedNickname}: </Text>
 							<View>
-								<TextInput
-									placeholder='enter days here'
-									keyboardType='number-pad'
-									value={String(wateringDays)}
-									onChangeText={(text) =>
-										setWateringDays(() => {
-											if (text) {
-												return parseInt(text)
-											} else {
-												return 0
-											}
-										})
-									}></TextInput>
-								<TextInput
-									placeholder='How many times'
-									keyboardType='number-pad'
-									value={String(repeatedDays)}
-									onChangeText={(text) =>
-										setRepeatedDays(() => {
-											if (text) {
-												return parseInt(text)
-											} else {
-												return 0
-											}
-										})
-									}></TextInput>
-								<Text>Days</Text>
+								<View style={styles.taskInputContainer}>
+									<Text style={styles.taskInputLabel}>Set frequency (in days)</Text>
+									<TextInput
+										style={styles.taskInputField}
+										placeholder='enter days here'
+										keyboardType='numeric'
+										value={String(wateringDays)}
+										onChangeText={(text) =>
+											setWateringDays(() => {
+												if (text) {
+													return parseInt(text)
+												} else {
+													return 0
+												}
+											})
+										}></TextInput>
+								</View>
+								<View style={styles.taskInputContainer}>
+									<Text style={styles.taskInputLabel}>Repeat for how many times</Text>
+									<TextInput
+										style={styles.taskInputField}
+										placeholder='How many times'
+										keyboardType='numeric'
+										value={String(repeatedDays)}
+										onChangeText={(text) =>
+											setRepeatedDays(() => {
+												if (text) {
+													return parseInt(text)
+												} else {
+													return 0
+												}
+											})
+										}></TextInput>
+								</View>
 							</View>
 							<TouchableOpacity style={styles.addTaskButton} onPress={() => addATask(isEnabled)}>
 								<Text style={styles.addTaskText}>Confirm</Text>
 							</TouchableOpacity>
+						</View>
+					)}
+					{displayTasks && (
+						<View style={styles.taskContainer}>
+							<Text style={styles.taskTitle}>Tasks for {selectedDate}:</Text>
+							{selectedTasks.map((task: string, index: number) => (
+								<View style={styles.taskItem} key={index}>
+									<Text style={styles.taskText}>{task}</Text>
+									<Pressable
+										onPress={() => {
+											setTimeout(() => onPress({ task }, index), 100)
+										}}>
+										<Icon size={30} name='checksquareo' />
+									</Pressable>
+								</View>
+							))}
 						</View>
 					)}
 				</>
@@ -217,6 +246,16 @@ export const CalendarScreen: FC = () => {
 		fetchMarkedDates()
 	}, [selectedNickname, selectedTasks, refresh])
 
+	useEffect(() => {
+		if (addTasksVisible) {
+			setDisplayTasks(false)
+		} else if (selectedTasks.length > 0 && selectedDate) {
+			setDisplayTasks(true)
+		} else {
+			setDisplayTasks(false)
+		}
+	}, [selectedTasks, selectedDate, addTasksVisible])
+
 	const handleDayPress = async (day) => {
 		try {
 			const selectedDate = day.dateString
@@ -239,7 +278,7 @@ export const CalendarScreen: FC = () => {
 		}
 	}
 
-	function onPress({ task }, index) {
+	function onPress({ task }, index): void {
 		removeTask(selectedDate, { task }, selectedNickname, userEmail)
 		setSelectedTasks((currentArr) => {
 			const newArr = [...currentArr]
@@ -270,8 +309,8 @@ export const CalendarScreen: FC = () => {
 								calendarBackground: '#ffffff',
 								textSectionTitleColor: '#b6c1cd',
 								selectedDayBackgroundColor: '#00adf5',
-								selectedDayTextColor: '#8DC267',
-								todayTextColor: '#FFAA33',
+								selectedDayTextColor: '#8dc267',
+								todayTextColor: '#2d4150',
 								dayTextColor: '#2d4150',
 								textDisabledColor: '#d9e'
 							}}
@@ -279,22 +318,6 @@ export const CalendarScreen: FC = () => {
 							markedDates={markedDates}
 						/>
 					</View>
-					{selectedTasks.length > 0 && selectedDate && (
-						<View style={styles.taskContainer}>
-							<Text style={styles.taskTitle}>Tasks for {selectedDate}:</Text>
-							{selectedTasks.map((task: string, index: number) => (
-								<View style={styles.taskText} key={index}>
-									<Text style={styles.taskText}>{task}</Text>
-									<Button
-										title='Delete Task'
-										onPress={() => {
-											onPress({ task }, index)
-										}}
-									/>
-								</View>
-							))}
-						</View>
-					)}
 					<View>{selectedDate && <Dropdown label='schedule' />}</View>
 				</View>
 			</SafeAreaView>
@@ -325,17 +348,34 @@ const styles = StyleSheet.create({
 		columnGap: 15
 	},
 	filterDropdownOptions: {
+		alignSelf: 'center',
+		paddingVertical: 5,
 		borderWidth: 2,
-		width: '100%',
+		borderColor: '#30d576',
+		borderRadius: 30,
+		width: '80%',
 		alignItems: 'center',
 		position: 'absolute',
 		backgroundColor: 'white',
 		top: 60
 	},
+	switchText: {
+		fontFamily: 'BDO-Grotesk-Light',
+		fontSize: 16
+	},
 	switch: {
 		flexDirection: 'row',
+		columnGap: 10,
 		alignItems: 'center',
 		justifyContent: 'center'
+	},
+	scheduleDropdown: {
+		alignItems: 'center',
+		rowGap: 10
+	},
+	scheduleText: {
+		fontFamily: 'BDO-Grotesk-Reg',
+		fontSize: 16
 	},
 	button: {
 		marginTop: 20,
@@ -361,33 +401,60 @@ const styles = StyleSheet.create({
 		borderColor: 'gray'
 	},
 	taskContainer: {
+		alignSelf: 'center',
+		width: '70%',
+		borderWidth: 1,
+		borderColor: 'red',
 		alignItems: 'center',
-		padding: 20,
-		backgroundColor: 'lightgray'
+		padding: 10,
+		backgroundColor: '#ffffff'
 	},
 	taskTitle: {
-		fontSize: 16,
-		fontWeight: 'bold',
+		fontFamily: 'BDO-Grotesk-Med',
+		fontSize: 18,
 		marginBottom: 10
 	},
+	taskInputContainer: {
+		flexDirection: 'row',
+		columnGap: 20
+	},
+	taskInputField: {
+		borderWidth: 1,
+		textAlign: 'center',
+		fontFamily: 'BDO-Grotesk-Reg',
+		fontSize: 16,
+		width: 30
+	},
+	taskInputLabel: {
+		fontFamily: 'BDO-Grotesk-Reg'
+	},
 	taskText: {
-		fontSize: 14,
-		marginBottom: 5
+		fontFamily: 'BDO-Grotesk-Reg',
+		fontSize: 16
+	},
+	taskItem: {
+		flexDirection: 'row',
+		columnGap: 10,
+		alignItems: 'center'
 	},
 	dropdownText: {
 		fontSize: 20,
 		fontFamily: 'BDO-Grotesk-Reg'
 	},
 	addTaskButton: {
+		alignSelf: 'center',
+		width: 'auto',
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: '#2196F3',
+		backgroundColor: '#ffffff',
 		paddingVertical: 12,
 		paddingHorizontal: 24,
-		borderRadius: 4,
+		borderWidth: 1,
+		borderRadius: 30,
 		marginBottom: 10
 	},
 	addTaskText: {
-		color: 'red'
+		fontFamily: 'BDO-Grotesk-Med',
+		fontSize: 18
 	}
 })
