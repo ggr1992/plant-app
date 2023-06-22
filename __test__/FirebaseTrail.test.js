@@ -6,7 +6,7 @@ const getAllPlantNames = require("../components/utils/getAllPlantNames");
 const signUp = require("../components/utils/signUpData");
 const signIn = require("../components/utils/signInUser");
 import getUserProfile from "../components/utils/getUser";
-
+import deleteAPlant from "../components/utils/deleteAPlant";
 import { db, auth } from "../Firebase_Config/firebaseConfig";
 import { setDoc, doc, getDoc } from "firebase/firestore";
 import exactScienticNameSearch from "../components/utils/exactScienticNameSearch";
@@ -219,6 +219,7 @@ describe("exactScienticNameSearch", () => {
     expect(result.plant.scientific_name[0]).toEqual(name);
   });
 });
+
 describe.only('CalenderTesting' , () => {
  test('', async () => {
   const result = await addTaskToUser()
@@ -229,6 +230,12 @@ describe.only("UserProfile" , () => {
   test('' , async () => {
       const email = 'Charliestorer97@gmail.com'
       const result = await getUserProfile(email);
+      console.log(result)
+  })
+})
+describe.only("UserProfile" , () => {
+  test('' , async () => {   
+      const result = await deleteAPlant('a@a.com','Jommnathal');
       console.log(result)
   })
 })
