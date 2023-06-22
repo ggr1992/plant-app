@@ -61,14 +61,15 @@ const styles = StyleSheet.create({
 		fontFamily: 'BDO-Grotesk-Light'
 	},
 	button: {
-		backgroundColor: '#2196F3',
+		backgroundColor: '#00A36C',
 		paddingVertical: 9,
 		paddingHorizontal: 18,
-		borderRadius: 5
+		borderRadius: 20
 	},
 	buttonText: {
 		fontFamily: 'BDO-Grotesk-Med',
-		fontSize: 18
+		fontSize: 18,
+		color: '#ffffff'
 	},
 	signInMessage: {
 		fontFamily: 'BDO-Grotesk-Reg',
