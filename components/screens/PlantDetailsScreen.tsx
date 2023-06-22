@@ -141,7 +141,9 @@ export function PlantDetailsScreen({ navigation, route }) {
               style={styles.image}
               source={{ uri: plantDetails["image_url"] } as ImageSourcePropType}
             />
-            <Button title="Delete Plant" color="red" onPress={promptDelete} />
+            <Pressable style={styles.deleteButton} onPress={promptDelete}>
+              <Text style={styles.deleteText}>Delete Plant</Text>
+            </Pressable>
           </View>
           {plantDetails["family"] && (
             <Text style={styles.bodyText}>
@@ -195,7 +197,7 @@ export function PlantDetailsScreen({ navigation, route }) {
               style={{ flexDirection: "column", rowGap: 10 }}
               onLayout={(event) => {
                 const layout = event.nativeEvent.layout;
-                setCoordinate(layout.y);
+                setCoordinate(layout.y - 10);
               }}
             >
               <View
@@ -332,6 +334,15 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
+  },
+  deleteButton: {
+    marginTop: 10,
+    alignItems: 'center'
+  },
+  deleteText: {
+    color: 'red',
+    fontFamily: 'BDO-Grotesk-Med',
+    fontSize: 18
   },
   headerText: {
     fontFamily: "BDO-Grotesk-Med",
