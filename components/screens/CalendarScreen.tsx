@@ -194,11 +194,23 @@ export const CalendarScreen: FC = () => {
 					}
 					if (markedData) {
 						if (markedData.task.length > 0) {
+							let tasks = markedData.task.map((element) => {
+								const splitArr = element.split(' ')
+								const task = splitArr[0]
+								return task
+							})
+							const wateringDot = { key: 'wateringDot', color: 'blue' }
+							const pruningDot = { key: 'pruningDot', color: 'green' }
 							markedDatesData[date] = {
 								marked: true,
-								selectedColor: 'blue'
-								//dotColor: markedData.nickName.dotColor, // Assuming dotColor field exists in the database
-								//  task: markedData.nickName.task, // Assuming task field exists in the database
+								dots:
+									tasks.length === 2
+										? [wateringDot, pruningDot]
+										: tasks[0] === 'Water'
+										? [wateringDot]
+										: tasks[0] === 'Prune'
+										? [pruningDot]
+										: 'red'
 							}
 						}
 					}
@@ -261,16 +273,16 @@ export const CalendarScreen: FC = () => {
 							onDayPress={handleDayPress}
 							// enableSwipeMonths
 							theme={{
-								backgroundColor: '#E9EBEC',
-								calendarBackground: '#E9EBEC',
+								backgroundColor: '#ffffff',
+								calendarBackground: '#ffffff',
 								textSectionTitleColor: '#b6c1cd',
 								selectedDayBackgroundColor: '#00adf5',
 								selectedDayTextColor: '#8DC267',
-								todayTextColor: '#8DC267',
+								todayTextColor: '#FFAA33',
 								dayTextColor: '#2d4150',
 								textDisabledColor: '#d9e'
 							}}
-							// style={styles.calendar}
+							markingType={'multi-dot'}
 							markedDates={markedDates}
 						/>
 					</View>
@@ -316,8 +328,8 @@ const styles = StyleSheet.create({
 	},
 	filterDropdown: {
 		flexDirection: 'row',
-		justifyContent: 'space-evenly',
-		alignItems: 'center'
+		justifyContent: 'center',
+		columnGap: 15
 	},
 	filterDropdownOptions: {
 		borderWidth: 2,
