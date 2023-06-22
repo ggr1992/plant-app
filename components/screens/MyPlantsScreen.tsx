@@ -69,6 +69,10 @@ export function MyPlantsScreen({ navigation, route }) {
     }, 500);
   }, [refreshing]);
 
+  useEffect(() => {
+    setRefreshing(true);
+  }, []);
+
   return (
     <>
       <Text style={styles.header}>My Plants</Text>
