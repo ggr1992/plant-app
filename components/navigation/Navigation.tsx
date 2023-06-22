@@ -48,17 +48,17 @@ export function TabNavigator() {
       })}
     >
       <Tab.Screen
-        name="Light Sensor"
-        component={LightSensorScreen}
+        name="My Plants Stack"
+        component={MyPlantsStackNavigator}
         options={{
           tabBarIcon: ({ focused }) => {
             return (
               <View>
-                <Entypo
-                  name="light-up"
+                <Icon
+                  name="staro"
                   size={30}
                   color={focused ? "#00ff7f" : "white"}
-                />
+                ></Icon>
               </View>
             );
           },
@@ -101,18 +101,18 @@ export function TabNavigator() {
           tabBarIconStyle: styles.navigationIcon,
         }}
       />
-      <Tab.Screen
-        name="My Plants Stack"
-        component={MyPlantsStackNavigator}
+       <Tab.Screen
+        name="Light Sensor"
+        component={LightSensorScreen}
         options={{
           tabBarIcon: ({ focused }) => {
             return (
               <View>
-                <Icon
-                  name="staro"
+                <Entypo
+                  name="light-up"
                   size={30}
                   color={focused ? "#00ff7f" : "white"}
-                ></Icon>
+                />
               </View>
             );
           },
