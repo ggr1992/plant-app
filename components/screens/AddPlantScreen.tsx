@@ -20,6 +20,7 @@ import {
 } from "../utils/api";
 import { Entypo } from "@expo/vector-icons";
 import { UserContext } from "../context/User";
+import LoadingScreen from "../navigation/LoadingScreen";
 
 export function AddPlantScreen({ navigation, route }) {
   const [searchTerm, setSearchTerm] = useState("");

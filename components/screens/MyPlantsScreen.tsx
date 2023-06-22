@@ -12,11 +12,14 @@ import {
 } from "react-native";
 import getUserDoc from "../utils/getUserDoc";
 import { UserContext } from "../context/User";
+
+import LoadingScreen from "../navigation/LoadingScreen";
 import deleteAPlant from "../utils/deleteAPlant";
 
 
+
 export function MyPlantsScreen({ navigation }) {
-  const { userEmail } = useContext(UserContext)
+  const { userEmail } = useContext(UserContext);
   const [loading, setLoading] = useState(true);
   const [savedPlants, setSavedPlants] = useState([]);
   let scrollViewRef = useRef(null);
@@ -51,7 +54,7 @@ export function MyPlantsScreen({ navigation }) {
         <View style={styles.mainSection}>
           {loading ? (
             <View style={styles.loadingContainer}>
-              <Text style={styles.loading}>Loading...</Text>
+              <LoadingScreen />
             </View>
           ) : (
             <>
@@ -94,11 +97,14 @@ export function MyPlantsScreen({ navigation }) {
                   </Pressable>
                 ))}
               </ScrollView>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={handleScrollToTop}
+              >
+                <Text>Back to top</Text>
+              </TouchableOpacity>
             </>
           )}
-          <TouchableOpacity style={styles.button} onPress={handleScrollToTop}>
-            <Text>Back to top</Text>
-          </TouchableOpacity>
         </View>
       </SafeAreaView>
     </View>
@@ -107,14 +113,14 @@ export function MyPlantsScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   page: {
-    height: '100%',
-    backgroundColor: 'white'
+    height: "100%",
+    backgroundColor: "white",
   },
   areaView: {
-    height: '89.5%'
+    height: "89.5%",
   },
   mainSection: {
-    height: '100%'
+    height: "100%",
   },
   contentContainer: {
     paddingTop: 10,
