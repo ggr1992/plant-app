@@ -49,6 +49,7 @@ export function LoginScreen({ navigation }) {
         setEmail("");
         setPasswordSignUp("");
         setPassword("");
+
         navigation.navigate("App");
       })
       .catch((error) => {
