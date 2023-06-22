@@ -142,9 +142,9 @@ export const CalendarScreen: FC = () => {
 								/>
 								<Text style={styles.switchText}>Pruning</Text>
 							</View>
-							<View>
+							<View style={styles.taskInputContainerWrapper}>
 								<View style={styles.taskInputContainer}>
-									<Text style={styles.taskInputLabel}>Set frequency (in days)</Text>
+									<Text style={styles.taskInputLabel}>Set scheduling frequency (in days)</Text>
 									<TextInput
 										style={styles.taskInputField}
 										placeholder='enter days here'
@@ -161,7 +161,7 @@ export const CalendarScreen: FC = () => {
 										}></TextInput>
 								</View>
 								<View style={styles.taskInputContainer}>
-									<Text style={styles.taskInputLabel}>Repeat for how many times</Text>
+									<Text style={styles.taskInputLabel}>Schedule to repeat how many times</Text>
 									<TextInput
 										style={styles.taskInputField}
 										placeholder='How many times'
@@ -308,14 +308,14 @@ export const CalendarScreen: FC = () => {
 								backgroundColor: '#ffffff',
 								calendarBackground: '#ffffff',
 								textSectionTitleColor: '#b6c1cd',
-								selectedDayBackgroundColor: '#00adf5',
-								selectedDayTextColor: '#8dc267',
+								selectedDayBackgroundColor: '#70ee70',
+								selectedDayTextColor: '#2d4150',
 								todayTextColor: '#2d4150',
 								dayTextColor: '#2d4150',
 								textDisabledColor: '#d9e'
 							}}
 							markingType={'multi-dot'}
-							markedDates={markedDates}
+							markedDates={{ ...markedDates, [selectedDate]: { ...markedDates[selectedDate], selected: true } }}
 						/>
 					</View>
 					<View>{selectedDate && <Dropdown label='schedule' />}</View>
@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
 		alignSelf: 'center',
 		paddingVertical: 5,
 		borderWidth: 2,
-		borderColor: '#30d576',
+		borderColor: '#009172',
 		borderRadius: 30,
 		width: '80%',
 		alignItems: 'center',
@@ -404,10 +404,14 @@ const styles = StyleSheet.create({
 		alignSelf: 'center',
 		width: '70%',
 		borderWidth: 1,
-		borderColor: 'red',
+		borderRadius: 20,
+		borderColor: 'black',
 		alignItems: 'center',
 		padding: 10,
 		backgroundColor: '#ffffff'
+	},
+	taskInputContainerWrapper: {
+		rowGap: 10
 	},
 	taskTitle: {
 		fontFamily: 'BDO-Grotesk-Med',
@@ -416,17 +420,19 @@ const styles = StyleSheet.create({
 	},
 	taskInputContainer: {
 		flexDirection: 'row',
-		columnGap: 20
+		columnGap: 10
 	},
 	taskInputField: {
 		borderWidth: 1,
+		borderRadius: 40,
 		textAlign: 'center',
 		fontFamily: 'BDO-Grotesk-Reg',
-		fontSize: 16,
-		width: 30
+		fontSize: 18,
+		width: 40
 	},
 	taskInputLabel: {
-		fontFamily: 'BDO-Grotesk-Reg'
+		fontFamily: 'BDO-Grotesk-Reg',
+		fontSize: 18
 	},
 	taskText: {
 		fontFamily: 'BDO-Grotesk-Reg',
