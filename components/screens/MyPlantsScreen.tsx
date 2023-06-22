@@ -12,13 +12,18 @@ import {
 } from "react-native";
 import getUserDoc from "../utils/getUserDoc";
 import { UserContext } from "../context/User";
+
 import LoadingScreen from "../navigation/LoadingScreen";
+import deleteAPlant from "../utils/deleteAPlant";
+
+
 
 export function MyPlantsScreen({ navigation }) {
   const { userEmail } = useContext(UserContext);
   const [loading, setLoading] = useState(true);
   const [savedPlants, setSavedPlants] = useState([]);
   let scrollViewRef = useRef(null);
+  const [refresh,setRefresh] = useState(false)
 
   useEffect(() => {
     let name = userEmail;
@@ -30,7 +35,12 @@ export function MyPlantsScreen({ navigation }) {
       setLoading(false);
       setSavedPlants(arr);
     });
-  }, []);
+  }, [refresh]);
+
+  const onPress = (userEmail,nickname) => {
+    deleteAPlant(userEmail, nickname)
+    setRefresh(!refresh)
+  }
 
   const handleScrollToTop = () => {
     if (scrollViewRef.current) {
@@ -80,6 +90,9 @@ export function MyPlantsScreen({ navigation }) {
                           {plant.scientific_name}
                         </Text>
                       </View>
+                      <TouchableOpacity onPress={(() =>  onPress(userEmail,plant.nickname))} style={styles.button}>
+                      <Text>Delete plant</Text>
+                      </TouchableOpacity>
                     </View>
                   </Pressable>
                 ))}

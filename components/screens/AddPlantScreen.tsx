@@ -108,7 +108,7 @@ export function AddPlantScreen({ navigation, route }) {
         />
         <Dialog.Button label="Submit" onPress={addPlant} />
       </Dialog.Container>
-      <View>
+      <View style={styles.searchInputContainer}>
         <TextInput
           style={styles.searchInput}
           onChangeText={(text) => setSearchTerm(text)}
@@ -181,7 +181,10 @@ export function AddPlantScreen({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-  container: { marginTop: 40, marginBottom: 60, padding: 20 },
+  container: { marginTop: 50, marginBottom: 60, padding: 5 },
+  searchInputContainer: {
+    paddingHorizontal: 15
+  },
   searchInput: {
     width: "100%",
     borderColor: "#009172",
@@ -197,7 +200,7 @@ const styles = StyleSheet.create({
   },
   searchInputClearIcon: {
     position: "absolute",
-    right: 14,
+    right: 30,
     top: 16,
     color: "red",
   },
@@ -243,13 +246,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   plantCardWrapper: {
+    width: '100%',
     flexDirection: "row",
+    justifyContent: 'center',
     flexWrap: "wrap",
-    marginBottom: 20,
   },
   resultStatusMsg: { color: "#b0112b", alignSelf: "center", fontSize: 16 },
   plantCardTouchable: {
-    width: 172,
+    width: 160,
     aspectRatio: 1,
     margin: 6,
   },
