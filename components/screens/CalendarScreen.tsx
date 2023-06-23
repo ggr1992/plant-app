@@ -148,7 +148,7 @@ export const CalendarScreen: FC = () => {
 									<TextInput
 										style={styles.taskInputField}
 										placeholder='enter days here'
-										keyboardType='numeric'
+										keyboardType='number-pad'
 										value={String(wateringDays)}
 										onChangeText={(text) =>
 											setWateringDays(() => {
@@ -165,7 +165,7 @@ export const CalendarScreen: FC = () => {
 									<TextInput
 										style={styles.taskInputField}
 										placeholder='How many times'
-										keyboardType='numeric'
+										keyboardType='number-pad'
 										value={String(repeatedDays)}
 										onChangeText={(text) =>
 											setRepeatedDays(() => {
